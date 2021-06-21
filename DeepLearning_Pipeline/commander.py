@@ -105,24 +105,13 @@ class EyeCommander:
             # extract eye images
             self._extract_eyes()
         return success
-        
-    def run(self):
-        while self.cam.isOpened():
-            success = self._refresh()
-            if self.eye_status == True:
-                cv2.imshow('eye_frame', self.eye_right)
-                cv2.imshow('eye_frame2', self.eye_left)
-            else:
-                cv2.imshow('frame', self.display_frame)
-            if cv2.waitKey(5) & 0xFF == 27:
-                break
-        self.cam.release()
 
     def demo(self):
         while self.cam.isOpened():
             success = self._refresh()
             if (success == False) or (self.eye_status == False):
                 continue
+            # suggested head placement box
             cv2.rectangle(self.display_frame,(420,20),(900,700),(0,255,0),3)
             cv2.putText(self.display_frame, "center head inside box", (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 1)
             if (success == True) and (self.eye_status == True):
