@@ -12,9 +12,9 @@ class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     DECISION_THRESHOLD = 0.9
 
-    def __init__(self, model, window_size: int =14):
+    def __init__(self, model, window_size: int =12):
         self.cam = cv2.VideoCapture(0)
-        self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.8)
+        self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.9)
         self.frame = None
         self.shape = None
         self.eye_status = False
@@ -123,6 +123,8 @@ class EyeCommander:
             success = self._refresh()
             if (success == False) or (self.eye_status == False):
                 continue
+            cv2.rectangle(self.display_frame,(420,20),(900,700),(0,255,0),3)
+            cv2.putText(self.display_frame, "center head inside box", (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 1)
             if (success == True) and (self.eye_status == True):
                 prediction_left = self._predict_frame(self.eye_left)
                 prediction_right = self._predict_frame(self.eye_right)
@@ -135,7 +137,10 @@ class EyeCommander:
                 label = self.CLASS_LABELS[window_prediction]
                 self._display(label)
             else:
+                
                 cv2.imshow('frame', self.display_frame)
+                
+               
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         self.cam.release()
