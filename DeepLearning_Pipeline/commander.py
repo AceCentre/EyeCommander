@@ -14,14 +14,18 @@ class EyeCommander:
 
     def __init__(self, model, window_size: int =12):
         self.cam = cv2.VideoCapture(0)
+        self.model = model
         self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.9)
         self.frame = None
+        self.display_frame = None
+        self.prediction_window = PredictionWindow(size=window_size)
+        self.window_size = window_size
+
+        self.window_prediction = None
+        self.confidence = None
         self.shape = None
         self.eye_status = False
-        self.display_frame = None
-        self.model = model
-        self.window_size = window_size
-        self.prediction_window = PredictionWindow(size=window_size)
+        self.cam_status = False
         
     def _bounding_box(self, detection):
         shape = self.shape
@@ -78,8 +82,21 @@ class EyeCommander:
         batch = np.expand_dims(img,0)
         prediction = self.model.predict_classes(batch)[0]
         return prediction
+    
+    def _classify(self):
+        if (self.cam_status == True) and (self.eye_status == True):
+                # make prediction on left eye
+                prediction_left = self._predict_frame(self.eye_left)
+                # make prediction on right eye
+                prediction_right = self._predict_frame(self.eye_right)
+                # add both predictions to the prediction stack
+                self.prediction_window.insert_prediction(prediction_left)
+                self.prediction_window.insert_prediction(prediction_right)
+        # make prediction over a window by majority vote
+        self.window_prediction, self.confidence = self.prediction_window.make_window_prediction(self.window_size)
+             
 
-    def _display(self, label, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
+    def _display_prediction(self, label, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
         color = color
         font = font
         if label == 'left':
@@ -95,41 +112,33 @@ class EyeCommander:
         cv2.imshow("frame", self.display_frame)
 
     def _refresh(self):
-        success, self.frame = self.cam.read()
+        self.cam_status, self.frame = self.cam.read()
         self.frame.flags.writeable = False
         # Stop if no video input
-        if success == True:
+        if self.cam_status == True:
             self.shape = self.frame.shape
             # create display frame
             self.display_frame = cv2.flip(self.frame, 1)
             # extract eye images
             self._extract_eyes()
-        return success
 
     def demo(self):
         while self.cam.isOpened():
-            success = self._refresh()
-            if (success == False) or (self.eye_status == False):
+            self._refresh()
+            if (self.cam_status == False) or (self.eye_status == False):
                 continue
-            # suggested head placement box
+            # display suggested head placement box
             cv2.rectangle(self.display_frame,(420,20),(900,700),(0,255,0),3)
             cv2.putText(self.display_frame, "center head inside box", (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 1)
-            if (success == True) and (self.eye_status == True):
-                prediction_left = self._predict_frame(self.eye_left)
-                prediction_right = self._predict_frame(self.eye_right)
-                self.prediction_window.insert_prediction(prediction_left)
-                self.prediction_window.insert_prediction(prediction_right)
-            # make prediction over a window by majority vote
-            window_prediction, ratio = self.prediction_window.make_window_prediction(self.window_size)
+            # make classifcation
+            self._classify() 
             # display results
-            if ratio > self.DECISION_THRESHOLD:
-                label = self.CLASS_LABELS[window_prediction]
-                self._display(label)
+            if self.confidence > self.DECISION_THRESHOLD:
+                label = self.CLASS_LABELS[self.window_prediction]
+                self._display_prediction(label)
             else:
-                
                 cv2.imshow('frame', self.display_frame)
-                
-               
+            # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         self.cam.release()
@@ -146,12 +155,12 @@ class PredictionWindow(object):
             self.stack.pop()
         else:
             self.stack.append(prediction)
-    
+
     def make_window_prediction(self, window_size):
-        c = Counter(self.stack).most_common(1)[0]
-        ratio = c[1]/window_size
-        vote = c[0]
-        return vote, ratio
+        counter = Counter(self.stack).most_common(1)[0]
+        frequency = counter[1]/window_size
+        prediction = counter[0]
+        return prediction, frequency
 
 if __name__ == "__main__":
     model = tf.keras.models.load_model('./Models/jupiter1')
