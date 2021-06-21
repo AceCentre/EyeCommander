@@ -1,8 +1,6 @@
 import cv2
 import os
-from FaceDetection.FaceDetection import FaceDetector
 import glob
-from EyeCommander import EyeCommander
 
 def dir_to_frames(inpath, writepath):
     writepath = writepath
