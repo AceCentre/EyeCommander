@@ -15,10 +15,10 @@ class EyeCommander:
     def __init__(self, model, window_size: int =12):
         self.cam = cv2.VideoCapture(0)
         self.model = model
-        self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.9)
+        self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.8)
         self.frame = None
         self.display_frame = None
-        self.prediction_window = PredictionWindow(size=window_size)
+        self.prediction_stack = PredictionStack(size=window_size)
         self.window_size = window_size
 
         self.window_prediction = None
@@ -50,6 +50,7 @@ class EyeCommander:
             processed_frame = self.frame
         else:
             processed_frame = cv2.cvtColor(cv2.flip(self.frame, 1), cv2.COLOR_BGR2RGB)
+        # detect face and landmarks using tensorflow mediapipe
         results = self.face_detection.process(processed_frame)
         if results.detections:
             detection = results.detections[0]
@@ -83,54 +84,60 @@ class EyeCommander:
         prediction = self.model.predict_classes(batch)[0]
         return prediction
     
+    def _predict_window(self):
+        counter = self.prediction_stack.most_common()
+        frequency = counter[1]/self.window_size
+        prediction = counter[0]
+        return prediction, frequency
+    
     def _classify(self):
         if (self.cam_status == True) and (self.eye_status == True):
-                # make prediction on left eye
-                prediction_left = self._predict_frame(self.eye_left)
-                # make prediction on right eye
-                prediction_right = self._predict_frame(self.eye_right)
-                # add both predictions to the prediction stack
-                self.prediction_window.insert_prediction(prediction_left)
-                self.prediction_window.insert_prediction(prediction_right)
+            # make prediction on left eye
+            prediction_left = self._predict_frame(self.eye_left)
+            # make prediction on right eye
+            prediction_right = self._predict_frame(self.eye_right)
+            # add both predictions to the prediction stack
+            self.prediction_stack.insert_prediction(prediction_left)
+            self.prediction_stack.insert_prediction(prediction_right)
         # make prediction over a window by majority vote
-        self.window_prediction, self.confidence = self.prediction_window.make_window_prediction(self.window_size)
+        self.window_prediction, self.confidence = self._predict_window()
              
 
     def _display_prediction(self, label, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
-        color = color
-        font = font
         if label == 'left':
             cv2.putText(self.display_frame, "left", (50, 375), font , 7, color, 15)
         elif label == 'right':
             cv2.putText(self.display_frame, "right", (900, 375), font, 7, color, 15)
         elif label == 'up':
             cv2.putText(self.display_frame, "up", (575, 100), font, 7, color, 15)
-        elif label == 'down':
+        else:
             cv2.putText(self.display_frame, "down", (500, 700), font, 7, color, 15)
-       
         # display frame
         cv2.imshow("frame", self.display_frame)
 
     def _refresh(self):
         self.cam_status, self.frame = self.cam.read()
+        # set the flag to improve performance
         self.frame.flags.writeable = False
         # Stop if no video input
         if self.cam_status == True:
             self.shape = self.frame.shape
-            # create display frame
+            # create display frame 
             self.display_frame = cv2.flip(self.frame, 1)
+            self.display_frame.flags.writeable = True
             # extract eye images
             self._extract_eyes()
 
     def demo(self):
         while self.cam.isOpened():
+            # capture a frame and extract eye images
             self._refresh()
             if (self.cam_status == False) or (self.eye_status == False):
                 continue
             # display suggested head placement box
-            cv2.rectangle(self.display_frame,(420,20),(900,700),(0,255,0),3)
-            cv2.putText(self.display_frame, "center head inside box", (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0), 1)
-            # make classifcation
+            cv2.rectangle(self.display_frame,(420,20),(900,700),(100,175,255),3)
+            cv2.putText(self.display_frame, "center head inside box", (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (100,175,255), 1)
+            # make classifcation based on eye images
             self._classify() 
             # display results
             if self.confidence > self.DECISION_THRESHOLD:
@@ -144,7 +151,7 @@ class EyeCommander:
         self.cam.release()
         cv2.destroyAllWindows()
 
-class PredictionWindow(object):
+class PredictionStack(object):
     def __init__(self, size=5):
         self.size = size
         self.stack = []
@@ -155,12 +162,10 @@ class PredictionWindow(object):
             self.stack.pop()
         else:
             self.stack.append(prediction)
+    
+    def most_common(self):
+        return Counter(self.stack).most_common(1)[0]
 
-    def make_window_prediction(self, window_size):
-        counter = Counter(self.stack).most_common(1)[0]
-        frequency = counter[1]/window_size
-        prediction = counter[0]
-        return prediction, frequency
 
 if __name__ == "__main__":
     model = tf.keras.models.load_model('./Models/jupiter1')
