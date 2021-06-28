@@ -18,7 +18,7 @@ class EyeCommander:
         self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.8)
         self.frame = None
         self.display_frame = None
-        self.prediction_stack = PredictionStack(size=window_size)
+        self.prediction_window = PredictionWindow(size=window_size)
         self.window_size = window_size
 
         self.window_prediction = None
@@ -85,7 +85,7 @@ class EyeCommander:
         return prediction
     
     def _predict_window(self):
-        counter = self.prediction_stack.most_common()
+        counter = self.prediction_window.most_common()
         frequency = counter[1]/self.window_size
         prediction = counter[0]
         return prediction, frequency
@@ -96,9 +96,9 @@ class EyeCommander:
             prediction_left = self._predict_frame(self.eye_left)
             # make prediction on right eye
             prediction_right = self._predict_frame(self.eye_right)
-            # add both predictions to the prediction stack
-            self.prediction_stack.insert_prediction(prediction_left)
-            self.prediction_stack.insert_prediction(prediction_right)
+            # add both predictions to the prediction window
+            self.prediction_window.insert_prediction(prediction_left)
+            self.prediction_window.insert_prediction(prediction_right)
         # make prediction over a window by majority vote
         self.window_prediction, self.confidence = self._predict_window()
              
@@ -151,20 +151,20 @@ class EyeCommander:
         self.cam.release()
         cv2.destroyAllWindows()
 
-class PredictionStack(object):
+class PredictionWindow(object):
     def __init__(self, size=5):
         self.size = size
-        self.stack = []
+        self.items = []
     
     def insert_prediction(self, prediction):
-        if len(self.stack) == self.size:
-            self.stack.insert(0,prediction)
-            self.stack.pop()
+        if len(self.items) == self.size:
+            self.items.insert(0,prediction)
+            self.items.pop()
         else:
-            self.stack.append(prediction)
+            self.items.append(prediction)
     
     def most_common(self):
-        return Counter(self.stack).most_common(1)[0]
+        return Counter(self.items).most_common(1)[0]
 
 
 if __name__ == "__main__":
