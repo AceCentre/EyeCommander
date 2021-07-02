@@ -1,0 +1,11 @@
+FROM python:3.7
+
+WORKDIR /dl_pipeline
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY ./EyeCommander ./EyeCommander
+
+CMD ["python", "./EyeCommander/main.py"]

@@ -7,7 +7,7 @@ import tensorflow as tf
 from collections import Counter
 import numpy as np
 import pyglet
-import time 
+import shutil 
 
 class EyeCommander:
     FD = mp.solutions.face_detection
@@ -89,10 +89,17 @@ class EyeCommander:
         self.eye_left = reshaped_left
         self.eye_right = reshaped_right
 
+    # def _predict_frame(self, eye_img):
+    #     img = eye_img.copy()
+    #     batch = np.expand_dims(img,0)
+    #     prediction = self.model.predict_classes(batch)[0]
+    #     return prediction
+    
     def _predict_frame(self, eye_img):
         img = eye_img.copy()
         batch = np.expand_dims(img,0)
-        prediction = self.model.predict_classes(batch)[0]
+        pred_vec = self.model.predict(batch)
+        prediction = np.argmax(pred_vec)
         return prediction
     
     def _predict_window(self):
@@ -137,30 +144,6 @@ class EyeCommander:
             self.display_frame.flags.writeable = True
             # extract eye images
             self._extract_eyes()
-    
-    def run(self):
-        while self.cam.isOpened():
-            # capture a frame and extract eye images
-            self._refresh()
-            if (self.cam_status == False) or (self.eye_status == False):
-                continue
-            # display suggested head placement box
-            cv2.rectangle(self.display_frame,(420,20),(900,700),(100,175,255),3)
-            cv2.putText(self.display_frame, "center head inside box", 
-                        (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (100,175,255), 1)
-            # make classifcation based on eye images
-            self._classify() 
-            # display results
-            if self.confidence > self.DECISION_THRESHOLD:
-                label = self.CLASS_LABELS[self.window_prediction]
-                self._display_prediction(label)
-            else:
-                cv2.imshow('frame', self.display_frame)
-            # end demo when ESC key is entered 
-            if cv2.waitKey(5) & 0xFF == 27:
-                break
-        self.cam.release()
-        cv2.destroyAllWindows()
         
     def display_text(self, message, rectangle=True):
         if len(message) < 30:
@@ -181,7 +164,7 @@ class EyeCommander:
         n_frames = 400
         setup_delay = 100
         start_delay = 200
-        end_delay = 50
+        end_delay = 30
         frame_count = 0
         collected_frames = []
         stage_completed = False
@@ -242,17 +225,89 @@ class EyeCommander:
                 break
     
     def _to_temp_dataset(self):
-        path = os.join(self.TEMP_DATAPATH,'data')
-        os.mkdir(path)
+        d ={'up':self.up_frames, 'down':self.down_frames, 
+         'right':self.right_frames,'left':self.left_frames,
+         'center':self.center_frames}
+        basepath = os.path.join(self.TEMP_DATAPATH,'data')
+        os.mkdir(basepath)
+        for label in self.CLASS_LABELS:
+            newpath = os.path.join(basepath,label)
+            os.mkdir(newpath)
+            count = 1
+            for img in d[label]:
+                cv2.imwrite(os.path.join(newpath,f'{label}{count}.jpg'), img)
+                count += 1
+
+    def _load_model_for_retrain(self):
+        model = tf.keras.models.load_model('./models/jupiter2')
+        # make all but last two layers untrainable
+        for i in range(0,10):
+            model.layers[i].trainable = False
+        model.compile(optimizer="adam", 
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy'])
+        return model
+    
+    
+    def _retrain(self, model):
+        batch_size = 32
+        img_height = 100
+        img_width = 100
+
+        train_ds = tf.keras.preprocessing.image_dataset_from_directory('./temp/data', validation_split=0.1, 
+                                                                       color_mode="grayscale", subset="training", 
+                                                                       seed=123, image_size=(img_height, img_width), 
+                                                                       batch_size=batch_size)
+
+        val_ds = tf.keras.preprocessing.image_dataset_from_directory('./temp/data', validation_split=0.1, 
+                                                                     color_mode="grayscale", subset="validation", 
+                                                                     seed=123, image_size=(img_height, img_width), 
+                                                                     batch_size=batch_size)
         
-     
-    def config(self):
-        directions = ['up','down','right','left','center']
+        model.fit( train_ds, validation_data=val_ds, epochs=10)
+        model.save('./temp/temp_model')
+        self.model = model
+        
+    def configure(self):
+        directions = self.CLASS_LABELS
         for direction in directions:
             self._config_direction(direction=direction)
+        # self.cam.release()
+        # cv2.destroyAllWindows()
+        
+        print('processing images')
+        self._to_temp_dataset()
+        print('images processed')
+        
+        base_model = self._load_model_for_retrain()
+        self._retrain(base_model)
+        shutil.rmtree('./temp/data')
+        print('configuration completed.')
+        
+    def run(self):
+        self.configure()
+        while self.cam.isOpened():
+            # capture a frame and extract eye images
+            self._refresh()
+            if (self.cam_status == False) or (self.eye_status == False):
+                continue
+            # display suggested head placement box
+            cv2.rectangle(self.display_frame,(420,20),(900,700),(100,175,255),3)
+            cv2.putText(self.display_frame, "center head inside box", 
+                        (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (100,175,255), 1)
+            # make classifcation based on eye images
+            self._classify() 
+            # display results
+            if self.confidence > self.DECISION_THRESHOLD:
+                label = self.CLASS_LABELS[self.window_prediction]
+                self._display_prediction(label)
+            else:
+                cv2.imshow('frame', self.display_frame)
+            # end demo when ESC key is entered 
+            if cv2.waitKey(5) & 0xFF == 27:
+                break
         self.cam.release()
         cv2.destroyAllWindows()
-        print('configuration completed.')
         
     
 class PredictionWindow(object):
@@ -273,15 +328,16 @@ class PredictionWindow(object):
 
 
 if __name__ == "__main__":
-    # model = tf.keras.models.load_model('./models/jupiter1')
-    # model = tf.keras.models.load_model('./models/jupiter1')
+    
     commander = EyeCommander()
-    commander.config()
+    # commander.configure()
+    # temp_model = tf.keras.models.load_model('./temp/temp_model')
+    # temp_model.compile(optimizer="adam", 
+    #             loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    #             metrics=['accuracy'])
+    # commander.model = temp_model
+    commander.run()
    
     
-    
-    # config = Configuration()
-    # config.capture()
-
 
 
