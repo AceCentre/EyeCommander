@@ -13,7 +13,7 @@ class EyeCommander:
     FD = mp.solutions.face_detection
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     DECISION_THRESHOLD = 0.9
-    START_SOUND  = pyglet.media.load("./sounds/look.mp3", streaming=False)
+    START_SOUND  = pyglet.media.load("./sounds/start.mp3", streaming=False)
     STOP_SOUND   = pyglet.media.load("./sounds/completed.mp3", streaming=False)
     TEMP_DATAPATH = './temp'
 
