@@ -11,7 +11,7 @@ import shutil
 
 class EyeCommander:
     FD = mp.solutions.face_detection
-    CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
+    CLASS_LABELS = ['center','up' ,'down', 'left', 'right']
     DECISION_THRESHOLD = 0.9
     START_SOUND  = pyglet.media.load("./sounds/ding.mp3", streaming=False)
     STOP_SOUND   = pyglet.media.load("./sounds/ding.mp3", streaming=False)
@@ -150,7 +150,7 @@ class EyeCommander:
         if len(message) < 30:
             pos1 = 515
         else:
-            pos1 = 10
+            pos1 = 20
             
         if rectangle == True:
             cv2.rectangle(self.display_frame,(420,20),(900,700),rect_color,3)
@@ -158,7 +158,7 @@ class EyeCommander:
                         (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, rect_color, 1)
         cv2.putText(self.display_frame, message, org =(pos1, 110),  
                         fontFace=cv2.FONT_HERSHEY_PLAIN, 
-                        fontScale=3, color=(200, 200, 200),
+                        fontScale=3, color=(252, 158, 3),
                         thickness=6) 
     
     def _config_direction(self, direction='up'):
@@ -182,7 +182,7 @@ class EyeCommander:
                     self._display_text(message=message)
             
             elif (frame_count >= setup_delay) and (frame_count < start_delay):
-                message = f'at the beep slowly look {direction} until the next beep'
+                message = f'look {direction} when box turns green, until beep.'
                 self._display_text(message=message)
             
             elif frame_count == start_delay:
@@ -274,7 +274,7 @@ class EyeCommander:
         for direction in directions:
             self._config_direction(direction=direction)
         # self.cam.release()
-        # cv2.destroyAllWindows()
+        cv2.destroyAllWindows()
         
         print('processing images')
         self._to_temp_dataset()
