@@ -241,13 +241,12 @@ class EyeCommander:
     def _load_model_for_retrain(self):
         model = tf.keras.models.load_model('./models/jupiter2')
         # make all but last two layers untrainable
-        for i in range(0,10):
+        for i in range(0,11):
             model.layers[i].trainable = False
         model.compile(optimizer="adam", 
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
         return model
-    
     
     def _retrain(self, model):
         batch_size = 32
@@ -330,12 +329,6 @@ class PredictionWindow(object):
 if __name__ == "__main__":
     
     commander = EyeCommander()
-    # commander.configure()
-    # temp_model = tf.keras.models.load_model('./temp/temp_model')
-    # temp_model.compile(optimizer="adam", 
-    #             loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-    #             metrics=['accuracy'])
-    # commander.model = temp_model
     commander.run()
    
     
