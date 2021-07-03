@@ -11,7 +11,7 @@ import shutil
 
 class EyeCommander:
     FD = mp.solutions.face_detection
-    CLASS_LABELS = ['center','up' ,'down', 'left', 'right']
+    CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     DECISION_THRESHOLD = 0.9
     START_SOUND  = pyglet.media.load("./sounds/ding.mp3", streaming=False)
     STOP_SOUND   = pyglet.media.load("./sounds/ding.mp3", streaming=False)
