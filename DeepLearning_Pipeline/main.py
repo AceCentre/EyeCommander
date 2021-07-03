@@ -145,19 +145,21 @@ class EyeCommander:
             # extract eye images
             self._extract_eyes()
         
-    def display_text(self, message, rectangle=True):
+    def _display_text(self, message, rectangle=True, rect_color =(0,0,255)):
+        
         if len(message) < 30:
-            pos1 = 470
+            pos1 = 515
         else:
-            pos1 = 20
-        cv2.putText(self.display_frame, message, org =(pos1, 400),  
-                        fontFace=cv2.FONT_HERSHEY_PLAIN, 
-                        fontScale=3, color=(255, 5, 255),
-                        thickness=6)
+            pos1 = 10
+            
         if rectangle == True:
-            cv2.rectangle(self.display_frame,(420,20),(900,700),(100,175,255),3)
+            cv2.rectangle(self.display_frame,(420,20),(900,700),rect_color,3)
             cv2.putText(self.display_frame, "center head inside box", 
-                        (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (5,5,205), 1)
+                        (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, rect_color, 1)
+        cv2.putText(self.display_frame, message, org =(pos1, 110),  
+                        fontFace=cv2.FONT_HERSHEY_PLAIN, 
+                        fontScale=3, color=(200, 200, 200),
+                        thickness=6) 
     
     def _config_direction(self, direction='up'):
         
@@ -177,33 +179,33 @@ class EyeCommander:
             
             if frame_count < setup_delay:
                     message = 'get ready'
-                    self.display_text(message=message)
+                    self._display_text(message=message)
             
             elif (frame_count >= setup_delay) and (frame_count < start_delay):
                 message = f'at the beep slowly look {direction} until the next beep'
-                self.display_text(message=message)
+                self._display_text(message=message)
             
             elif frame_count == start_delay:
                 self.START_SOUND.play()
                 message = f'slowly look {direction}!'
-                self.display_text(message=message)
+                self._display_text(message=message, rect_color=(0,255,0))
                 
             elif (frame_count >= start_delay) and (len(collected_frames) < n_frames):
-                message = f'slowly look {direction}!' 
-                self.display_text(message=message)
+                message = f'look {direction}!' 
+                self._display_text(message=message, rect_color=(0,255,0))
                 collected_frames.append(self.eye_left)
                 collected_frames.append(self.eye_right)
                 
             elif (len(collected_frames) == n_frames) and (stage_completed == False):
                 self.STOP_SOUND.play()
                 message = 'good work!' 
-                self.display_text(message=message, rectangle=False)
+                self._display_text(message=message, rectangle=False)
                 end_delay = end_delay + frame_count
                 stage_completed = True
                 
             elif (len(collected_frames) == n_frames) and (frame_count<end_delay):
                 message = 'good work!'
-                self.display_text(message=message, rectangle=True)
+                self._display_text(message=message, rectangle=True)
                 
             else:
                 if direction == 'up':
@@ -264,7 +266,7 @@ class EyeCommander:
                                                                      batch_size=batch_size)
         
         model.fit( train_ds, validation_data=val_ds, epochs=10)
-        model.save('./temp/temp_model')
+        # model.save('./temp/temp_model')
         self.model = model
         
     def configure(self):
@@ -304,7 +306,9 @@ class EyeCommander:
                 cv2.imshow('frame', self.display_frame)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
+                shutil.rmtree('./temp/data')
                 break
+                
         self.cam.release()
         cv2.destroyAllWindows()
         
