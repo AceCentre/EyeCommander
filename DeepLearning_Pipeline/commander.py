@@ -1,14 +1,13 @@
-from typing import Tuple
 import cv2
-import mediapipe as mp
+import pyglet
+import shutil 
 import glob
 import os
+from typing import Tuple
+import mediapipe as mp
 import tensorflow as tf
 from collections import Counter
 import numpy as np
-import pyglet
-import shutil 
-
 from detection import eye_detection 
 from configuration import configuration
 from classification import classification
@@ -111,12 +110,10 @@ class EyeCommander:
         self.cam.release()
         cv2.destroyAllWindows()
     
-     
-
 if __name__ == "__main__":
     commander = EyeCommander()
     commander.run(configure=True)
-   
+    
     
 
 

@@ -14,3 +14,4 @@ def process_eye_images(frame, left_coords, right_coords):
     reshaped_right = resized_right.reshape((100,100,1))
 
     return reshaped_left, reshaped_right
+
