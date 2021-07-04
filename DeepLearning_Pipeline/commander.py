@@ -9,25 +9,22 @@ import numpy as np
 import pyglet
 import shutil 
 
+from eye_detection import eye_detection 
+
 class EyeCommander:
-    FD = mp.solutions.face_detection
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
-    DECISION_THRESHOLD = 0.9
-    START_SOUND  = pyglet.media.load("./sounds/ding.mp3", streaming=False)
-    STOP_SOUND   = pyglet.media.load("./sounds/ding.mp3", streaming=False)
+    SOUND  = pyglet.media.load("./sounds/ding.mp3", streaming=False)
     TEMP_DATAPATH = './temp'
 
     def __init__(self, model=None, window_size: int =12):
         self.cam = cv2.VideoCapture(0)
         self.model = model
-        self.face_detection = self.FD.FaceDetection(min_detection_confidence=0.8)
-        self.frame = None
-        self.display_frame = None
+        self.eye_detection = eye_detection.EyeDetector()
         self.prediction_window = PredictionWindow(size=window_size)
         self.window_size = window_size
 
-        self.window_prediction = None
-        self.confidence = None
+        self.frame = None
+        self.display_frame = None
         self.shape = None
         self.eye_status = False
         self.cam_status = False
@@ -36,101 +33,7 @@ class EyeCommander:
         self.up_frames = None
         self.down_frames = None
         self.right_frames = None
-        self.left_frames = None
-        
-    def _bounding_box(self, detection):
-        shape = self.shape
-        location_data = detection.location_data
-        bb_object = location_data.relative_bounding_box
-        xmin = int(bb_object.xmin * shape[1])
-        ymin = int(bb_object.ymin * shape[0])
-        width = int(bb_object.width * shape[1])
-        height = int(bb_object.height * shape[0])
-        return (xmin, ymin, width, height)
-
-    def _eye_cords(self, detection):
-        shape = self.shape
-        location_data = detection.location_data
-        keypoints = location_data.relative_keypoints[:2]
-        left = (int(keypoints[0].x * shape[1]), int(keypoints[0].y * shape[0]))
-        right = (int(keypoints[1].x * shape[1]), int(keypoints[1].y * shape[0]))
-        return (left, right)   
-
-    def _extract_eyes(self, static: bool = False):
-        if static == True:
-            processed_frame = self.frame
-        else:
-            processed_frame = cv2.cvtColor(cv2.flip(self.frame, 1), cv2.COLOR_BGR2RGB)
-        # detect face and landmarks using tensorflow mediapipe
-        results = self.face_detection.process(processed_frame)
-        if results.detections:
-            detection = results.detections[0]
-            self.shape = self.frame.shape
-            left, right = self._eye_cords(detection)
-            cropped_left = processed_frame[left[1]-50:left[1]+35, left[0]-50:left[0]+50]
-            cropped_right = processed_frame[right[1]-50:right[1]+35, right[0]-50:right[0]+50]
-            self.eye_right = cropped_right
-            self.eye_left = cropped_left
-            self._process_eyes()
-            self.eye_status = True
-        else:
-            self.eye_status = False
-    
-    def _process_eyes(self):
-        # gray 
-        left, right = cv2.cvtColor(self.eye_left, cv2.COLOR_BGR2GRAY), cv2.cvtColor(self.eye_right, cv2.COLOR_BGR2GRAY)
-        # resize
-        resized_left = cv2.resize(left, (100, 100))
-        resized_right = cv2.resize(right, (100, 100))
-        # reshape
-        reshaped_left = resized_left.reshape((100,100,1))
-        reshaped_right = resized_right.reshape((100,100,1))
-        # re_assignment
-        self.eye_left = reshaped_left
-        self.eye_right = reshaped_right
-
-    # def _predict_frame(self, eye_img):
-    #     img = eye_img.copy()
-    #     batch = np.expand_dims(img,0)
-    #     prediction = self.model.predict_classes(batch)[0]
-    #     return prediction
-    
-    def _predict_frame(self, eye_img):
-        img = eye_img.copy()
-        batch = np.expand_dims(img,0)
-        pred_vec = self.model.predict(batch)
-        prediction = np.argmax(pred_vec)
-        return prediction
-    
-    def _predict_window(self):
-        counter = self.prediction_window.most_common()
-        frequency = counter[1]/self.window_size
-        prediction = counter[0]
-        return prediction, frequency
-    
-    def _classify(self):
-        if (self.cam_status == True) and (self.eye_status == True):
-            # make prediction on left eye
-            prediction_left = self._predict_frame(self.eye_left)
-            # make prediction on right eye
-            prediction_right = self._predict_frame(self.eye_right)
-            # add both predictions to the prediction window
-            self.prediction_window.insert_prediction(prediction_left)
-            self.prediction_window.insert_prediction(prediction_right)
-        # make prediction over a window by majority vote
-        self.window_prediction, self.confidence = self._predict_window()
-             
-    def _display_prediction(self, label, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
-        if label == 'left':
-            cv2.putText(self.display_frame, "left", (50, 375), font , 7, color, 15)
-        elif label == 'right':
-            cv2.putText(self.display_frame, "right", (900, 375), font, 7, color, 15)
-        elif label == 'up':
-            cv2.putText(self.display_frame, "up", (575, 100), font, 7, color, 15)
-        else:
-            cv2.putText(self.display_frame, "down", (500, 700), font, 7, color, 15)
-        # display frame
-        cv2.imshow("frame", self.display_frame)
+        self.left_frames = None  
 
     def _refresh(self):
         self.cam_status, self.frame = self.cam.read()
@@ -143,7 +46,45 @@ class EyeCommander:
             self.display_frame = cv2.flip(self.frame, 1)
             self.display_frame.flags.writeable = True
             # extract eye images
-            self._extract_eyes()
+            self.eye_left, self.eye_right = self.eye_detection.extract_eyes(self.frame)
+            self.eye_status = self.eye_detection.status
+
+    def _prep_batch(self, images: tuple):
+        img1 = images[0].reshape((100,100,1))
+        img2 = images[1].reshape((100,100,1))
+        img1 = np.expand_dims(img1,0)
+        img2 = np.expand_dims(img2,0)
+        batch = np.concatenate([img1,img2])
+        return batch
+    
+    def _predict_batch(self, batch):
+        predictions = self.model.predict(batch)  
+        return list(predictions)   
+    
+    def _classify(self):
+        if (self.cam_status == True) and (self.eye_status == True):
+            # make batch
+            batch = self._prep_batch((self.eye_left, self.eye_right))
+            # make prediction on batch
+            predictions = self._predict_batch(batch)
+            # add both predictions to the prediction window
+            self.prediction_window.insert_predictions(predictions)
+    
+        # make prediction over a window 
+        pred, mean_proba = self.prediction_window.predict()
+        return pred, mean_proba
+             
+    def _display_prediction(self, label, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
+        if label == 'left':
+            cv2.putText(self.display_frame, "left", (50, 375), font , 7, color, 15)
+        elif label == 'right':
+            cv2.putText(self.display_frame, "right", (900, 375), font, 7, color, 15)
+        elif label == 'up':
+            cv2.putText(self.display_frame, "up", (575, 100), font, 7, color, 15)
+        else:
+            cv2.putText(self.display_frame, "down", (500, 700), font, 7, color, 15)
+        # display frame
+        cv2.imshow("frame", self.display_frame)
         
     def _display_text(self, message, rectangle=True, rect_color =(0,0,255)):
         
@@ -163,7 +104,7 @@ class EyeCommander:
     
     def _config_direction(self, direction='up'):
         
-        n_frames = 400
+        n_frames = 800
         setup_delay = 100
         start_delay = 200
         end_delay = 30
@@ -186,7 +127,7 @@ class EyeCommander:
                 self._display_text(message=message)
             
             elif frame_count == start_delay:
-                self.START_SOUND.play()
+                self.SOUND.play()
                 message = f'slowly look {direction}!'
                 self._display_text(message=message, rect_color=(0,255,0))
                 
@@ -197,7 +138,7 @@ class EyeCommander:
                 collected_frames.append(self.eye_right)
                 
             elif (len(collected_frames) == n_frames) and (stage_completed == False):
-                self.STOP_SOUND.play()
+                self.SOUND.play()
                 message = 'good work!' 
                 self._display_text(message=message, rectangle=False)
                 end_delay = end_delay + frame_count
@@ -240,10 +181,10 @@ class EyeCommander:
                 cv2.imwrite(os.path.join(newpath,f'{label}{count}.jpg'), img)
                 count += 1
 
-    def _load_model_for_retrain(self):
-        model = tf.keras.models.load_model('./models/jupiter2')
+    def _load_model_for_retrain(self, path:str='./models/jupiter2'):
+        model = tf.keras.models.load_model(path)
         # make all but last two layers untrainable
-        for i in range(0,11):
+        for i in range(0,10):
             model.layers[i].trainable = False
         model.compile(optimizer="adam", 
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -265,7 +206,7 @@ class EyeCommander:
                                                                      seed=123, image_size=(img_height, img_width), 
                                                                      batch_size=batch_size)
         
-        model.fit( train_ds, validation_data=val_ds, epochs=10)
+        model.fit(train_ds, validation_data=val_ds, batch_size=batch_size, epochs=12)
         # model.save('./temp/temp_model')
         self.model = model
         
@@ -285,8 +226,9 @@ class EyeCommander:
         shutil.rmtree('./temp/data')
         print('configuration completed.')
         
-    def run(self):
-        self.configure()
+    def run(self, configure=True):
+        if configure == True:
+            self.configure()
         while self.cam.isOpened():
             # capture a frame and extract eye images
             self._refresh()
@@ -297,10 +239,10 @@ class EyeCommander:
             cv2.putText(self.display_frame, "center head inside box", 
                         (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (100,175,255), 1)
             # make classifcation based on eye images
-            self._classify() 
+            prediction, mean_proba = self._classify() 
             # display results
-            if self.confidence > self.DECISION_THRESHOLD:
-                label = self.CLASS_LABELS[self.window_prediction]
+            if (self.prediction_window.is_full() == True) and (mean_proba > 8):
+                label = self.CLASS_LABELS[prediction]
                 self._display_prediction(label)
             else:
                 cv2.imshow('frame', self.display_frame)
@@ -325,15 +267,34 @@ class PredictionWindow(object):
             self.items.pop()
         else:
             self.items.append(prediction)
+            
+    def insert_predictions(self, predictions):
+        if (len(self.items) == self.size):
+            self.items.insert(0,predictions[0])
+            self.items.insert(1,predictions[1])
+            self.items.pop()
+            self.items.pop() 
+        elif (len(self.items) == self.size -1):
+            self.items.insert(0,predictions[0])
+            self.items.insert(1,predictions[1])
+            self.items.pop()
+        else:
+            self.items.extend(predictions)
     
-    def most_common(self):
-        return Counter(self.items).most_common(1)[0]
+    def predict(self):
+        window = np.array(self.items)
+        mean_scores = np.mean(window,axis=0)
+        pred = mean_scores.argmax()
+        mean_proba = mean_scores.max()
+        return pred, mean_proba
+    
+    def is_full(self):
+        return len(self.items) == self.size
 
 
 if __name__ == "__main__":
-    
     commander = EyeCommander()
-    commander.run()
+    commander.run(configure=True)
    
     
 
