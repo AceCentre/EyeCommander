@@ -16,7 +16,8 @@ class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     SOUND  = pyglet.media.load("./sounds/ding.mp3", streaming=False)
     TEMP_DATAPATH = './temp'
-
+    DEFAULT_MODEL = tf.keras.models.load_model('./models/jupiter2')
+    
     def __init__(self, model=None, window_size: int =12):
         self.cam = cv2.VideoCapture(0)
         self.configuration = configuration.Configuration()
@@ -30,6 +31,7 @@ class EyeCommander:
         self.shape = None
         self.eye_status = False
         self.cam_status = False 
+        self.callibration_done = False
 
     def _refresh(self):
         self.cam_status, self.frame = self.cam.read()
@@ -54,7 +56,10 @@ class EyeCommander:
         return batch
     
     def _predict_batch(self, batch):
-        predictions = self.model.predict(batch)  
+        if self.callibration_done == True:
+            predictions = self.model.predict(batch) 
+        else:
+             predictions = self.DEFAULT_MODEL.predict(batch)
         return list(predictions)   
     
     def _classify(self):
@@ -84,7 +89,8 @@ class EyeCommander:
        
     def run(self, configure=True):
         if configure == True:
-            self.model = self.configuration.configure()  
+            self.model = self.configuration.configure() 
+            self.callibration_done == True 
         while self.cam.isOpened():
             # capture a frame and extract eye images
             self._refresh()
@@ -102,6 +108,7 @@ class EyeCommander:
                 self._display_prediction(label)
             else:
                 cv2.imshow('frame', self.display_frame)
+            cv2.imshow('eye',self.eye_right)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
                 shutil.rmtree('./temp/data')
@@ -111,8 +118,9 @@ class EyeCommander:
         cv2.destroyAllWindows()
     
 if __name__ == "__main__":
+    # model = tf.keras.models.load_model('./models/jupiter2')
     commander = EyeCommander()
-    commander.run(configure=True)
+    commander.run(configure=False)
     
     
 
