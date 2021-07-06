@@ -80,16 +80,7 @@ class EyeCommander:
             predictions = self.model.predict(batch) 
         else:
              predictions = self.DEFAULT_MODEL.predict(batch)
-        return list(predictions)   
-    
-    def _classify(self):
-        if (self.cam_status == True) and (self.eye_status == True):
-            # make batch
-            batch = self._prep_batch((self.eye_left, self.eye_right))
-            # make prediction on batch
-            predictions = self._predict_batch(batch)
-            # add both predictions to the prediction window
-            self.prediction_window.insert_predictions(predictions)
+        return predictions   
             
     def predict(self, eye_left:np.array, eye_right:np.array):
         # make batch
@@ -111,8 +102,6 @@ class EyeCommander:
             cv2.putText(frame, "up", (575, 100), font, 7, color, 15)
         else:
             cv2.putText(frame, "down", (500, 700), font, 7, color, 15)
-        # display frame
-        # cv2.imshow("frame", frame)
     
     def run(self, calibrate=True):
         if calibrate == True:

@@ -14,17 +14,18 @@ class PredictionWindow(object):
             self.items.append(prediction)
             
     def insert_predictions(self, predictions):
+        pred_list = list(predictions)
         if (len(self.items) == self.size):
-            self.items.insert(0,predictions[0])
-            self.items.insert(1,predictions[1])
+            self.items.insert(0,pred_list[0])
+            self.items.insert(1,pred_list[1])
             self.items.pop()
             self.items.pop() 
         elif (len(self.items) == self.size -1):
-            self.items.insert(0,predictions[0])
-            self.items.insert(1,predictions[1])
+            self.items.insert(0,pred_list[0])
+            self.items.insert(1,pred_list[1])
             self.items.pop()
         else:
-            self.items.extend(predictions)
+            self.items.extend(pred_list)
     
     def predict(self):
         window = np.array(self.items)
