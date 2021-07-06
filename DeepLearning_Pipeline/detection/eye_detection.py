@@ -39,10 +39,10 @@ class EyeDetector:
             detection = results.detections[0]
             self.shape = frame.shape
             left_coords, right_coords = self.eye_coords(detection)
-            eye_left, eye_right = preprocessing.process_eye_images(frame=frame, left_coords=left_coords, 
-                                                     right_coords=right_coords)
+            eye_left_crop = frame[left_coords[1]-50:left_coords[1]+35, left_coords[0]-50:left_coords[0]+50]
+            eye_right_crop = frame[right_coords[1]-50:right_coords[1]+35, right_coords[0]-50:right_coords[0]+50]
             self.status = True
-            return eye_left, eye_right
+            return (eye_left_crop, eye_right_crop)
         else:
             self.status = False
-            return None, None
+            return None
