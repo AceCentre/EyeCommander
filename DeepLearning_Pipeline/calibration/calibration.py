@@ -5,7 +5,7 @@ import shutil
 import tensorflow as tf
 from detection import eye_detection
 
-class Configuration:
+class Calibration:
     
     TEMP_DATAPATH = './temp'
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
@@ -163,7 +163,7 @@ class Configuration:
         # model.save('./temp/temp_model')
         return model
         
-    def configure(self):
+    def calibrate(self):
         directions = self.CLASS_LABELS
         for direction in directions:
             self._gen_retrain_data(direction=direction)

@@ -9,7 +9,7 @@ import tensorflow as tf
 from collections import Counter
 import numpy as np
 from detection import eye_detection 
-from configuration import configuration
+from calibration import calibration
 from classification import classification
 
 class EyeCommander:
@@ -20,7 +20,7 @@ class EyeCommander:
     
     def __init__(self, model=None, window_size: int =12):
         self.cam = cv2.VideoCapture(0)
-        self.configuration = configuration.Configuration()
+        self.calibration = calibration.Calibration()
         self.eye_detection = eye_detection.EyeDetector()
         self.prediction_window = classification.PredictionWindow(size=window_size)
         self.window_size = window_size
@@ -31,7 +31,7 @@ class EyeCommander:
         self.shape = None
         self.eye_status = False
         self.cam_status = False 
-        self.callibration_done = False
+        self.calibration_done = False
 
     def _refresh(self):
         self.cam_status, self.frame = self.cam.read()
@@ -87,10 +87,10 @@ class EyeCommander:
         # display frame
         cv2.imshow("frame", self.display_frame)
        
-    def run(self, configure=True):
-        if configure == True:
-            self.model = self.configuration.configure() 
-            self.callibration_done == True 
+    def run(self, calibrate=True):
+        if calibrate == True:
+            self.model = self.calibration.calibrate() 
+            self.calibration_done == True 
         while self.cam.isOpened():
             # capture a frame and extract eye images
             self._refresh()
@@ -108,7 +108,6 @@ class EyeCommander:
                 self._display_prediction(label)
             else:
                 cv2.imshow('frame', self.display_frame)
-            cv2.imshow('eye',self.eye_right)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
                 shutil.rmtree('./temp/data')
@@ -120,7 +119,7 @@ class EyeCommander:
 if __name__ == "__main__":
     # model = tf.keras.models.load_model('./models/jupiter2')
     commander = EyeCommander()
-    commander.run(configure=False)
+    commander.run(calibrate=True)
     
     
 
