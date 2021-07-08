@@ -10,13 +10,10 @@ from collections import Counter
 import numpy as np
 from eye_commander.detection import detection
 from eye_commander.classification import classification
-from pkg_resources import resource_filename
-
-# sound = pyglet.media.load('./sounds/ding.mp3', streaming=False)
 
 class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
-    TEMP_DATAPATH = './temp'
+    TEMP_DATAPATH = os.path.join(os.getcwd(),'eye_commander/temp')
     BASE_MODEL_PATH = os.path.join(os.getcwd(),'eye_commander/models/jupiter2')
     
     def __init__(self, model=None, window_size: int =12, image_shape:tuple =(100,100,1)):
@@ -138,30 +135,119 @@ class EyeCommander:
         cv2.destroyAllWindows()
         
 class Exp(EyeCommander):
-    TEMP_DATAPATH = './temp'
     def __init__(self):
         super().__init__(self)
+        print(self.TEMP_DATAPATH)
         
-    def capture_data(self, n_frames:int):
-        key = input('hit enter to begin')
-        if key:
-            frame_count = 0
-            data = []
-            while (self.camera.isOpened()) and (frame_count < n_frames):
-                camera_output = self.refresh()
-                if camera_output:
-                    display_frame, frame = camera_output
-                    eyes = self._eye_images_from_frame(frame)
-                    if eyes:
-                        eye_left, eye_right = eyes
-                        eye_left_processed, eye_right_processed = self._preprocess_eye_images(eye_left, eye_right)
-                        data.extend([eye_left_processed, eye_right_processed])
-                        frame_count += 1
+    def capture_data(self, n_frames:int=50):
+        frame_count = 0
+        data = []
+        while (self.camera.isOpened()) and (frame_count < n_frames):
+            camera_output = self.refresh()
+            if camera_output:
+                display_frame, frame = camera_output
+                eyes = self._eye_images_from_frame(frame)
+                if eyes:
+                    eye_left, eye_right = eyes
+                    eye_left_processed, eye_right_processed = self._preprocess_eye_images(eye_left, eye_right)
+                    data.extend([eye_left_processed, eye_right_processed])
+                    frame_count += 1
+            self._position_rect(display_frame, color='red')
+            cv2.imshow('frame', display_frame)
+            # end demo when ESC key is entered 
+            if cv2.waitKey(5) & 0xFF == 27:
+                break
+        return data
+
+    def _build_directory(self):
+        basepath = os.path.join(self.TEMP_DATAPATH,'data')
+        os.mkdir(basepath)
+        for label in self.CLASS_LABELS:
+            newpath = os.path.join(basepath,label)
+            os.mkdir(newpath)
+                
+    def _process_data(self, direction:str, data:list):
+        basepath = os.path.join(self.TEMP_DATAPATH,'data')
+        class_path = os.path.join(basepath,direction)
+        count = 1
+        for image in data:
+            cv2.imwrite(os.path.join(class_path,f'{direction}{count}.jpg'), image)
+            count += 1
+            
+    def _position_rect(self, frame, color:str):
+        if color == 'green':
+            color = (0,255,0)
+        if color == 'red':
+            color = (0,0,255)
+        cv2.rectangle(frame,(420,20),(900,700),color,3)
+        cv2.putText(frame, "center head inside box", 
+                        (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)
+        
+    def _load_model_for_retrain(self):
+        model = tf.keras.models.load_model(self.BASE_MODEL_PATH)
+        # make all but last two layers untrainable
+        for i in range(0,10):
+            model.layers[i].trainable = False
+        model.compile(optimizer="adam", 
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                metrics=['accuracy'])
+        return model
+    
+    def _retrain(self, model):
+        batch_size = 32
+        img_height = 100
+        img_width = 100
+        train_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.1, 
+                                                                       color_mode="grayscale", subset="training", 
+                                                                       seed=123, image_size=(img_height, img_width), 
+                                                                       batch_size=batch_size)
+
+        val_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.1, 
+                                                                     color_mode="grayscale", subset="validation", 
+                                                                     seed=123, image_size=(img_height, img_width), 
+                                                                     batch_size=batch_size)
+        
+        model.fit(train_ds, validation_data=val_ds, batch_size=batch_size, epochs=12)
+        # model.save('./temp/temp_model')
+        return model
+    
+    def auto_calibrate(self):
+        # build directory
+        self._build_directory()
+        # opening
+        while self.camera.isOpened():
+            # capture a frame and extract eye images
+            camera_output = self.refresh()
+            if camera_output:
+                display_frame, frame = camera_output
+                cv2.putText(display_frame, f'press esc to begin calibration', org =(50, 110),  
+                    fontFace=cv2.FONT_HERSHEY_PLAIN, 
+                    fontScale=3, color=(252, 158, 3),
+                    thickness=6)
+                self._position_rect(display_frame, color='green')
                 cv2.imshow('frame', display_frame)
-                # end demo when ESC key is entered 
-                if cv2.waitKey(5) & 0xFF == 27:
-                    break
-            return data
+                
+            if cv2.waitKey(1) & 0xFF == 27:
+                    # end demo when ESC key is entered 
+                for direction in ['center', 'down', 'left', 'right', 'up']:
+                    while self.camera.isOpened():
+                        # capture a frame and extract eye images
+                        camera_output = self.refresh()
+                        if camera_output:
+                            display_frame, frame = camera_output
+                            cv2.putText(display_frame, f'press esc to begin {direction} calibration', org =(50, 110),  
+                                fontFace=cv2.FONT_HERSHEY_PLAIN, 
+                                fontScale=3, color=(252, 158, 3),
+                                thickness=6) 
+                            self._position_rect(display_frame, color='green')
+                            cv2.imshow('frame', display_frame)
+
+                            # end demo when ESC key is entered 
+                        if cv2.waitKey(1) & 0xFF == 27:
+                            data = self.capture_data()
+                            self._process_data(direction=direction, data=data)
+                            break
+                break
 
 class Calibration:
     
@@ -230,21 +316,7 @@ class Calibration:
                         fontFace=cv2.FONT_HERSHEY_PLAIN, 
                         fontScale=3, color=(252, 158, 3),
                         thickness=6) 
-        
-    # def gen_data(self, direction:str, n_frames:int):
-    #     frame_count = 0
-    #     data = []
-    #     while (self.camera.isOpened()) and (frame_count < n_frames):
-    #         output = self.update()
-    #         if output:
-    #             display, eye_left, eye_right = output 
-    #             data.extend([eye_left, eye_right])
-    #             frame_count += 1
-    #         cv2.imshow('frame', display_frame)
-    #         # end demo when ESC key is entered 
-    #         if cv2.waitKey(5) & 0xFF == 27:
-    #             break
-    #     return data
+    
     
     def exp(self):
         # d ={'up':self.up_frames, 'down':self.down_frames, 
