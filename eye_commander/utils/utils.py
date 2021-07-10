@@ -1,31 +1,32 @@
 import cv2
 import os
 import glob
+from eye_commander.commander.commander import EyeCommander
 
-def dir_to_frames(inpath, writepath):
-    writepath = writepath
-    files = [i for i in os.listdir(inpath) if i != '.DS_Store' and i != '.ipynb_checkpoints']
-    count = 1
-    for f in files:
-        vidpath = os.path.join(inpath, f)
-        vidcap = cv2.VideoCapture(vidpath)
-        success,image = vidcap.read()
-        framecount = 0
-        while success:
-            try:
-                success,image = vidcap.read()
-                cv2.imwrite(writepath + str(count)+"frame%d.jpg" % framecount, image)     # save frame as JPEG file      
-                print('Read a new frame: ', success)
-                framecount += 1
-            except:
-                pass
-        count+=1
 
+
+def video_dir_to_frames(writepath, video_dir_path):
+    os.mkdir(writepath)
+    for label in ['center','up','down','left','right']:
+        newpath = os.path.join(writepath,label)
+        os.mkdir(newpath)
+        files = glob.glob(video_dir_path + f'/{label}*.mov')
+        print(files)
+        for file in files:
+            vidcap = cv2.VideoCapture(file)
+            success,image = vidcap.read()
+            frame_count = 1
+            while success:
+                try:
+                    success,image = vidcap.read()
+                    cv2.imwrite(os.path.join(newpath, f'frame{str(frame_count)}.jpg'), image)     # save frame as JPEG file      
+                    frame_count += 1
+                except: 
+                    pass
 
 def extract_file(filepath: str, writepath1: str, writepath2: str, commander):
     img = cv2.imread(filepath, cv2.IMREAD_UNCHANGED)
-    eyes = commander._eye_images_from_frame(img)
-                # if detection is able to isolate eyes
+    eyes = commander.eye_detection.extract_eyes(img, static=True)
     if eyes:
         eye_left, eye_right = eyes
         eye_left_processed, eye_right_processed = commander._preprocess_eye_images(eye_left, eye_right)
@@ -35,9 +36,8 @@ def extract_file(filepath: str, writepath1: str, writepath2: str, commander):
     else:
         return False
 
-def dir_to_eye_images(base_readpath: str, base_writepath: str):
-    commander = EyeCommander()
-    commander.image_shape = (30,30,1)
+def dir_to_eye_images(base_readpath: str, base_writepath: str, commander):
+    os.mkdir(base_writepath)
     for name in ['up','down','left','right','center']:
         readpath = os.path.join(base_readpath,name) 
         print(readpath)
