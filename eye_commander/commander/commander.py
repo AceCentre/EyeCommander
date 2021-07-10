@@ -14,15 +14,16 @@ from eye_commander.classification import classification
 class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     TEMP_DATAPATH = os.path.join(os.getcwd(),'eye_commander/temp')
-    BASE_MODEL_PATH = os.path.join(os.getcwd(),'eye_commander/models/jupiter2')
+    # BASE_MODEL_PATH = os.path.join(os.getcwd(),'eye_commander/models/best_model_aug.h5')
     
-    def __init__(self, base_model=None, window_size:int =12, image_shape:tuple =(100,100,1),
-                 n_frames:int=50, epochs:int=5, batch_size:int=32):
+    def __init__(self, base_model=None, window_size:int=12, image_shape:tuple =(80,80,3),
+                 n_frames:int=200, epochs:int=10, batch_size:int=32, base_model_path:str='eye_commander/models/eyenet'):
         
         self.camera = cv2.VideoCapture(0)
         self.eye_detection = detection.EyeDetector()
         self.prediction_window = classification.PredictionWindow(size=window_size)
         self.window_size = window_size
+        self.base_model_path = os.path.join(os.getcwd(),base_model_path)
         self.base_model = base_model
         self.tuned_model = None
         self.image_shape = image_shape
@@ -55,11 +56,11 @@ class EyeCommander:
     def _preprocess_eye_images(self, eye_left:np.array, eye_right:np.array):
         shape = self.image_shape
         # gray 
-        gray_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2GRAY)
-        gray_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2GRAY)
+        # eye_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2GRAY)
+        # eye_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2GRAY)
         # resize
-        resized_left = cv2.resize(gray_left, shape[:2])
-        resized_right = cv2.resize(gray_right, shape[:2])
+        resized_left = cv2.resize(eye_left, shape[:2])
+        resized_right = cv2.resize(eye_right, shape[:2])
         # reshape
         reshaped_left = resized_left.reshape(shape)
         reshaped_right = resized_right.reshape(shape)
@@ -85,6 +86,16 @@ class EyeCommander:
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         return data
+    
+    def _add_augmentation(self, data:list):
+        for idx, img in enumerate(data):
+            aug_img = tf.image.random_brightness(img,max_delta=0.3)
+            aug_img = np.array(aug_img)
+            if (aug_img.mean() > 210) or (aug_img.mean() < 50):
+                continue
+            else:
+                data.append(aug_img)
+            return data
 
     def _build_directory(self):
         basepath = os.path.join(self.TEMP_DATAPATH,'data')
@@ -113,33 +124,77 @@ class EyeCommander:
         cv2.putText(frame, "center head inside box", 
                         (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)
         
-    def _load_model_for_retrain(self):
-        model = tf.keras.models.load_model(self.BASE_MODEL_PATH)
-        # make all but last two layers untrainable
+    def _add_augmentation(self, arr):
+        for idx in range(len(arr)):
+            img = arr[idx]
+            img = np.array(tf.image.random_brightness(img,max_delta=0.3))
+            while (img.mean() > 210) or (img.mean() < 50):
+                img = np.array(tf.image.random_brightness(img,max_delta=0.3))
+            arr[idx] = img
+        return arr
+
+    def _load_user_data(self, path, balance:bool=True):
+        d = {}
+        for idx, l in enumerate(['center', 'down', 'left', 'right', 'up']):
+            subpath = os.path.join(path, l)
+            files = glob.glob(subpath + '/*.jpg')
+            data = []
+            for f in files:
+                img = cv2.imread(f, cv2.IMREAD_UNCHANGED)
+                data.append(img)
+            d[idx] = np.array(data)
+        shapes = {key:val.shape[0] for key,val in d.items()}
+        max_size = max(shapes.values())
+        if balance == True:
+            for key, val in shapes.items():
+                diff = max_size - val
+                if diff <= 0:
+                    continue
+                else:
+                    smpl_idxs = np.random.randint(0, val-1, size=diff)
+                    samples = self._add_augmentation(d[key][smpl_idxs])
+                    d[key] = np.concatenate([d[key],samples])
+            shapes = {key:val.shape[0] for key,val in d.items()}
+
+        images = []
+        labels = []
+        for key, val in d.items():
+            images.extend(list(val))
+            labels.extend([key]*len(val))
+        images = np.array(images)
+        labels = np.array(labels)
+        print('output dataset size: ',shapes)
+        return images, labels
+
+    def _load_model_for_tuning(self, path):
+        print('loading model')
+        model = tf.keras.models.load_model(path)
         for i in range(len(model.layers)):
             model.layers[i].trainable = False
-        model.layers[-1].trainable = True 
-        model.compile(optimizer="adam", 
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                metrics=['accuracy'])
+        model.layers[-1].trainable = True
         return model
-    
-    def _retrain(self, model):
-        train_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.1, 
-                                                                       color_mode="grayscale", subset="training", 
-                                                                       seed=123, image_size=self.image_shape[:2], 
-                                                                       batch_size=self.batch_size)
 
-        val_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.1, 
-                                                                     color_mode="grayscale", subset="validation", 
-                                                                     seed=123, image_size=self.image_shape[:2], 
-                                                                     batch_size=self.batch_size)
-        
-        model.fit(train_ds, validation_data=val_ds, batch_size=self.batch_size, epochs=self.epochs)
-        # model.save('./temp/temp_model')
+    def _tune_model(self, model, X, y):
+        model.fit(x= X, y=y, epochs=10, batch_size =32, shuffle=True)
         return model
+        
+    # def _retrain(self, model):
+    #     train_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.2, 
+    #                                                                    color_mode="grayscale", subset="training", 
+    #                                                                    seed=123, image_size=self.image_shape[:2], 
+    #                                                                    batch_size=self.batch_size,label_mode='int',shuffle=True)
+
+    #     val_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.2, 
+    #                                                                  color_mode="grayscale", subset="validation", 
+    #                                                                  seed=123, image_size=self.image_shape[:2], 
+    #                                                                  batch_size=self.batch_size, label_mode='int', shuffle=True)
+        
+    #     model.fit(train_ds, validation_data=val_ds, batch_size=self.batch_size, epochs=self.epochs)
+    #     # model.save('./temp/temp_model')
+    #     return model
     
     def auto_calibrate(self):
+        ###### CAPTURING USER DATA #######
         font = cv2.FONT_HERSHEY_PLAIN
         font_color = (252, 158, 3)
         # build directory
@@ -174,12 +229,14 @@ class EyeCommander:
                             self._process_captured_data(direction=direction, data=data)
                             break
                 break
-        base_model = self._load_model_for_retrain()
-        self.base_model = base_model
-        tuned_model = self._retrain(base_model)
-        if os.path.exists(os.path.join(self.TEMP_DATAPATH,'data')) == True:
-            shutil.rmtree(os.path.join(self.TEMP_DATAPATH,'data'))
-        return tuned_model
+            
+        ####### MODEL TUNING ########
+        self.base_model = self._load_model_for_tuning(self.base_model_path)
+        X, y = self._load_user_data(os.path.join(self.TEMP_DATAPATH,'data'), balance=True)
+        model = self._tune_model(self.base_model, X, y)
+        # if os.path.exists(os.path.join(self.TEMP_DATAPATH,'data')) == True:
+        #     shutil.rmtree(os.path.join(self.TEMP_DATAPATH,'data'))
+        return model
 
     def _prep_batch(self, images: tuple):
         img1 = images[0].reshape(self.image_shape)
@@ -222,7 +279,7 @@ class EyeCommander:
             self.tuned_model = self.auto_calibrate() 
             self.calibration_done = True 
         else:
-            self.base_model = tf.keras.models.load_model(self.BASE_MODEL_PATH)
+            self.base_model = tf.keras.models.load_model(self.base_model_path)
         while self.camera.isOpened():
             # capture a frame and extract eye images
             camera_output = self.refresh()
