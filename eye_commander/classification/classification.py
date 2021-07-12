@@ -68,6 +68,7 @@ class Window:
     def __init__(self, size:int=4):
         self.size = size
         self.items = []
+        self.probability = None
     
     def is_full(self):
         return len(self.items)==self.size
@@ -84,6 +85,16 @@ class Window:
             self.items.pop()
         else:
             self.items.append(prediction)
+
+    def update_probability(self,proba):
+        if self.probability == None:
+            self.probability = proba
+        else:
+            self.probability += proba
+    
+    def current_probability(self):
+        return self.probability/self.size
+        
     
         
 
