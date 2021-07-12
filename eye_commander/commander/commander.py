@@ -431,7 +431,7 @@ class EyeCommander:
                     if (self.window.all_same()==True) and (self.window.items[0]==pred):
                         label = self.CLASS_LABELS[pred]
                         self._display_prediction(label=label, frame=display_frame)
-                        # self._output_keystrokes(label=label)
+                        self._output_keystrokes(label=label)
                     #### display probability of current frame
                     cv2.putText(display_frame, str(round(proba,3)), 
                             (510, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
