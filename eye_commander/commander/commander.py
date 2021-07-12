@@ -14,23 +14,19 @@ from eye_commander.classification import classification
 class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     TEMP_DATAPATH = os.path.join(os.getcwd(),'eye_commander/temp')
-    # BASE_MODEL_PATH = os.path.join(os.getcwd(),'eye_commander/models/best_model_aug.h5')
     
-    def __init__(self, base_model=None, window_size:int=12, image_shape:tuple =(80,80,3),
-                 n_frames:int=200, epochs:int=10, batch_size:int=32, base_model_path:str='eye_commander/models/eyenet'):
+    def __init__(self, window_size:int=4, image_shape:tuple =(80,80,3),
+                 n_frames:int=150, base_model_path:str='eye_commander/models/eyenet', 
+                 calibrate:bool=True):
         
         self.camera = cv2.VideoCapture(0)
         self.eye_detection = detection.EyeDetector()
-        self.prediction_window = classification.PredictionWindow(size=window_size)
-        self.window_size = window_size
+        self.window = classification.Window(size=window_size)
         self.base_model_path = os.path.join(os.getcwd(),base_model_path)
-        self.base_model = base_model
-        self.tuned_model = None
+        self.model = None
         self.image_shape = image_shape
         self.n_frames = n_frames
-        self.epochs = epochs
-        self.batch_size = batch_size
-        self.calibration_done = False
+        self.calibrate = calibrate
           
     def refresh(self):
         cam_status, frame = self.camera.read()
@@ -51,13 +47,17 @@ class EyeCommander:
             return eyes
         else:
             return None
-        
 
     def _preprocess_eye_images(self, eye_left:np.array, eye_right:np.array):
         shape = self.image_shape
-        # gray 
-        # eye_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2GRAY)
-        # eye_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2GRAY)
+        if shape[-1] == 1:
+            # gray 
+            eye_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2GRAY)
+            eye_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2GRAY)
+        elif shape[-1] == 3:
+            # color 
+            eye_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2RGB)
+            eye_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2RGB)
         # resize
         resized_left = cv2.resize(eye_left, shape[:2])
         resized_right = cv2.resize(eye_right, shape[:2])
@@ -67,7 +67,7 @@ class EyeCommander:
         
         return reshaped_left, reshaped_right
     
-    def capture_data(self):
+    def capture_data(self, drop_frames:int= 10):
         frame_count = 0
         data = []
         while (self.camera.isOpened()) and (frame_count < self.n_frames):
@@ -85,17 +85,9 @@ class EyeCommander:
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
                 break
+        ##### drop first few frames
+        data = data[drop_frames:]
         return data
-    
-    def _add_augmentation(self, data:list):
-        for idx, img in enumerate(data):
-            aug_img = tf.image.random_brightness(img,max_delta=0.3)
-            aug_img = np.array(aug_img)
-            if (aug_img.mean() > 210) or (aug_img.mean() < 50):
-                continue
-            else:
-                data.append(aug_img)
-            return data
 
     def _build_directory(self):
         basepath = os.path.join(self.TEMP_DATAPATH,'data')
@@ -123,7 +115,7 @@ class EyeCommander:
         cv2.rectangle(frame,(420,20),(900,700),color,3)
         cv2.putText(frame, "center head inside box", 
                         (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)
-        
+     
     def _add_augmentation(self, arr):
         for idx in range(len(arr)):
             img = arr[idx]
@@ -166,32 +158,18 @@ class EyeCommander:
         print('output dataset size: ',shapes)
         return images, labels
 
-    def _load_model_for_tuning(self, path):
-        print('loading model')
+    def _load_model(self, path):
+        print(f'loading model: {path[-13:]}')
         model = tf.keras.models.load_model(path)
-        for i in range(len(model.layers)):
-            model.layers[i].trainable = False
-        model.layers[-1].trainable = True
+        if self.calibrate == True:
+            for i in range(len(model.layers)):
+                model.layers[i].trainable = False
+            model.layers[-1].trainable = True
         return model
 
     def _tune_model(self, model, X, y):
-        model.fit(x= X, y=y, epochs=10, batch_size =32, shuffle=True)
+        model.fit(x= X, y=y, epochs=5, batch_size =6, shuffle=True)
         return model
-        
-    # def _retrain(self, model):
-    #     train_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.2, 
-    #                                                                    color_mode="grayscale", subset="training", 
-    #                                                                    seed=123, image_size=self.image_shape[:2], 
-    #                                                                    batch_size=self.batch_size,label_mode='int',shuffle=True)
-
-    #     val_ds = tf.keras.preprocessing.image_dataset_from_directory(self.TEMP_DATAPATH, validation_split=0.2, 
-    #                                                                  color_mode="grayscale", subset="validation", 
-    #                                                                  seed=123, image_size=self.image_shape[:2], 
-    #                                                                  batch_size=self.batch_size, label_mode='int', shuffle=True)
-        
-    #     model.fit(train_ds, validation_data=val_ds, batch_size=self.batch_size, epochs=self.epochs)
-    #     # model.save('./temp/temp_model')
-    #     return model
     
     def auto_calibrate(self):
         ###### CAPTURING USER DATA #######
@@ -231,11 +209,12 @@ class EyeCommander:
                 break
             
         ####### MODEL TUNING ########
-        self.base_model = self._load_model_for_tuning(self.base_model_path)
+        self.model = self._load_model(self.base_model_path)
         X, y = self._load_user_data(os.path.join(self.TEMP_DATAPATH,'data'), balance=True)
-        model = self._tune_model(self.base_model, X, y)
-        # if os.path.exists(os.path.join(self.TEMP_DATAPATH,'data')) == True:
-        #     shutil.rmtree(os.path.join(self.TEMP_DATAPATH,'data'))
+        model = self._tune_model(self.model, X, y)
+        model.save(os.path.join(self.TEMP_DATAPATH, 'custom_model'))
+        if os.path.exists(os.path.join(self.TEMP_DATAPATH,'data')) == True:
+            shutil.rmtree(os.path.join(self.TEMP_DATAPATH,'data'))
         return model
 
     def _prep_batch(self, images: tuple):
@@ -247,10 +226,7 @@ class EyeCommander:
         return batch
     
     def _predict_batch(self, batch:np.array):
-        if self.calibration_done == True:
-            predictions = self.tuned_model.predict(batch)
-        else:
-            predictions = self.base_model.predict(batch)
+        predictions = self.model.predict(batch)
         return predictions   
             
     def predict(self, eye_left:np.array, eye_right:np.array):
@@ -258,11 +234,14 @@ class EyeCommander:
         batch = self._prep_batch((eye_left, eye_right))
         # make prediction on batch
         predictions = self._predict_batch(batch)
-        # add both predictions to the prediction window
-        self.prediction_window.insert_predictions(predictions)
-        # make prediction over a window 
-        pred, mean_proba = self.prediction_window.predict()
-        return pred, mean_proba
+        pred_vec = np.mean(predictions, axis =0)
+        pred = pred_vec.argmax()
+        proba = pred_vec.max()
+        # # add both predictions to the prediction window
+        # self.prediction_window.insert(predictions)
+        # # make prediction over a window 
+        # mean_vec = self.prediction_window._mean_vec()
+        return pred, proba
              
     def _display_prediction(self, label, frame, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
         if label == 'left':
@@ -271,15 +250,20 @@ class EyeCommander:
             cv2.putText(frame, "right", (900, 375), font, 7, color, 15)
         elif label == 'up':
             cv2.putText(frame, "up", (575, 100), font, 7, color, 15)
-        else:
+        elif label == 'down':
             cv2.putText(frame, "down", (500, 700), font, 7, color, 15)
-        
-    def run(self, calibrate=True):
-        if calibrate == True:
-            self.tuned_model = self.auto_calibrate() 
-            self.calibration_done = True 
         else:
-            self.base_model = tf.keras.models.load_model(self.base_model_path)
+            pass
+        
+    def run(self):
+        if self.calibrate == True:
+            self.model = self.auto_calibrate() 
+        else:
+            if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'custom_model')) == True:
+                self.model = self._load_model(os.path.join(self.TEMP_DATAPATH, 'custom_model'))
+            else:
+                self.model = self._load_model(self.base_model_path)
+        
         while self.camera.isOpened():
             # capture a frame and extract eye images
             camera_output = self.refresh()
@@ -292,16 +276,21 @@ class EyeCommander:
                 if eyes:
                     eye_left, eye_right = eyes
                     eye_left_processed, eye_right_processed = self._preprocess_eye_images(eye_left, eye_right)
-                    # make classifcation based on eye images
-                    prediction, mean_proba = self.predict(eye_left_processed, eye_right_processed) 
-                    # display results
-                    if (self.prediction_window.is_full() == True):
-                        label = self.CLASS_LABELS[prediction]
+                    
+                    #### make classifcation based on eye images
+                    pred, proba = self.predict(eye_left_processed, eye_right_processed)
+                    self.window.insert(pred)
+                    
+                    #### if all of the prediction in the window are the same ####
+                    if (self.window.all_same() == True) and (self.window.items[0]==pred):
+                        label = self.CLASS_LABELS[pred]
                         self._display_prediction(label=label, frame=display_frame)
+                    #### display probability of current frame
+                    cv2.putText(display_frame, str(round(proba,3)), 
+                            (510, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
+                    
                 # display suggested head placement box
-                cv2.rectangle(display_frame,(420,20),(900,700),(100,175,255),3)
-                cv2.putText(display_frame, "center head inside box", 
-                        (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (100,175,255), 1)
+                self._position_rect(display_frame,color='green')
                 cv2.imshow('EyeCommander', display_frame)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
@@ -310,4 +299,8 @@ class EyeCommander:
                 
         self.camera.release()
         cv2.destroyAllWindows()
+
+
+    
+    
  

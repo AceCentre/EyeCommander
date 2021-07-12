@@ -133,4 +133,5 @@ dmypy.json
 .vscode
 .DS_Store
 temp/data/
+notebooks/
 

@@ -2,8 +2,9 @@ from eye_commander.commander import commander
 from eye_commander.utils.utils import dir_to_eye_images, video_dir_to_frames
 
 cmder = commander.EyeCommander()
-# cmder.n_frames = 200
-cmder.run(calibrate=True)   
+cmder.calibrate = False
+cmder.n_frames = 100
+cmder.run()   
 
 
 # cmder = commander.EyeCommander()
