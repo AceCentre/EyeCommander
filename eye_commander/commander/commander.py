@@ -8,6 +8,7 @@ import mediapipe as mp
 import tensorflow as tf
 from collections import Counter
 import numpy as np
+from operator import itemgetter
 from eye_commander.detection import detection
 from eye_commander.classification import classification
 
@@ -15,10 +16,10 @@ class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     TEMP_DATAPATH = os.path.join(os.getcwd(),'eye_commander/temp')
     
-    def __init__(self, window_size:int=4, image_shape:tuple =(80,80,3),
-                 n_frames:int=150, base_model_path:str='eye_commander/models/eyenet', 
-                 calibrate:bool=True):
-        
+    def __init__(self, window_size:int=5, image_shape:tuple =(80,80,3),
+                 n_frames:int=100, base_model_path:str='eye_commander/models/eyenet3.h5', 
+                 calibrate:bool=True, keep_data:bool=False):
+    
         self.camera = cv2.VideoCapture(0)
         self.eye_detection = detection.EyeDetector()
         self.window = classification.Window(size=window_size)
@@ -27,6 +28,7 @@ class EyeCommander:
         self.image_shape = image_shape
         self.n_frames = n_frames
         self.calibrate = calibrate
+        self.keep_data = keep_data
           
     def refresh(self):
         cam_status, frame = self.camera.read()
@@ -48,7 +50,7 @@ class EyeCommander:
         else:
             return None
 
-    def _preprocess_eye_images(self, eye_left:np.array, eye_right:np.array):
+    def _preprocess(self, eye_left:np.array, eye_right:np.array):
         shape = self.image_shape
         if shape[-1] == 1:
             # gray 
@@ -77,7 +79,7 @@ class EyeCommander:
                 eyes = self._eye_images_from_frame(frame)
                 if eyes:
                     eye_left, eye_right = eyes
-                    eye_left_processed, eye_right_processed = self._preprocess_eye_images(eye_left, eye_right)
+                    eye_left_processed, eye_right_processed = self._preprocess(eye_left, eye_right)
                     data.extend([eye_left_processed, eye_right_processed])
                     frame_count += 1
             self._position_rect(display_frame, color='red')
@@ -99,7 +101,7 @@ class EyeCommander:
             newpath = os.path.join(basepath,label)
             os.mkdir(newpath)
                 
-    def _process_captured_data(self, direction:str, data:list):
+    def _prepare_captured_data(self, direction:str, data:list):
         basepath = os.path.join(self.TEMP_DATAPATH,'data')
         class_path = os.path.join(basepath,direction)
         count = 1
@@ -125,7 +127,7 @@ class EyeCommander:
             arr[idx] = img
         return arr
 
-    def _load_user_data(self, path, balance:bool=True):
+    def _load_user_data(self, path, balance:bool=False):
         d = {}
         for idx, l in enumerate(['center', 'down', 'left', 'right', 'up']):
             subpath = os.path.join(path, l)
@@ -168,7 +170,8 @@ class EyeCommander:
         return model
 
     def _tune_model(self, model, X, y):
-        model.fit(x= X, y=y, epochs=5, batch_size =6, shuffle=True)
+        print('tuning model')
+        model.fit(x= X, y=y, epochs=7, batch_size =5, shuffle=True)
         return model
     
     def auto_calibrate(self):
@@ -204,17 +207,18 @@ class EyeCommander:
                             # end demo when ESC key is entered 
                         if cv2.waitKey(1) & 0xFF == 27:
                             data = self.capture_data()
-                            self._process_captured_data(direction=direction, data=data)
+                            self._prepare_captured_data(direction=direction, data=data)
                             break
                 break
             
         ####### MODEL TUNING ########
         self.model = self._load_model(self.base_model_path)
-        X, y = self._load_user_data(os.path.join(self.TEMP_DATAPATH,'data'), balance=True)
+        X, y = self._load_user_data(os.path.join(self.TEMP_DATAPATH,'data'), balance=False)
         model = self._tune_model(self.model, X, y)
-        model.save(os.path.join(self.TEMP_DATAPATH, 'custom_model'))
-        if os.path.exists(os.path.join(self.TEMP_DATAPATH,'data')) == True:
-            shutil.rmtree(os.path.join(self.TEMP_DATAPATH,'data'))
+        model.save(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5'))
+        if self.keep_data == False:
+            if os.path.exists(os.path.join(self.TEMP_DATAPATH,'data')) == True:
+                shutil.rmtree(os.path.join(self.TEMP_DATAPATH,'data'))
         return model
 
     def _prep_batch(self, images: tuple):
@@ -232,15 +236,14 @@ class EyeCommander:
     def predict(self, eye_left:np.array, eye_right:np.array):
         # make batch
         batch = self._prep_batch((eye_left, eye_right))
-        # make prediction on batch
+        # make prediction on batch -- returns two vectors
         predictions = self._predict_batch(batch)
-        pred_vec = np.mean(predictions, axis =0)
-        pred = pred_vec.argmax()
-        proba = pred_vec.max()
-        # # add both predictions to the prediction window
-        # self.prediction_window.insert(predictions)
-        # # make prediction over a window 
-        # mean_vec = self.prediction_window._mean_vec()
+        #### select the prediction from the eye with higher probability
+        eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
+                   (predictions[1].max(), predictions[1].argmax())]
+        strongest_eye = max(eye_predictions, key=itemgetter(0))
+        proba = strongest_eye[0]
+        pred = strongest_eye[1]
         return pred, proba
              
     def _display_prediction(self, label, frame, color = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
@@ -258,9 +261,10 @@ class EyeCommander:
     def run(self):
         if self.calibrate == True:
             self.model = self.auto_calibrate() 
+        ### if calibrate set to false look for custom model, then base model
         else:
-            if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'custom_model')) == True:
-                self.model = self._load_model(os.path.join(self.TEMP_DATAPATH, 'custom_model'))
+            if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5')) == True:
+                self.model = self._load_model(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5'))
             else:
                 self.model = self._load_model(self.base_model_path)
         
@@ -270,19 +274,18 @@ class EyeCommander:
             # if the camera is outputing images
             if camera_output:
                 display_frame, frame = camera_output
-                # detect eyes
+                # try to detect eyes
                 eyes = self._eye_images_from_frame(frame)
-                # if detection is able to isolate eyes
                 if eyes:
+                    # if detection is able to isolate eyes
                     eye_left, eye_right = eyes
-                    eye_left_processed, eye_right_processed = self._preprocess_eye_images(eye_left, eye_right)
-                    
+                    eye_left_processed, eye_right_processed = self._preprocess(eye_left, eye_right)
                     #### make classifcation based on eye images
                     pred, proba = self.predict(eye_left_processed, eye_right_processed)
                     self.window.insert(pred)
-                    
+                    self.window.update_probability(proba)
                     #### if all of the prediction in the window are the same ####
-                    if (self.window.all_same() == True) and (self.window.items[0]==pred):
+                    if (self.window.all_same()==True) and (self.window.items[0]==pred):
                         label = self.CLASS_LABELS[pred]
                         self._display_prediction(label=label, frame=display_frame)
                     #### display probability of current frame
@@ -294,11 +297,15 @@ class EyeCommander:
                 cv2.imshow('EyeCommander', display_frame)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
-                shutil.rmtree('./temp/data')
+                if self.keep_data == False:
+                    if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'data')):
+                        shutil.rmtree(os.path.join(self.TEMP_DATAPATH, 'data'))
                 break
-                
         self.camera.release()
         cv2.destroyAllWindows()
+        if self.keep_data == False:
+            if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'data')):
+                shutil.rmtree(os.path.join(self.TEMP_DATAPATH, 'data'))
 
 
     
