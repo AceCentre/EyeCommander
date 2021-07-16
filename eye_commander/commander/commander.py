@@ -6,6 +6,7 @@ from pynput.keyboard import Key, Controller
 from typing import Tuple
 import mediapipe as mp
 import tensorflow as tf
+import xgboost 
 from collections import Counter
 import numpy as np
 from operator import itemgetter
@@ -17,12 +18,12 @@ class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     TEMP_DATAPATH = os.path.join(os.getcwd(),'eye_commander/temp')
     
-    def __init__(self, window_size:int=5, image_shape:tuple =(80,80,3),
+    def __init__(self, window_size:int=5, image_shape:tuple =(90,50,3),
                  n_frames:int=100, base_model_path:str='eye_commander/models/eyenet3.h5', 
                  calibrate:bool=True, keep_data:bool=False):
     
         self.camera = cv2.VideoCapture(0)
-        self.eye_detection = detection.EyeDetector()
+        self.eye_detection = detection.Meshy()
         self.window = classification.Window(size=window_size)
         self.base_model_path = os.path.join(os.getcwd(),base_model_path)
         self.model = None
@@ -94,10 +95,38 @@ class EyeCommander:
         resized_left = cv2.resize(eye_left, shape[:2])
         resized_right = cv2.resize(eye_right, shape[:2])
         # reshape
-        reshaped_left = resized_left.reshape(shape)
+        reshaped_left = resized_left.reshape((shape))
         reshaped_right = resized_right.reshape(shape)
         
         return (reshaped_left, reshaped_right)
+    
+    def preprocess(self, eye_left:np.array, eye_right:np.array):
+        """_preprocess prepares eye images for classification by 
+        resizing, reshaping, and doing appropriate color transformation
+        
+        Args:
+            eye_left (np.array): unprocessed image data from left eye
+            eye_right (np.array): unprocessed image data from right eye
+
+        Returns:
+           tuple(iterable) : processed image data for left and right eye
+        """                     
+        # shape = self.image_shape
+        # #### if shape of desired image is 1 dimensional, turn image grayscale
+        # if shape[-1] == 1:
+        #     # gray 
+        #     eye_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2GRAY)
+        #     eye_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2GRAY)
+        # ### if shape of desired image is 3D, convert images to RGB
+        # elif shape[-1] == 3:
+        #     # color 
+        #     eye_left = cv2.cvtColor(eye_left, cv2.COLOR_BGR2RGB)
+        #     eye_right =  cv2.cvtColor(eye_right, cv2.COLOR_BGR2RGB)
+        # # resize
+        resized_left = cv2.resize(eye_left, (80,40))
+        resized_right = cv2.resize(eye_right, (80,40))
+        
+        return (resized_left, resized_right)
     
     def _capture_data(self, drop_frames:int= 10):
         """_capture_data is used in the autocalibration function to record 
@@ -399,7 +428,19 @@ class EyeCommander:
             keyboard.release(Key.down)
         else:
             pass
-         
+    
+    def classify(self, images):
+        shape = images.shape
+        images = np.reshape(images,(shape[0], shape[1] * shape[2]))
+        predictions = self.model.predict_proba(images)
+        eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
+                        (predictions[1].max(), predictions[1].argmax())]
+        strongest_eye = max(eye_predictions, key=itemgetter(0))
+        proba = strongest_eye[0]
+        pred = strongest_eye[1]
+
+        return pred, proba
+
     def run(self):
         """demo
         """
@@ -407,35 +448,45 @@ class EyeCommander:
             self.model = self.auto_calibrate() 
         ### if calibrate set to false look for custom model, then base model
         else:
-            if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5')) == True:
-                self.model = self._load_model(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5'))
-            else:
-                self.model = self._load_model(self.base_model_path)
-        
+            # if os.path.exists(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5')) == True:
+            #     self.model = self._load_model(os.path.join(self.TEMP_DATAPATH, 'custom_model.h5'))
+            # else:
+            #     self.model = self._load_model(self.base_model_path)
+            model = xgboost.XGBClassifier()
+            model.load_model(os.path.join(os.getcwd(),'eye_commander/models/xgboost2'))
+            self.model = model
         while self.camera.isOpened():
             # capture a frame and extract eye images
             camera_output = self.refresh()
             # if the camera is outputing images
             if camera_output:
                 display_frame, frame = camera_output
+                frame = cv2.flip(frame, 1)
                 # try to detect eyes
                 eyes = self._eye_images_from_frame(frame)
                 if eyes:
                     # if detection is able to isolate eyes
                     eye_left, eye_right = eyes
-                    eye_left_processed, eye_right_processed = self._preprocess(eye_left, eye_right)
+                    # eye_left_processed, eye_right_processed = self.preprocess(eye_left, eye_right)
+                    eye_left_processed, eye_right_processed = eye_left, eye_right
+                    cv2.imshow('eye', eye_left)
+                   
                     #### make classifcation based on eye images
-                    pred, proba = self.predict(eye_left_processed, eye_right_processed)
-                    self.window.insert(pred)
-                    #### if all of the prediction in the window are the same ####
-                    if (self.window.all_same()==True) and (self.window.items[0]==pred):
-                        label = self.CLASS_LABELS[pred]
-                        self._display_prediction(label=label, frame=display_frame)
-                        self._output_keystrokes(label=label)
-                    #### display probability of current frame
-                    cv2.putText(display_frame, str(round(proba,3)), 
-                            (510, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
-                    
+                    # pred, proba = self.predict(eye_left_processed, eye_right_processed)
+                    images = np.array([eye_left_processed, eye_right_processed])
+                    pred, proba = self.classify(images)
+                    if proba > 0.8:
+                        self.window.insert(pred)
+                        self.window.insert_probability(proba)
+                        #### if all of the prediction in the window are the same ####
+                        if (self.window.all_same()==True) and (self.window.items[0]==pred) and (np.mean(self.window.prob)>0.9):
+                            label = self.CLASS_LABELS[pred]
+                            self._display_prediction(label=label, frame=display_frame)
+                            self._output_keystrokes(label=label)
+                        #### display probability of current frame
+                        cv2.putText(display_frame, str(round(proba,3)), 
+                                (510, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
+                        
                 # display suggested head placement box
                 self._position_rect(display_frame,color='green')
                 cv2.imshow('EyeCommander', display_frame)
