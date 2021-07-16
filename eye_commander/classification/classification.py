@@ -68,6 +68,7 @@ class Window:
     def __init__(self, size:int=4):
         self.size = size
         self.items = []
+        self.prob = []
     
     def is_full(self):
         """is_full returns true if the window is full
@@ -106,6 +107,20 @@ class Window:
             self.items.pop()
         else:
             self.items.append(prediction)
+    
+    def insert_probability(self, prediction:int):
+        """insert adds the current frame prediction to the window
+
+        Args:
+            prediction (int): prediction of current frame.
+        """
+
+        if len(self.prob) == self.size:
+            self.prob.insert(0,prediction)
+            self.prob.pop()
+        else:
+            self.prob.append(prediction)
+        
 
         
 
