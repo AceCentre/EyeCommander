@@ -24,14 +24,15 @@ def video_dir_to_frames(writepath, video_dir_path):
                 except: 
                     pass
 
+
 def extract_file(filepath: str, writepath1: str, writepath2: str, commander):
     img = cv2.imread(filepath, cv2.IMREAD_UNCHANGED)
-    eyes = commander.eye_detection.extract_eyes(img, static=True)
+    eyes = commander.eye_detection.extract_eyes(img)
     if eyes:
         eye_left, eye_right = eyes
-        eye_left_processed, eye_right_processed = commander._preprocess_eye_images(eye_left, eye_right)
-        cv2.imwrite(writepath1, img=eye_left_processed)
-        cv2.imwrite(writepath2, img=eye_right_processed)
+
+        cv2.imwrite(writepath1, img=eye_left)
+        cv2.imwrite(writepath2, img=eye_right)
         return True
     else:
         return False
@@ -54,7 +55,8 @@ def dir_to_eye_images(base_readpath: str, base_writepath: str, commander):
             else:
                 count+=1
         print(f'done {name}.')
-    
-# dir_to_eye_images(base_readpath='/Users/danielkashkett/Desktop/EyeProject/data/frames/', 
-#                       base_writepath='/Users/danielkashkett/Desktop/EyeProject/data/micronet/')
+   
+# ec = EyeCommander(calibrate=False) 
+# dir_to_eye_images(base_readpath='/Users/danielkashkett/Desktop/AceCentre/data/raw/frames/frames', 
+#                       base_writepath='/Users/danielkashkett/Desktop/AceCentre/data/processed/50_90/', commander=ec)
     
