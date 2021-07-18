@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
+import tensorflow as tf
 
 class EyeDetector:
     
@@ -184,6 +185,8 @@ class FaceMesh:
             else:
                 eyes = self.generate_eye_frames(frame)
             return eyes
+        
+    
 
 class Meshy:
     def __init__(self):
@@ -203,7 +206,7 @@ class Meshy:
         self.shape = (50,90)
         
     def preprocess_image(self, frame):
-        img = frame
+        img = np.array(tf.image.adjust_brightness(frame,delta=0.1))
         t = 80
         img = cv2.GaussianBlur(img, (7,7), 0)
         shape = img[:,:,0].shape
@@ -319,6 +322,7 @@ class Meshy:
                 left = cv2.resize(eyes[0], (90,50))
                 right = cv2.resize(eyes[1], (90,50))
                 return (left,right)
+            
         
     # def extract_eyes(self, frame:np.array, static: bool = False):
     #     self.detect(frame)

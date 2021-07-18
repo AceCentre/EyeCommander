@@ -18,7 +18,7 @@ class EyeCommander:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     TEMP_DATAPATH = os.path.join(os.getcwd(),'eye_commander/temp')
     
-    def __init__(self, window_size:int=5, image_shape:tuple =(90,50,3),
+    def __init__(self, window_size:int=4, image_shape:tuple =(90,50,3),
                  n_frames:int=100, base_model_path:str='eye_commander/models/eyenet3.h5', 
                  calibrate:bool=True, keep_data:bool=False):
     
@@ -469,17 +469,18 @@ class EyeCommander:
                     eye_left, eye_right = eyes
                     # eye_left_processed, eye_right_processed = self.preprocess(eye_left, eye_right)
                     eye_left_processed, eye_right_processed = eye_left, eye_right
-                    cv2.imshow('eye', eye_left)
-                   
+                    cv2.imshow('left eye', eye_left)
+                    cv2.imshow('right eye', eye_right)
                     #### make classifcation based on eye images
                     # pred, proba = self.predict(eye_left_processed, eye_right_processed)
                     images = np.array([eye_left_processed, eye_right_processed])
                     pred, proba = self.classify(images)
-                    if proba > 0.8:
+                    if proba > 0.87:
                         self.window.insert(pred)
                         self.window.insert_probability(proba)
                         #### if all of the prediction in the window are the same ####
-                        if (self.window.all_same()==True) and (self.window.items[0]==pred) and (np.mean(self.window.prob)>0.9):
+                        window_consensus = self.window.consensus()
+                        if window_consensus == pred:
                             label = self.CLASS_LABELS[pred]
                             self._display_prediction(label=label, frame=display_frame)
                             self._output_keystrokes(label=label)

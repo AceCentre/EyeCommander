@@ -86,14 +86,15 @@ class Window:
         """
         return len(self.items) ==0
     
-    def all_same(self):
+    def consensus(self):
         """all_same returns True if all elements in the window 
         are the same. Used to determine intentional eye movement.add()
 
         Returns:
             bool: True or False
         """
-        return len(set(self.items))==1
+        if len(set(self.items))==1:
+            return self.items[0]
 
     def insert(self, prediction:int):
         """insert adds the current frame prediction to the window
