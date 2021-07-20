@@ -34,9 +34,10 @@ class EyeCommander:
             if success == True:
                 eyes = self.face_detection.eyes(frame)
                 if eyes:
+                    cv2.imshow('eye', eyes[0])
                     processed_eyes = self.image_processor.transform(eyes)
-                    cv2.imshow('eye', processed_eyes[0])
-                    cv2.imshow('eye2', processed_eyes[1])
+        
+                    cv2.imshow('eye2', processed_eyes[0])
                     prediction, probability = self.model.predict(processed_eyes)
                     output = self.output_filter(prediction, probability)
                     if output:

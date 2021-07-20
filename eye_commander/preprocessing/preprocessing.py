@@ -23,11 +23,17 @@ class ImageProcessor:
         return resized
     
     def _process(self, image):
-        gray = self._grayscale(image)
-        blur = cv2.GaussianBlur(gray, (5,5), cv2.BORDER_DEFAULT)
-        segmented_image = self._segment_image(blur)
-        resized_image = self._resize(segmented_image)
-        return resized_image
+        # denoising
+        denoised = cv2.fastNlMeansDenoisingColored(image, None, 10, 10, 15, 0)
+        # convert to grayscale
+        grayscale = cv2.cvtColor(denoised, cv2.COLOR_BGR2GRAY)
+        # add blur
+        blur = cv2.GaussianBlur(grayscale, (5,5), cv2.BORDER_DEFAULT)
+        # segment using local threshold
+        segmented = self._segment_image(blur)
+        # resize image
+        resized = self._resize(segmented)
+        return resized
     
     def transform(self, images:tuple):
         left, right = images
