@@ -37,3 +37,7 @@ def display_prediction(label:str, frame:np.array,
         cv2.putText(frame, "down", (500, 700), font, 7, color, 15)
     else:
         pass
+
+def display_probability(frame:np.array, probability:float):
+    cv2.putText(frame, str(round(probability,3)), 
+                                (510, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
