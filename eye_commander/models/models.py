@@ -4,32 +4,7 @@ import os
 import numpy as np
 from operator import itemgetter
 import pickle 
-
-# class XGBoostModel:
-#     PATH = os.path.join(os.getcwd(),'eye_commander/models/xgboost2')
-    
-#     def __init__(self):
-#         self.model = xgboost.XGBClassifier()
-#         self.model.load_model(self.PATH)
-        
-#     def _prep_batch(self, images: tuple):
-#         images = np.array(images)
-#         reshaped = np.reshape(images,(images.shape[0], 
-#                                       images.shape[1] * images.shape[2]))
-#         return np.array(reshaped)
-    
-#     def predict(self, images: tuple):
-#         batch = self._prep_batch(images)
-#         predictions = self.model.predict_proba(batch)
-        
-#         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
-#                         (predictions[1].max(), predictions[1].argmax())]
-    
-#         strongest_eye = max(eye_predictions, key=itemgetter(0))
-#         probability = strongest_eye[0]
-#         prediction = strongest_eye[1]
-
-#         return prediction, probability
+from eye_commander.preprocessing import preprocessing
 
 class CNNModel:
     PATH = os.path.join(os.getcwd(),'eye_commander/models/cnn.h5')
@@ -37,13 +12,16 @@ class CNNModel:
     def __init__(self):
         self.model = tf.keras.models.load_model(self.PATH)
         self.tuned_model = None
+        self.image_processor = preprocessing.ImageProcessor()
 
     def _prep_batch(self, images: tuple):
-        img1 = images[0].reshape((35,63))
-        img2 = images[1].reshape((35,63))
-        img1 = np.expand_dims(img1,0)
-        img2 = np.expand_dims(img2,0)
-        batch = np.concatenate([img1,img2])
+        # preprocessing 
+        eyes = self.image_processor.transform(images)
+        # add batch dimension for tensorflow
+        left = np.expand_dims(eyes[0], 0)
+        right = np.expand_dims(eyes[1], 0)
+        # combine left/right back into one batch
+        batch = np.concatenate([left,right])
         
         return batch
     
@@ -106,12 +84,11 @@ class FeatureExtractor:
         features = self.extractor.predict(input_)
         return features
 
-class EyeBoostNet:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/XGB')
+class Net:
+    PATH = os.path.join(os.getcwd(),'eye_commander/models/dense.h5')
     
     def __init__(self):
-        self.model = xgboost.XGBClassifier()
-        self.model.load_model(self.PATH)
+        self.model = tf.keras.models.load_model(self.PATH)
         self.feature_extractor = FeatureExtractor()
         self.input_size = (50,80,3)
         
@@ -127,7 +104,7 @@ class EyeBoostNet:
     
     def predict(self, images: tuple):
         batch = self._prep_batch(images)
-        predictions = self.model.predict_proba(batch)
+        predictions = self.model.predict(batch)
         
         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
                         (predictions[1].max(), predictions[1].argmax())]
@@ -137,3 +114,30 @@ class EyeBoostNet:
         prediction = strongest_eye[1]
 
         return prediction, probability
+    
+    
+    # class XGBoostModel:
+#     PATH = os.path.join(os.getcwd(),'eye_commander/models/xgboost2')
+    
+#     def __init__(self):
+#         self.model = xgboost.XGBClassifier()
+#         self.model.load_model(self.PATH)
+        
+#     def _prep_batch(self, images: tuple):
+#         images = np.array(images)
+#         reshaped = np.reshape(images,(images.shape[0], 
+#                                       images.shape[1] * images.shape[2]))
+#         return np.array(reshaped)
+    
+#     def predict(self, images: tuple):
+#         batch = self._prep_batch(images)
+#         predictions = self.model.predict_proba(batch)
+        
+#         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
+#                         (predictions[1].max(), predictions[1].argmax())]
+    
+#         strongest_eye = max(eye_predictions, key=itemgetter(0))
+#         probability = strongest_eye[0]
+#         prediction = strongest_eye[1]
+
+#         return prediction, probability
