@@ -1,4 +1,4 @@
-import xgboost
+# import xgboost
 import tensorflow as tf
 import os
 import numpy as np
@@ -7,7 +7,7 @@ import pickle
 from eye_commander.preprocessing import preprocessing
 
 class CNNModel:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/cnn.h5')
+    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn.h5')
     
     def __init__(self):
         self.model = tf.keras.models.load_model(self.PATH)
@@ -41,12 +41,14 @@ class CNNModel:
         return prediction, probability
     
 class RandomForest:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/rf.sav')
+    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/rf.sav')
     
     def __init__(self):
         self.model = pickle.load(open(self.PATH, 'rb'))
+        self.preprocessing = preprocessing.ImageProcessor()
         
     def _prep_batch(self, images: tuple):
+        images = self.preprocessing.transform(images)
         images = np.array(images)
         reshaped = np.reshape(images,(images.shape[0], 
                                     images.shape[1] * images.shape[2]))
@@ -65,31 +67,12 @@ class RandomForest:
 
         return prediction, probability
 
-class FeatureExtractor:
-    def __init__(self):
-        self.extractor = self.build_feature_extractor()
-    
-    def build_feature_extractor(self):
-        mobile = tf.keras.applications.mobilenet_v2.MobileNetV2(include_top=False,weights='imagenet',input_shape=(50,80,3))
-        for layer in mobile.layers:
-            layer.trainable = False
-        input_layer = tf.keras.Input(shape=(50, 80, 3))
-        preprocess_layer = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)(input_layer)
-        mobilenet = mobile(preprocess_layer)
-        features = tf.keras.layers.GlobalAveragePooling2D()(mobilenet)
-        feature_extractor = tf.keras.Model(inputs=input_layer, outputs=features)
-        return feature_extractor
-    
-    def extract(self, input_):
-        features = self.extractor.predict(input_)
-        return features
-
 class Net:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/dense.h5')
+    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/dense.h5')
     
     def __init__(self):
         self.model = tf.keras.models.load_model(self.PATH)
-        self.feature_extractor = FeatureExtractor()
+        self.feature_extractor = preprocessing.FeatureExtractor()
         self.input_size = (50,80,3)
         
     def _prep_batch(self, images: tuple):

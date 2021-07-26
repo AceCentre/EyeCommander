@@ -3,12 +3,12 @@
 
 
 from eye_commander.commander.experimental import EyeCommander
-# from eye_commander.preprocessing import preprocessing
-# from eye_commander.face_detection import face_detection
-# import os
-# import glob
-# import cv2
-# from PIL import Image
+from eye_commander.preprocessing import preprocessing
+from eye_commander.face_detection import face_detection
+import os
+import glob
+import cv2
+from PIL import Image
 
 #### To capture data run eyecommander with keep_data = True
 ec = EyeCommander()
@@ -58,7 +58,7 @@ ec.run()
 
 # class_ = 'center'
 # base = '/Users/danielkashkett/Desktop/AceCentre/data/raw/frames/frames'  
-# write = '/Users/danielkashkett/Desktop/AceCentre/data/processed/seg2/'
+# write = '/Users/danielkashkett/Desktop/AceCentre/data/processed/seg3/'
 
 # files = glob.glob(base +f'/{class_}' + '/*.jpg')
 # print(f'{len(files)} files in read directory, {len(files)*2} possible samples.')
@@ -68,16 +68,17 @@ ec.run()
 #     img = cv2.imread(file, cv2.IMREAD_UNCHANGED)
 #     eyes = fd.eyes(img)
 #     if eyes:
-#         processed = ip.transform(eyes)
-#         if processed:
-#             left, right = processed
-#             left, right = Image.fromarray(left), Image.fromarray(right)
-#             w1 = f'/Users/danielkashkett/Desktop/AceCentre/data/processed/seg2/{class_}/image{idx}a.jpg'
-#             w2 = f'/Users/danielkashkett/Desktop/AceCentre/data/processed/seg2/{class_}/image{idx}b.jpg'
-#             left.save(w1)
-#             right.save(w2)
-#             write_count+=2
+#         # processed = ip.transform(eyes)
+#         # if processed:
+#         left, right = eyes
+#         left, right = Image.fromarray(left), Image.fromarray(right)
+#         w1 = f'/Users/danielkashkett/Desktop/AceCentre/data/processed/seg3/{class_}/image{idx}a.jpg'
+#         w2 = f'/Users/danielkashkett/Desktop/AceCentre/data/processed/seg3/{class_}/image{idx}b.jpg'
+#         left.save(w1)
+#         right.save(w2)
+#         write_count+=2
 #     else:
+       
 #         errors+=1
 # print(f'detection errors: {errors}')
 # print(f'{write_count} files written successfuly')

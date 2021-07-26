@@ -11,8 +11,8 @@ class FaceDetector:
     def __init__(self, static:bool=False):
         self.face_mesh = mp.solutions.face_mesh.FaceMesh(static_image_mode=static, 
                                                          max_num_faces=1,
-                                                         min_detection_confidence=0.8, 
-                                                         min_tracking_confidence=0.8)
+                                                         min_detection_confidence=0.7, 
+                                                         min_tracking_confidence=0.7)
         self.input_shape = None
         self.landmarks = None
         self.left_keys = None

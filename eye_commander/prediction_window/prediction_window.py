@@ -1,4 +1,5 @@
 import numpy as np
+import queue
 
 class Window:
     def __init__(self, size:int=4):
@@ -56,6 +57,27 @@ class Window:
             self.prob.pop()
         else:
             self.prob.append(prediction)
+            
+
+# class Window:
+    
+#     def __init__(self, maxsize:int=4):
+#         self.queue = queue.LifoQueue(maxsize=maxsize)
+        
+#     def is_empty(self):
+#         return self.queue.empty()
+    
+#     def is_full(self):
+#         return self.queue.full()
+    
+#     def put(self,item):
+#         return self.queue.put(item)
+    
+#     def peek(self):
+#         return self.queue.queue[0]
+    
+#     def consensus(self, prediction:int):
+#         return (len(set(self.queue.queue))==1) and (self.peek()==prediction)
         
 
         

@@ -25,9 +25,9 @@ class Camera:
         
     
     def open(self):
-        self.camera.isOpened()
+        return self.camera.isOpened()
     
     def close(self):
-        self.camera.release()
-        cv2.destroyAllWindows()
+        return self.camera.release()
+        
     

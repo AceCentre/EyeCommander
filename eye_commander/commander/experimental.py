@@ -4,35 +4,38 @@ from eye_commander.models import models
 from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
 import cv2 
+import pandas as pd
 
 class EyeCommander:
     
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     
-    def __init__(self):
+    def __init__(self, confidence:float=0.9):
         self.camera = camera.Camera()
         self.face_detection = face_detection.FaceDetector()
         self.prediction_window = prediction_window.Window()
         self.model = models.CNNModel()
-    
+        self.confidence = confidence
+        self.log = []
+
     def _class_name(self,prediction):
         return self.CLASS_LABELS[prediction]
     
     def output_filter(self, prediction, probability):
-        if probability > 0.9:
+        if probability > self.confidence:
             self.prediction_window.insert(prediction)
             if self.prediction_window.is_full() == True:
                 consensus = self.prediction_window.consensus(prediction)
                 if consensus == True:
+                    self.log.append((prediction, probability))
                     return prediction
                             
     def run(self):
-        while self.camera.camera.isOpened():
+        while self.camera.open():
             success, frame = self.camera.refresh()
             if success == True:
                 eyes = self.face_detection.eyes(frame)
-                if eyes:
-                    cv2.imshow('eye', eyes[0])
+                if eyes:  
                     prediction, probability = self.model.predict(eyes)
                     output = self.output_filter(prediction, probability)
                     if output:
@@ -45,8 +48,10 @@ class EyeCommander:
             cv2.imshow('EyeCommander', frame)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
+                print(self.log)
                 break
-        self.camera.camera.release()
+        self.camera.close()
+        cv2.destroyAllWindows()
         
         
         
