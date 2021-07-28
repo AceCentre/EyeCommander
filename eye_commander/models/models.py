@@ -22,11 +22,9 @@ class CNNModel:
         right = np.expand_dims(eyes[1], 0)
         # combine left/right back into one batch
         batch = np.concatenate([left,right])
-        
         return batch
     
     def predict(self, images: tuple):
-        
         # make batch
         batch = self._prep_batch(images)
         # make prediction on batch -- returns two vectors
@@ -37,7 +35,6 @@ class CNNModel:
         strongest_eye = max(eye_predictions, key=itemgetter(0))
         probability = strongest_eye[0]
         prediction = strongest_eye[1]
-        
         return prediction, probability
     
 class RandomForest:
@@ -100,27 +97,29 @@ class Net:
     
     
     # class XGBoostModel:
-#     PATH = os.path.join(os.getcwd(),'eye_commander/models/xgboost2')
-    
-#     def __init__(self):
-#         self.model = xgboost.XGBClassifier()
-#         self.model.load_model(self.PATH)
+    #     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/xgboost2')
         
-#     def _prep_batch(self, images: tuple):
-#         images = np.array(images)
-#         reshaped = np.reshape(images,(images.shape[0], 
-#                                       images.shape[1] * images.shape[2]))
-#         return np.array(reshaped)
-    
-#     def predict(self, images: tuple):
-#         batch = self._prep_batch(images)
-#         predictions = self.model.predict_proba(batch)
+    #     def __init__(self):
+    #         self.model = xgboost.XGBClassifier()
+    #         self.model.load_model(self.PATH)
+    #         self.preprocessing = preprocessing.ImageProcessor()
+            
+    #     def _prep_batch(self, images: tuple):
+    #         images = self.preprocessing.transform(images)
+    #         images = np.array(images)
+    #         reshaped = np.reshape(images,(images.shape[0], 
+    #                                     images.shape[1] * images.shape[2]))
+    #         return np.array(reshaped)
         
-#         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
-#                         (predictions[1].max(), predictions[1].argmax())]
-    
-#         strongest_eye = max(eye_predictions, key=itemgetter(0))
-#         probability = strongest_eye[0]
-#         prediction = strongest_eye[1]
+    #     def predict(self, images: tuple):
+    #         batch = self._prep_batch(images)
+    #         predictions = self.model.predict_proba(batch)
+            
+    #         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
+    #                         (predictions[1].max(), predictions[1].argmax())]
+        
+    #         strongest_eye = max(eye_predictions, key=itemgetter(0))
+    #         probability = strongest_eye[0]
+    #         prediction = strongest_eye[1]
 
-#         return prediction, probability
+    #         return prediction, probability

@@ -3,8 +3,8 @@ from eye_commander.face_detection import face_detection
 from eye_commander.models import models
 from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
+from eye_commander.preprocessing import preprocessing
 import cv2 
-import pandas as pd
 
 class EyeCommander:
     
@@ -14,9 +14,8 @@ class EyeCommander:
         self.camera = camera.Camera()
         self.face_detection = face_detection.FaceDetector()
         self.prediction_window = prediction_window.Window()
-        self.model = models.CNNModel()
+        self.model = models.Net()
         self.confidence = confidence
-        self.log = []
 
     def _class_name(self,prediction):
         return self.CLASS_LABELS[prediction]
@@ -27,7 +26,6 @@ class EyeCommander:
             if self.prediction_window.is_full() == True:
                 consensus = self.prediction_window.consensus(prediction)
                 if consensus == True:
-                    self.log.append((prediction, probability))
                     return prediction
                             
     def run(self):
@@ -37,6 +35,7 @@ class EyeCommander:
                 eyes = self.face_detection.eyes(frame)
                 if eyes:  
                     prediction, probability = self.model.predict(eyes)
+                    cv2.imshow('frame',eyes[0])
                     output = self.output_filter(prediction, probability)
                     if output:
                         label = self._class_name(output)
@@ -48,10 +47,8 @@ class EyeCommander:
             cv2.imshow('EyeCommander', frame)
             # end demo when ESC key is entered 
             if cv2.waitKey(5) & 0xFF == 27:
-                print(self.log)
                 break
         self.camera.close()
         cv2.destroyAllWindows()
-        
         
         
