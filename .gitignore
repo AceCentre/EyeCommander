@@ -132,6 +132,11 @@ dmypy.json
 #
 .vscode
 .DS_Store
-temp/data/
+eye_commander/temp/data/center
+eye_commander/temp/data/up
+eye_commander/temp/data/left
+eye_commander/temp/data/right
+eye_commander/temp/data/down
 notebooks/
+
 
