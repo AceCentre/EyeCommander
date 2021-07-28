@@ -5,6 +5,8 @@ import numpy as np
 from operator import itemgetter
 import pickle 
 from eye_commander.preprocessing import preprocessing
+import glob
+import cv2
 
 class CNNModel:
     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn.h5')
@@ -37,6 +39,19 @@ class CNNModel:
         prediction = strongest_eye[1]
         return prediction, probability
     
+    def tune(self, X, y):
+        #### prep model
+        for layer in self.model.layers:
+            layer.trainable = False
+        self.model.layers[-1].trainable = True
+        #### prep data
+        X = self.image_processor.transform_list(X)
+        X = [np.expand_dims(img,0) for img in X]
+        X = np.concatenate(X)
+        #### tune model
+        self.model.fit(x= X, y=y, epochs=7, batch_size=5, shuffle=True)
+        
+    
 class RandomForest:
     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/rf.sav')
     
@@ -64,36 +79,36 @@ class RandomForest:
 
         return prediction, probability
 
-class Net:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/dense.h5')
+# class Net:
+#     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/dense.h5')
     
-    def __init__(self):
-        self.model = tf.keras.models.load_model(self.PATH)
-        self.feature_extractor = preprocessing.FeatureExtractor()
-        self.input_size = (50,80,3)
+#     def __init__(self):
+#         self.model = tf.keras.models.load_model(self.PATH)
+#         self.feature_extractor = preprocessing.FeatureExtractor()
+#         self.input_size = (50,80,3)
         
-    def _prep_batch(self, images: tuple):
-        imgs = []
-        for image in images:
-            image = np.array(tf.image.resize_with_crop_or_pad(image, target_height=50, target_width=80))
-            image = np.expand_dims(image,0)
-            imgs.append(image)
-        batch = np.concatenate(imgs)
-        features = self.feature_extractor.extract(batch)
-        return features
+#     def _prep_batch(self, images: tuple):
+#         imgs = []
+#         for image in images:
+#             image = np.array(tf.image.resize_with_crop_or_pad(image, target_height=50, target_width=80))
+#             image = np.expand_dims(image,0)
+#             imgs.append(image)
+#         batch = np.concatenate(imgs)
+#         features = self.feature_extractor.extract(batch)
+#         return features
     
-    def predict(self, images: tuple):
-        batch = self._prep_batch(images)
-        predictions = self.model.predict(batch)
+#     def predict(self, images: tuple):
+#         batch = self._prep_batch(images)
+#         predictions = self.model.predict(batch)
         
-        eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
-                        (predictions[1].max(), predictions[1].argmax())]
+#         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
+#                         (predictions[1].max(), predictions[1].argmax())]
     
-        strongest_eye = max(eye_predictions, key=itemgetter(0))
-        probability = strongest_eye[0]
-        prediction = strongest_eye[1]
+#         strongest_eye = max(eye_predictions, key=itemgetter(0))
+#         probability = strongest_eye[0]
+#         prediction = strongest_eye[1]
 
-        return prediction, probability
+#         return prediction, probability
     
     
     # class XGBoostModel:
