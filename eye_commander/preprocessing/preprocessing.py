@@ -42,6 +42,10 @@ class ImageProcessor:
         right_processed = self._process(right)
         return (left_processed, right_processed)
     
+    def transform_list(self, images:list):
+        output = [self._process(img) for img in images]
+        return output
+    
 class FeatureExtractor:
     def __init__(self):
         self.extractor = self.build_feature_extractor()
