@@ -5,6 +5,8 @@ from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
 from eye_commander.calibration import calibration
 import cv2 
+import numpy as np
+import os
 
 class EyeCommander:
     
@@ -28,6 +30,11 @@ class EyeCommander:
                 consensus = self.prediction_window.consensus(prediction)
                 if consensus == True:
                     return prediction
+    
+    def log(self, frame, pred, proba):
+        log = open(os.path.join(os.getcwd(),'eye_commander/log/log.txt'), "a")
+        log.write(f'{pred}, {proba}, {np.mean(frame)} \n')
+        log.close()
                    
     def run(self, calibrate:bool=True):
         if calibrate == True:
@@ -38,11 +45,11 @@ class EyeCommander:
                 eyes = self.face_detection.eyes(frame)
                 if eyes:  
                     prediction, probability = self.model.predict(eyes)
-                    cv2.imshow('frame',eyes[0])
                     output = self.output_filter(prediction, probability)
                     if output:
                         label = self._class_name(output)
                         display.display_prediction(label=label, frame=frame)
+                    self.log(frame=frame, pred=prediction, proba=probability)
                         
                     display.display_probability(frame=frame, probability=probability)
             
