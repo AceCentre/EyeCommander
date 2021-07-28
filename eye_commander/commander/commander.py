@@ -3,7 +3,6 @@ from eye_commander.face_detection import face_detection
 from eye_commander.models import models
 from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
-from eye_commander.preprocessing import preprocessing
 from eye_commander.calibration import calibration
 import cv2 
 
