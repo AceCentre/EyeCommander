@@ -13,12 +13,13 @@ class Calibrator:
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     def __init__(self):
         self.camera = image_capture.Camera()
-        self.face_detector = face_detection.FaceDetector()
+        self.face_detector = face_detection.FaceDetector()    
        
     def _build_temp_data_directory(self):
         """_build_directory generates the nested directory structure that will be used
         to store user data for tuning.
         """
+        
         path = os.path.join(self.TEMP_PATH,'data')
         # delete any leftover temp data from the last session
         if os.path.exists(path) == True:
@@ -65,9 +66,11 @@ class Calibrator:
     
     def calibrate(self):
         # build temp data directory
+        if os.path.exists(self.TEMP_PATH) == False:
+            os.mkdir(self.TEMP_PATH)
         self._build_temp_data_directory()
         print('directory built successfully')
-         
+        
         # capture data
         data = self.camera.gather_data()
         print('data capture completed')
@@ -86,8 +89,6 @@ class Calibrator:
         
         # tune model
         model.tune(X=images, y=labels)
-        print('here')
-        print(type(model))
         
         # output success
         print('calibration successful')
