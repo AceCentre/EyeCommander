@@ -40,4 +40,4 @@ def display_prediction(label:str, frame:np.array,
 
 def display_probability(frame:np.array, probability:float):
     cv2.putText(frame, str(round(probability,3)), 
-                                (510, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
+                                (570, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 

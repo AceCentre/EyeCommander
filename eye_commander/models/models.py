@@ -9,7 +9,7 @@ import glob
 import cv2
 
 class CNNModel:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn.h5')
+    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn2.h5')
     
     def __init__(self):
         self.model = tf.keras.models.load_model(self.PATH)
