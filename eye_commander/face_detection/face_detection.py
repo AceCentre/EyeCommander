@@ -8,11 +8,11 @@ class FaceDetector:
                  'left_outline':[33,7,163,144,145,153,154,155,133, 173,157,158,159,160,161,246], 
                  'right_outline':[362,382,381,380,374,373,390,249,263,466,388,387,386,385,384,398]}
    
-    def __init__(self, static:bool=False):
+    def __init__(self, static:bool=False, min_detection_confidence:float=0.7, min_tracking_confidence:float=0.7):
         self.face_mesh = mp.solutions.face_mesh.FaceMesh(static_image_mode=static, 
                                                          max_num_faces=1,
-                                                         min_detection_confidence=0.7, 
-                                                         min_tracking_confidence=0.7)
+                                                         min_detection_confidence=min_detection_confidence, 
+                                                         min_tracking_confidence=min_tracking_confidence)
         self.input_shape = None
         self.landmarks = None
         self.left_keys = None
