@@ -1,7 +1,11 @@
-import cv2
+from eye_commander.commander.commander import EyeCommander
+from eye_commander.preprocessing import preprocessing
+from eye_commander.face_detection import face_detection
 import os
 import glob
-from eye_commander.commander.commander import EyeCommander
+import cv2
+from PIL import Image
+import shutil
 
 
 
@@ -55,6 +59,85 @@ def dir_to_eye_images(base_readpath: str, base_writepath: str, commander):
             else:
                 count+=1
         print(f'done {name}.')
+        
+
+
+class ImageUtil:
+    CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
+    def __init__(self, readpath:str, writepath:str):
+        self.preprocessing = preprocessing.ImageProcessor()
+        self.face_detector = face_detection.FaceDetector(static=True, min_detection_confidence=0.5,
+                                                         min_tracking_confidence=0.5) 
+        self.readpath = readpath
+        self.writepath = writepath
+        
+    def load_image(self, path):
+        image = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        corrected = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        return corrected
+
+    def crop_eyes(self, image):
+        eyes = self.face_detector.eyes(image)
+        return eyes
+    
+    def preprocess(self, eyes):
+        processed_eyes = self.preprocessing.transform(eyes)
+        return processed_eyes
+    
+    def write_images(self, eyes, path, count):
+        try:
+            left, right = Image.fromarray(eyes[0]), Image.fromarray(eyes[1])
+            path1 = os.path.join(path, f'image{count}.jpg')
+            path2 = os.path.join(path, f'image{count+1}.jpg')
+            left.save(path1)
+            right.save(path2)
+            return True
+        except:
+            return False
+    
+    def build_dir(self):
+        base = self.writepath
+        if os.path.exists(base):
+            shutil.rmtree(base)
+        base = os.path.join(self.writepath)
+        os.mkdir(base)
+        
+        for label in self.CLASS_LABELS:
+            path = os.path.join(base, label)
+            os.mkdir(path)
+            
+    def write_class(self, label:str):
+        readpath = os.path.join(self.readpath, label)
+        writepath = os.path.join(self.writepath, label)
+        files = glob.glob(os.path.join(readpath, '*.jpg'))
+        print(f'{len(files)*2} possible eye images for class: {label}')
+        count = 0
+        for path in files:
+            image = self.load_image(path)
+            eyes = self.crop_eyes(image)
+            if eyes:
+                success = self.write_images(eyes, writepath, count)
+                if success == True:
+                    count += 2
+                else:
+                    pass
+            else:
+                pass
+        print(f'{count} images written successfully for class: {label}')
+        # print(f'Error rate of {round((count/len(files)*2),2)} for class: {label}')
+    
+    def process(self):
+        self.build_dir()
+        for label in self.CLASS_LABELS:
+            self.write_class(label)
+            print(f'{label} completed...')
+        print('processing complete.')
+    
+
+# util = ImageUtil(readpath='/Users/danielkashkett/Desktop/AceCentre/data/raw/frames/frames',
+#                  writepath='/Users/danielkashkett/Desktop/AceCentre/data/eyes')
+# util.process()
+    
    
 # ec = EyeCommander(calibrate=False) 
 # dir_to_eye_images(base_readpath='/Users/danielkashkett/Desktop/AceCentre/data/raw/frames/frames', 
