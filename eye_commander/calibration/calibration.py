@@ -32,23 +32,22 @@ class Calibrator:
     def _load_data(self):
         path = os.path.join(self.TEMP_PATH, 'data')
         d = {}
-        for idx, l in enumerate(['center', 'down', 'left', 'right', 'up']):
-            subpath = os.path.join(path, l)
+        for idx, label in enumerate(['center', 'down', 'left', 'right', 'up']):
+            subpath = os.path.join(path, label)
             files = glob.glob(subpath + '/*.jpg')
             data = []
             for f in files:
                 img = cv2.imread(f, cv2.IMREAD_UNCHANGED)
                 data.append(img)
-            d[idx] = np.array(data)
-        shapes = {key:val.shape[0] for key,val in d.items()}
+            d[idx] = data
+        # shapes = {key:len(val) for key,val in d.items()}
         images = []
         labels = []
         for key, val in d.items():
-            images.extend(list(val))
+            images.extend(val)
             labels.extend([key]*len(val))
-        images = np.array(images)
-        labels = np.array(labels)
-        print('output dataset size: ',shapes)
+        
+        print(f'dataset size: {len(images)}')
         return images, labels
     
     def _process_caputred_frames(self, data:dict):
@@ -81,7 +80,7 @@ class Calibrator:
         
         # load data
         images, labels = self._load_data()
-        print('data loaded.')
+        # print('data loaded.')
         
         # load model 
         model = models.CNNModel()

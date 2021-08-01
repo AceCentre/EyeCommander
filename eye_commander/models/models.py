@@ -18,7 +18,7 @@ class CNNModel:
 
     def _prep_batch(self, images: tuple):
         # preprocessing 
-        eyes = self.image_processor.transform(images)
+        eyes = self.image_processor.preprocess_eyes(images)
         # add batch dimension for tensorflow
         left = np.expand_dims(eyes[0], 0)
         right = np.expand_dims(eyes[1], 0)
@@ -45,9 +45,10 @@ class CNNModel:
             layer.trainable = False
         self.model.layers[-1].trainable = True
         #### prep data
-        X = self.image_processor.transform_list(X)
+        X = self.image_processor.preprocess(X)
         X = [np.expand_dims(img,0) for img in X]
         X = np.concatenate(X)
+        y = np.array(y)
         #### tune model
         self.model.fit(x= X, y=y, epochs=7, batch_size=5, shuffle=True)
         

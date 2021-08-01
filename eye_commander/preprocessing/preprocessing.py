@@ -36,13 +36,13 @@ class ImageProcessor:
         resized = self._resize(segmented)
         return resized
     
-    def transform(self, images:tuple):
+    def preprocess_eyes(self, images:tuple):
         left, right = images
         left_processed = self._process(left)
         right_processed = self._process(right)
         return (left_processed, right_processed)
     
-    def transform_list(self, images:list):
+    def preprocess(self, images:list):
         output = [self._process(img) for img in images]
         return output
     

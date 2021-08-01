@@ -78,7 +78,12 @@ class Camera:
                             frames = self.capture_frames()
                             data[direction] = frames
                             break
+                    # on finish of last label
+                    if direction == 'up':
+                        cv2.putText(frame, f'Tuning in progress, please be patient.', org =(20, 210),  
+                                    fontFace=font, fontScale=3, color=font_color, thickness=6) 
                 break
+        
         return data
     
 
