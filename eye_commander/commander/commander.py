@@ -35,7 +35,7 @@ class EyeCommander:
         log = open(os.path.join(os.getcwd(),'eye_commander/log/log.txt'), "a")
         log.write(f'{pred}, {proba}, {np.mean(frame)} \n')
         log.close()
-                   
+             
     def run(self, calibrate:bool=True):
         if calibrate == True:
             self.model = self.calibrator.calibrate()
@@ -55,7 +55,9 @@ class EyeCommander:
             
             display.draw_position_rect(frame=frame, color='green')
             cv2.imshow('EyeCommander', frame)
-            # end demo when ESC key is entered 
+            # end demo when ESC key is entered
+            if cv2.waitKey(5) & 0xFF == ord('c'):
+                self.model = self.calibrator.calibrate()
             if cv2.waitKey(5) & 0xFF == 27:
                 break
         self.camera.close()
