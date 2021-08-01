@@ -143,3 +143,35 @@ class ImageUtil:
 # dir_to_eye_images(base_readpath='/Users/danielkashkett/Desktop/AceCentre/data/raw/frames/frames', 
 #                       base_writepath='/Users/danielkashkett/Desktop/AceCentre/data/processed/50_90/', commander=ec)
     
+
+
+def add_to_dataset(user_data_path, dataset_path):
+    CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
+    for label in CLASS_LABELS:
+        readpath = os.path.join(user_data_path,label)
+        writepath = os.path.join(dataset_path, label)
+        files_to_move = glob.glob(os.path.join(readpath,'*.jpg'))
+        destination_files = glob.glob(os.path.join(writepath,'*.jpg'))
+        func = lambda x: int(''.join([i for i in x if i.isdigit()]))
+        indx = max([func(i) for i in destination_files])
+        for file in files_to_move:
+            os.rename(src=file, dst=os.path.join(writepath, f'{label}{indx}.jpg'))
+            indx += 1
+            
+
+def reset_filenames(dataset_path:str):
+    CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
+    for label in CLASS_LABELS:
+        readpath = os.path.join(dataset_path, label)
+        files = glob.glob(os.path.join(readpath,'*.jpg'))
+        count = 1
+        for file in files:
+            head = os.path.split(file)[0]
+            print(head)
+            print(os.path.join(head, f'{label}{count}.jpg'))
+            os.rename(src=file, dst=os.path.join(head, f'{label}{count}.jpg'))
+            count += 1
+            return
+        
+        
+
