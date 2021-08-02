@@ -7,6 +7,7 @@ import pickle
 from eye_commander.preprocessing import preprocessing
 import glob
 import cv2
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class CNNModel:
     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn_filtered.h5')
