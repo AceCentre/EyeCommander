@@ -167,11 +167,20 @@ def reset_filenames(dataset_path:str):
         count = 1
         for file in files:
             head = os.path.split(file)[0]
-            print(head)
-            print(os.path.join(head, f'{label}{count}.jpg'))
             os.rename(src=file, dst=os.path.join(head, f'{label}{count}.jpg'))
             count += 1
-            return
+
+def change_filenames(dataset_path:str):
+    CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
+    for label in CLASS_LABELS:
+        readpath = os.path.join(dataset_path, label)
+        files = glob.glob(os.path.join(readpath,'*.jpg'))
+        count = 1
+        for file in files:
+            head = os.path.split(file)[0]
+            os.rename(src=file, dst=os.path.join(head, f'image{count}.jpg'))
+            count += 1
+    print('completed.')
         
         
 
