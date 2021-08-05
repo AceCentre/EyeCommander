@@ -1,7 +1,7 @@
 name: Comment on PR
 on:
   workflow_run:
-    workflows: [PullRequestBuild]
+    workflows: ["Pull Request Build"]
     types:
       - completed
 
@@ -15,7 +15,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          prefix: Here are the artifacts
-          suffix: Have a nice day.
+          prefix: Here is a link to the Windows build of eye commander.
           format: name
           addTo: pull
