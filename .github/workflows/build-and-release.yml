@@ -21,3 +21,7 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Install dependencies
         run: pip install -r ./eye_commander/requirements.txt
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+      - name: Bundle with pyinstaller
+        run: pyinstaller entry.py
