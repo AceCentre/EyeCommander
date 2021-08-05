@@ -41,7 +41,7 @@ class Camera:
             display.draw_position_rect(frame=frame, color='red')
             cv2.imshow('EyeCommander', frame)
             # end demo when ESC key is entered 
-            if cv2.waitKey(5) & 0xFF == 27:
+            if cv2.waitKey(5) & 0xFF == ord('c'):
                 break
         ##### drop first few frames
         data = data[drop_frames:]
@@ -57,31 +57,27 @@ class Camera:
             # capture a frame and extract eye images
             cam_success, frame = self.refresh()
             if cam_success == True:
-                cv2.putText(frame, f'press esc to begin calibration', org =(20, 210),  
+                cv2.putText(frame, f'press N to begin calibration', org =(20, 210),  
                     fontFace=font, fontScale=3, color=font_color, thickness=6)
                 display.draw_position_rect(frame=frame, color='green')
                 cv2.imshow('EyeCommander', frame)
                 
-            if cv2.waitKey(1) & 0xFF == 27:
+            if cv2.waitKey(1) & 0xFF == ord('n'):
                     # end demo when ESC key is entered 
                 for direction in ['center', 'down', 'left', 'right', 'up']:
                     while self.camera.isOpened():
                         # capture a frame and extract eye images
                         cam_success, frame = self.refresh()
                         if cam_success == True:
-                            cv2.putText(frame, f'press esc to begin {direction} calibration', org =(20, 210),  
+                            cv2.putText(frame, f'press N to begin {direction} calibration', org =(20, 210),  
                                 fontFace=font, fontScale=3, color=font_color, thickness=6) 
                             display.draw_position_rect(frame=frame, color='green')
                             cv2.imshow('EyeCommander', frame)
                             # end demo when ESC key is entered 
-                        if cv2.waitKey(1) & 0xFF == 27:
+                        if cv2.waitKey(1) & 0xFF == ord('n'):
                             frames = self.capture_frames()
                             data[direction] = frames
                             break
-                    # on finish of last label
-                    if direction == 'up':
-                        cv2.putText(frame, f'Tuning in progress, please be patient.', org =(20, 210),  
-                                    fontFace=font, fontScale=3, color=font_color, thickness=6) 
                 break
         
         return data
