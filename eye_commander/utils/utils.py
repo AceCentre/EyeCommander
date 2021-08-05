@@ -7,8 +7,6 @@ import cv2
 from PIL import Image
 import shutil
 
-
-
 def video_dir_to_frames(writepath, video_dir_path):
     os.mkdir(writepath)
     for label in ['center','up','down','left','right']:

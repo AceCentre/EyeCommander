@@ -53,33 +53,37 @@ class CNNModel:
         #### tune model
         self.model.fit(x= X, y=y, epochs=7, batch_size=5, shuffle=True)
         
-    
-class RandomForest:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/rf.sav')
-    
-    def __init__(self):
-        self.model = pickle.load(open(self.PATH, 'rb'))
-        self.preprocessing = preprocessing.ImageProcessor()
         
-    def _prep_batch(self, images: tuple):
-        images = self.preprocessing.transform(images)
-        images = np.array(images)
-        reshaped = np.reshape(images,(images.shape[0], 
-                                    images.shape[1] * images.shape[2]))
-        return np.array(reshaped)
-    
-    def predict(self, images: tuple):
-        batch = self._prep_batch(images)
-        predictions = self.model.predict_proba(batch)
         
-        eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
-                        (predictions[1].max(), predictions[1].argmax())]
+        
+        
+        
+# class RandomForest:
+#     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/rf.sav')
     
-        strongest_eye = max(eye_predictions, key=itemgetter(0))
-        probability = strongest_eye[0]
-        prediction = strongest_eye[1]
+#     def __init__(self):
+#         self.model = pickle.load(open(self.PATH, 'rb'))
+#         self.preprocessing = preprocessing.ImageProcessor()
+        
+#     def _prep_batch(self, images: tuple):
+#         images = self.preprocessing.transform(images)
+#         images = np.array(images)
+#         reshaped = np.reshape(images,(images.shape[0], 
+#                                     images.shape[1] * images.shape[2]))
+#         return np.array(reshaped)
+    
+#     def predict(self, images: tuple):
+#         batch = self._prep_batch(images)
+#         predictions = self.model.predict_proba(batch)
+        
+#         eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
+#                         (predictions[1].max(), predictions[1].argmax())]
+    
+#         strongest_eye = max(eye_predictions, key=itemgetter(0))
+#         probability = strongest_eye[0]
+#         prediction = strongest_eye[1]
 
-        return prediction, probability
+#         return prediction, probability
 
 # class Net:
 #     PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/dense.h5')

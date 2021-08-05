@@ -4,8 +4,8 @@ from eye_commander.display_tools import display
 
 class Camera:
     
-    def __init__(self, source=cv2.VideoCapture(0)):
-        self.camera = source
+    def __init__(self, source:int=0):
+        self.camera = cv2.VideoCapture(source)
     
     def refresh(self):
         """refresh uses the default or specified camera passed to EyeCommander on initialization.

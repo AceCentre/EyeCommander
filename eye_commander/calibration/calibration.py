@@ -54,7 +54,7 @@ class Calibrator:
         basepath = os.path.join(self.TEMP_PATH,'data')
         for key, frames in data.items():   
             class_path = os.path.join(basepath, key)
-            count = 1
+            count = 1   
             for frame in frames:
                 eyes = self.face_detector.eyes(frame=frame)
                 if eyes:
