@@ -25,3 +25,9 @@ jobs:
         run: pip install pyinstaller
       - name: Bundle with pyinstaller
         run: pyinstaller entry.py
+      - name: Upload Build
+        uses: actions/upload-artifact@v2
+          with:
+            name: build
+            path: dist
+            retention-days: 1
