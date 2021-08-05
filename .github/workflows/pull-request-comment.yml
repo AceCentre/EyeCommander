@@ -1,7 +1,7 @@
 name: Comment on PR
 on:
   workflow_run:
-    workflows: [pull_request]
+    workflows: ["Pull Request Build"]
     types: [completed]
 
 jobs:
