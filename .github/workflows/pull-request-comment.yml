@@ -1,8 +1,9 @@
 name: Comment on PR
 on:
   workflow_run:
-    workflows: ["Pull Request Build"]
-    types: [completed]
+    workflows: [PullRequestBuild]
+    types:
+      - completed
 
 jobs:
   comment-on-pr:

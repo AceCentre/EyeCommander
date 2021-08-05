@@ -1,4 +1,4 @@
-name: Pull Request Build
+name: PullRequestBuild
 # This will change later, its on pull request for debugging purposes.
 # When its done we want to run on main branch commits
 on: [pull_request]
