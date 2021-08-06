@@ -9,12 +9,16 @@ import numpy as np
 import tensorflow as tf
 
 class Calibrator:
+    
     TEMP_PATH = os.path.join(os.getcwd(),'eye_commander/temp')
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
-    def __init__(self):
+    
+    def __init__(self, keep_data:bool=True):
+        
         self.camera = image_capture.Camera()
         self.face_detector = face_detection.FaceDetector()    
-       
+        self.keep_data = keep_data
+        
     def _build_temp_data_directory(self):
         """_build_directory generates the nested directory structure that will be used
         to store user data for tuning.
@@ -28,7 +32,10 @@ class Calibrator:
         for label in self.CLASS_LABELS:
             newpath = os.path.join(path,label)
             os.mkdir(newpath)
-            
+    
+    def _remove_temp_data(self):
+        shutil.rmtree(self.TEMP_PATH)
+          
     def _load_data(self):
         path = os.path.join(self.TEMP_PATH, 'data')
         d = {}
@@ -91,6 +98,10 @@ class Calibrator:
         
         # output success
         print('calibration successful')
+        
+        if self.keep_data == False:
+            
+            self._remove_temp_data()
         
         return model
 

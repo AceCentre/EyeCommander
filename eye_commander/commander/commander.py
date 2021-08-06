@@ -15,13 +15,13 @@ class EyeCommander:
     
     def __init__(self,  camera:int=0, confidence:float=0.9, 
                  log_output:bool=False, output_keys:bool=True,
-                 calibrate:bool=True):
+                 calibrate:bool=True, keep_data:bool=True):
         
         self.camera = image_capture.Camera(source=camera)
         self.face_detection = face_detection.FaceDetector()
         self.prediction_window = prediction_window.Window()
         self.model = models.CNNModel()
-        self.calibrator = calibration.Calibrator()
+        self.calibrator = calibration.Calibrator(keep_data=keep_data)
         self.confidence = confidence
         self.log_output = log_output
         self.output_keys = output_keys
@@ -96,7 +96,6 @@ class EyeCommander:
                 self.model = self.calibrator.calibrate()
             # end demo when ESC key is entered   
             if cv2.waitKey(5) & 0xFF == 27:
-                
                 break
             
         self.camera.close()
