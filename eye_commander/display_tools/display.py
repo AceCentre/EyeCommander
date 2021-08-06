@@ -13,9 +13,15 @@ def draw_position_rect(frame:np.array, color:str):
         color = (0,255,0)
     if color == 'red':
         color = (0,0,255)
-    cv2.rectangle(frame,(420,20),(900,700),color,3)
+    
+    h, w = np.shape(frame)[:2]
+    top_r = (int(w*.32),int(h*.05))
+    bottom_l = (int(w*.68),int(h*.95))
+    text = (int(w*.35),int(h*.1))
+    cv2.rectangle(frame, top_r, bottom_l, color,3)
     cv2.putText(frame, "center head inside box", 
-                    (470, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)
+                    text, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 1)
+
 
 def display_prediction(label:str, frame:np.array,
                        color:tuple = (252, 198, 3), font=cv2.FONT_HERSHEY_PLAIN):
@@ -27,17 +33,35 @@ def display_prediction(label:str, frame:np.array,
         color (tuple, optional): color of text. Defaults to (252, 198, 3).
         font ([type], optional): text font. Defaults to cv2.FONT_HERSHEY_PLAIN.
     """
+    h, w = np.shape(frame)[:2]
+    centerx = int((w//2))
+    centery = int(int(h//2)*1.1)
+    leftx = int(w*.02)
+    rightx = int(w*.76)
+    upy = int(h*.12)
+    downy = int(h*.95)
+    
     if label == 'left':
-        cv2.putText(frame, "left", (50, 375), font , 7, color, 15)
+        cv2.putText(frame, "left", (leftx, centery), font , 7, color, 15)
     elif label == 'right':
-        cv2.putText(frame, "right", (900, 375), font, 7, color, 15)
+        cv2.putText(frame, "right", (rightx, centery), font, 7, color, 15)
     elif label == 'up':
-        cv2.putText(frame, "up", (575, 100), font, 7, color, 15)
+        cv2.putText(frame, "up", (int(centerx*.89), upy), font, 7, color, 15)
     elif label == 'down':
-        cv2.putText(frame, "down", (500, 700), font, 7, color, 15)
+        cv2.putText(frame, "down", (int(centerx*.78), downy), font, 7, color, 15)
     else:
         pass
 
 def display_probability(frame:np.array, probability:float):
+    h, w = np.shape(frame)[:2]
     cv2.putText(frame, str(round(probability,3)), 
-                                (570, 680), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
+                                (int(w*.83), int(h*.1)), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
+    
+def display_text(frame, text, color=(255, 255, 255)):
+    h, w = np.shape(frame)[:2]
+    # centerx = int((w//2))
+    centery = int(int(h//2))
+    leftx = int(w*.02)
+    # rightx = int(w*.76)
+    
+    cv2.putText(frame, text, (leftx, centery), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)

@@ -91,11 +91,11 @@ class EyeCommander:
             cv2.imshow('EyeCommander', frame)
             
             # trigger calibration by hitting the c key
-            if cv2.waitKey(5) & 0xFF == ord('c'):
+            if cv2.waitKey(1) & 0xFF == ord('c'):
         
                 self.model = self.calibrator.calibrate()
             # end demo when ESC key is entered   
-            if cv2.waitKey(5) & 0xFF == 27:
+            if cv2.waitKey(1) & 0xFF == 27:
                 break
             
         self.camera.close()
