@@ -1,10 +1,15 @@
-from eye_commander.commander.commander import EyeCommander
-from eye_commander.utils.utils import dir_to_eye_images, video_dir_to_frames
+from eye_commander.commander import commander
 
+#### set parameters
 
-#### To capture data run eyecommander with keep_data = True
-ec = EyeCommander(calibrate=True, keep_data=False)
-ec.run()   
+params = {'camera': 0, 
+          'confidence': 0.9, 
+          'log_output': False, 
+          'output_keys': True,
+          'calibrate': False,
+          'keep_data': False}
 
+eyecommander = commander.EyeCommander(**params)
 
+eyecommander.run()   
 
