@@ -86,7 +86,7 @@ class EyeCommander:
                          
                     display.display_probability(frame=frame, probability=probability)
             
-            display.draw_position_rect(frame=frame, color='green')
+            display.draw_position_rect(frame=frame, color='white')
             
             cv2.imshow('EyeCommander', frame)
             

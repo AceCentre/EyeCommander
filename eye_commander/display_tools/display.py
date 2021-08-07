@@ -11,8 +11,10 @@ def draw_position_rect(frame:np.array, color:str):
     """
     if color == 'green':
         color = (0,255,0)
-    if color == 'red':
+    elif color == 'red':
         color = (0,0,255)
+    elif color == 'white':
+        color = (255,255,255)
     
     h, w = np.shape(frame)[:2]
     top_r = (int(w*.32),int(h*.05))
@@ -55,7 +57,7 @@ def display_prediction(label:str, frame:np.array,
 def display_probability(frame:np.array, probability:float):
     h, w = np.shape(frame)[:2]
     cv2.putText(frame, str(round(probability,3)), 
-                                (int(w*.83), int(h*.1)), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0), 2) 
+                                (int(w*.83), int(h*.1)), cv2.FONT_HERSHEY_SIMPLEX, 2, (255,255,255), 3) 
     
 def display_text(frame, text, color=(255, 255, 255)):
     h, w = np.shape(frame)[:2]
