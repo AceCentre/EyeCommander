@@ -28,66 +28,96 @@ class EyeCommander:
         self.run_calibration = calibrate
 
     def _class_name(self,prediction):
-        
+        """converts prediction output into class name string
+
+        Args:
+            prediction (int): tensorflow argmax for predicted class
+
+        Returns:
+            str: corresponding class name
+        """
         return self.CLASS_LABELS[prediction]
     
     def output_filter(self, prediction, probability):
+        """filters current frame prediction based on threshold specified in initialization. 
+        Predictions in a window of time must agree, i.e. be the same, otherwise
+        function will return False.
+
+        Args:
+            prediction (int): tensorflow argmax prediction
+            probability (float): probability for predicted class
+
+        Returns:
+            bool: True or False depending on whether prediction meets criteria
+        """
+        # check if prediction proba > than a threshold
         if probability > self.confidence:
-            
+            # add prediction to window
             self.prediction_window.insert(prediction)
-            
+            # if window is equal to desired window size
             if self.prediction_window.is_full() == True:
-                
+                # determine if all predictions over that window are in aggreement
                 consensus = self.prediction_window.consensus(prediction)
-                
+                # consensus will return False if predictions disagree
                 if consensus == True:
-                    
+                    # return the prediction
                     return prediction
     
     def log(self, frame, pred:int, proba:float):
-        
+        """log
+
+        Args:
+            frame (np.array): numpy array representation of current frame
+            pred (int): tensorflow argmax of prediction
+            proba (float): prediction probability
+        """
+        # open file
         log = open(os.path.join(os.getcwd(),'eye_commander/log/log.txt'), "a")
-        
+        # write contents
         log.write(f'{pred}, {proba}, {np.mean(frame)} \n')
-        
+        # close file
         log.close()
              
     def run(self):
-        
+        """ main application entrypoint
+        """
+        # run calibration if parameter specified
         if self.run_calibration == True:
             
             self.model = self.calibrator.calibrate()
-            
+        # open camera lense  
         while self.camera.open():
-            
+            # attempt to capture a frame
             success, frame = self.camera.refresh()
-            
+            # if successful
             if success == True:
-                
+                # run face/eye detection on the captured frame
                 eyes = self.face_detection.eyes(frame)
-                
+                # if variable eyes contains tuple of images and not None
                 if eyes:  
-                    
+                    # make a prediction based on the eye images
                     prediction, probability = self.model.predict(eyes)
+                    # determine if prediction proba is > than proba threshold
                     output = self.output_filter(prediction, probability)
-                    
+                    # if so, output will be a prediction and not None
                     if output:
-                        
+                        # get class label from integer prediction value
                         label = self._class_name(output)
+                        # draw class label text onto frame
                         display.display_prediction(label=label, frame=frame)
-                    
+                        # output keystroke if parameter specified
                         if self.output_keys:
                             
                             keystroke.output_keystrokes(label)
-                    
+                    # log prediction, probability, mean_pixel if param specified
                     if self.log_output == True:
                         
                         self.log(frame=frame, pred=prediction, proba=probability)
-                         
+                    # display probability regardless of whether it exceeds threshold   
                     display.display_probability(frame=frame, probability=probability)
-            
+            # draw guid for head placement
             display.draw_position_rect(frame=frame, color='white')
-            
+            # show frame
             cv2.imshow('EyeCommander', frame)
             
             # trigger calibration by hitting the c key

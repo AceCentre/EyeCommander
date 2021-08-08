@@ -5,6 +5,7 @@ from eye_commander.display_tools import display
 class Camera:
     
     def __init__(self, source:int=0):
+        
         self.camera = cv2.VideoCapture(source)
     
     def refresh(self):
@@ -25,12 +26,27 @@ class Camera:
         return cam_status, frame
         
     def open(self):
+        """ wrapper for cv2 isOpened function
+        """
         return self.camera.isOpened()
     
     def close(self):
+        """ wrapper for cv2 method release, realeases the camera
+        """
         return self.camera.release()
     
     def capture_frames(self, n_frames:int = 100, drop_frames:int= 10):
+        """ capture_frames opens the specified camera and captures a specified 
+        number of frames. There is an option to drop the firs n frames 
+        as these are often poor examples.
+
+        Args:
+            n_frames (int): number of frames to capture. Defaults to 100.
+            drop_frames (int): number of frames to drop. Defaults to 10.
+
+        Returns:
+            list: list of image arrays
+        """
         
         frame_count = 0
         data = []
@@ -61,6 +77,13 @@ class Camera:
         return data
     
     def gather_data(self):
+        """gather_data automates the frame capture process by using the
+        capture_frames method for each of the classes gathering data 
+        to tune the model.
+
+        Returns:
+            dict: dictionary with class names as keys and lists of images as values
+        """
         data = {'center':[],'down':[],'left':[],'right':[],'up':[]}
         ###### CAPTURING USER DATA #######
         
