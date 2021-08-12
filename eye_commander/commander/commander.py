@@ -111,51 +111,44 @@ class EyeCommander:
                     if output:
                         # get class label from integer prediction value
                         label = self._class_name(output)
-                      
+                        # if not in a current label state
                         if not skip or frame_count >= skip:
-                            
+                            # reset frame_count
+                            frame_count = 0
                             # set label_state
                             label_state = label
-                            
-                            if self.sounds == True:
-                                
-                                sounds.play(label=label)
-                            
                             # skip inference on the next 8 frames
                             skip = frame_count + 14
-                            
+                            # play sound if param set
+                            if self.sounds == True:
+                                sounds.play(label=label)
+                            # output keystroke if param set
+                            if self.output_keys:
+                                keystroke.output_keystrokes(label=label)
+                                
+                    # if not in a current label state but there is no prediction
                     elif not skip or frame_count >= skip:
-                        
-                        label_state = None     
-                    
+                        # set label state to None
+                        label_state = None    
+        
                     # display probability regardless of whether it exceeds threshold   
                     display.display_probability(frame=frame, probability=probability)      
-                    
-                        # output keystroke if parameter specified
-                        # if self.output_keys:
-                        #     keystroke.output_keystrokes(label=label)
-                        # if self.sounds == True:
-                        #     # sounds.play(label=label)
-                        #     pass
-                            
-                    # log prediction, probability, mean_pixel if param specified
+                   
+                    # log prediction, probability, mean_pixel if param set
                     if self.log_output == True:
                         
                         self.log(frame=frame, pred=prediction, proba=probability)
-                         
-                # if we are not in a prediction state, set label_state to None and reset frame_count
-                # if skip_to and frame_count > skip_to:
-                #     label_state = None
-                #     frame_count = 0
-                # if a label_state exists, display it 
-                
-            if label_state:
-                display.display_prediction(label=label_state, frame=frame)
                         
+            # if currently in a label state
+            if label_state:
+                # display label
+                display.display_prediction(label=label_state, frame=frame)
+                           
             # draw guid for head placement
             display.draw_position_rect(frame=frame, color='white')
             # show frame
             cv2.imshow('EyeCommander', frame)
+            # iterate the frame count
             frame_count += 1 #####
             
             # trigger calibration by hitting the c key
