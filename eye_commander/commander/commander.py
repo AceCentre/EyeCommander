@@ -21,7 +21,7 @@ class EyeCommander:
         
         self.camera = image_capture.Camera(source=camera)
         self.face_detection = face_detection.FaceDetector()
-        self.prediction_window = prediction_window.Window()
+        self.prediction_window = prediction_window.Window(size=6)
         self.model = models.CNNModel()
         self.calibrator = calibration.Calibrator(keep_data=keep_data)
         self.confidence = confidence
