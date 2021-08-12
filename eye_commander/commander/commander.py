@@ -13,8 +13,8 @@ import sys
 # https://stackoverflow.com/questions/56210408/location-of-the-added-files-after-the-executable-file-is-generated-by-pyinstalle
 def resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
+        return os.path.join(sys._MEIPASS, relative_path.replace("/", "\\"))
+    return os.path.join(os.path.abspath("."), relative_path.replace("/", "\\"))
 
 class EyeCommander:
     
@@ -53,7 +53,7 @@ class EyeCommander:
     
     def log(self, frame, pred:int, proba:float):
         
-        log = open(resource_path('eye_commander/log/log.txt'), "a")
+        log = open(resource_path('eye_commander\log\log.txt'), "a")
         
         log.write(f'{pred}, {proba}, {np.mean(frame)} \n')
         
