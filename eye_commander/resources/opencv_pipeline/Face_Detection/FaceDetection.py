@@ -2,11 +2,16 @@ import dlib
 import os
 import cv2
 import numpy as np
+import sys
 
+# https://stackoverflow.com/questions/56210408/location-of-the-added-files-after-the-executable-file-is-generated-by-pyinstalle
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class FaceDetector(object):
-    CWD = os.getcwd()
-    MODEL_PATH = CWD + "/models/shape_predictor_68_face_landmarks.dat"
+    MODEL_PATH = resource_path("models/shape_predictor_68_face_landmarks.dat")
 
     def __init__(self):
         self._face_detector = dlib.get_frontal_face_detector()

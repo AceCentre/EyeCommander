@@ -7,10 +7,17 @@ import cv2
 import glob
 import numpy as np
 import tensorflow as tf
+import sys
+
+# https://stackoverflow.com/questions/56210408/location-of-the-added-files-after-the-executable-file-is-generated-by-pyinstalle
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class Calibrator:
     
-    TEMP_PATH = os.path.join(os.getcwd(),'eye_commander/temp')
+    TEMP_PATH = resource_path('eye_commander/temp')
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     
     def __init__(self, keep_data:bool=True):

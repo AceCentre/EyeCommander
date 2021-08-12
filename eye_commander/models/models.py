@@ -7,10 +7,17 @@ import pickle
 from eye_commander.preprocessing import preprocessing
 import glob
 import cv2
+import sys
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+# https://stackoverflow.com/questions/56210408/location-of-the-added-files-after-the-executable-file-is-generated-by-pyinstalle
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 class CNNModel:
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn_filtered.h5')
+    PATH = resource_path('eye_commander/models/trained_models/cnn_filtered.h5')
     
     def __init__(self):
         self.model = tf.keras.models.load_model(self.PATH)
