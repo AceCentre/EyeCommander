@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from eye_commander.display_tools import display
+from eye_commander.sounds import sounds
 
 class Camera:
     
@@ -105,7 +106,7 @@ class Camera:
                     # end demo when ESC key is entered 
                     
                 for direction in ['center', 'down', 'left', 'right', 'up']:
-                    
+                    sounds.play_tone() ####
                     while self.camera.isOpened():
                         
                         # capture a frame and extract eye images
@@ -121,12 +122,16 @@ class Camera:
                             cv2.imshow('EyeCommander', frame)
                             # end demo when ESC key is entered 
                         if cv2.waitKey(1) & 0xFF == ord('n'):
-                            
+                            if direction == 'center':
+                                sounds.play_center()
+                            else:
+                                sounds.play(direction)
                             frames = self.capture_frames()
-                            
                             data[direction] = frames
                             break
                 break
+        
+        sounds.play_tone()
         
         return data
     
