@@ -10,12 +10,6 @@ import numpy as np
 import os
 import sys
 
-# https://stackoverflow.com/questions/56210408/location-of-the-added-files-after-the-executable-file-is-generated-by-pyinstalle
-def resource_path(relative_path):
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path.replace("/", "\\"))
-    return os.path.join(os.path.abspath("."), relative_path.replace("/", "\\"))
-
 class EyeCommander:
     
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
