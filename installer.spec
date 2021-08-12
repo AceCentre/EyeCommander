@@ -7,12 +7,14 @@ def get_mediapipe_path():
     mediapipe_path = mediapipe.__path__[0]
     return mediapipe_path
 
-
+added_files = [
+    ( './eye_commander/models/trained_models', './eye_commander/models/trained_models' ),
+]
 
 a = Analysis(['example.py'],
              pathex=['.'],
              binaries=[],
-             datas=[],
+             datas=added_files,
              hiddenimports=["skimage.filters.rank.core_cy_3d","pynput.keyboard._win32", "pynput.mouse._win32"],
              hookspath=[],
              runtime_hooks=[],
