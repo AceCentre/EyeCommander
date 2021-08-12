@@ -7,8 +7,10 @@ def get_mediapipe_path():
     mediapipe_path = mediapipe.__path__[0]
     return mediapipe_path
 
-a = Analysis(['C:\\GitHub\\EyeCommander\\example.py'],
-             pathex=['C:\\GitHub\\EyeCommander'],
+
+
+a = Analysis(['example.py'],
+             pathex=['.'],
              binaries=[],
              datas=[],
              hiddenimports=["skimage.filters.rank.core_cy_3d"],
@@ -19,6 +21,7 @@ a = Analysis(['C:\\GitHub\\EyeCommander\\example.py'],
              win_private_assemblies=False,
              cipher=block_cipher,
              noarchive=True)
+             
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 
