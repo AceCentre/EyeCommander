@@ -6,10 +6,8 @@ from operator import itemgetter
 import pickle 
 from eye_commander.preprocessing import preprocessing
 from eye_commander.utils import resource_path
-
 import glob
 import cv2
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class CNNModel:

@@ -9,7 +9,6 @@ from eye_commander.utils import resource_path
 import cv2 
 import numpy as np
 import os
-import sys
 
 class EyeCommander:
     
