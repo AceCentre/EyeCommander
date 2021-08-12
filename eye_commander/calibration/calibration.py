@@ -1,7 +1,6 @@
 from eye_commander.image_capture import image_capture
 from eye_commander.face_detection import face_detection
 from eye_commander.models import models
-from eye_commander.sounds import sounds
 import os
 import shutil
 import cv2
@@ -142,4 +141,3 @@ class Calibrator:
             self._remove_temp_data()
         
         return model
-
