@@ -17,7 +17,7 @@ class EyeCommander:
     def __init__(self,  camera:int=0, confidence:float=0.9, 
                  log_output:bool=False, output_keys:bool=True,
                  calibrate:bool=True, keep_data:bool=True,
-                 sounds:bool=True):
+                 sounds:bool=True, directions:list=['center', 'down', 'left', 'right', 'up']):
         
         self.camera = image_capture.Camera(source=camera)
         self.face_detection = face_detection.FaceDetector()
@@ -29,7 +29,9 @@ class EyeCommander:
         self.output_keys = output_keys
         self.run_calibration = calibrate
         self.sounds = sounds
-        
+        self.directions = directions
+        if 'center' not in self.directions:
+            self.directions.append('center')
 
     def _class_name(self,prediction):
         """converts prediction output into class name string
@@ -64,8 +66,10 @@ class EyeCommander:
                 consensus = self.prediction_window.consensus(prediction)
                 # consensus will return False if predictions disagree
                 if consensus == True:
-                    # return the prediction
-                    return prediction
+                    
+                    if self._class_name(prediction) in self.directions:
+                        # return the prediction
+                        return prediction
     
     def log(self, frame, pred:int, proba:float):
         """log
@@ -88,7 +92,7 @@ class EyeCommander:
         # run calibration if parameter specified
         if self.run_calibration == True:
             
-            self.model = self.calibrator.calibrate()
+            self.model = self.calibrator.calibrate(directions=self.directions)
             
         frame_count = 0
         skip = None
@@ -154,7 +158,8 @@ class EyeCommander:
             # trigger calibration by hitting the c key
             if cv2.waitKey(1) & 0xFF == ord('c'):
         
-                self.model = self.calibrator.calibrate()
+                self.model = self.calibrator.calibrate(directions=self.directions)
+                
             # end demo when ESC key is entered   
             if cv2.waitKey(1) & 0xFF == 27:
                 break

@@ -104,7 +104,7 @@ class Calibrator:
                     
                     count += 2
     
-    def calibrate(self):
+    def calibrate(self, directions:list):
         
         # build temp data directory
         if os.path.exists(self.TEMP_PATH) == False:
@@ -115,7 +115,7 @@ class Calibrator:
         print('directory built successfully')
         
         # capture data
-        data = self.camera.gather_data()
+        data = self.camera.gather_data(directions=directions)
         print('data capture completed')
         
         # process data

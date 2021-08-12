@@ -77,7 +77,7 @@ class Camera:
         
         return data
     
-    def gather_data(self):
+    def gather_data(self, directions:list):
         """gather_data automates the frame capture process by using the
         capture_frames method for each of the classes gathering data 
         to tune the model.
@@ -105,7 +105,7 @@ class Camera:
             if cv2.waitKey(1) & 0xFF == ord('n'):
                     # end demo when ESC key is entered 
                     
-                for direction in ['center', 'down', 'left', 'right', 'up']:
+                for direction in directions:
                     if direction != 'center':
                         sounds.play_tone()
                     while self.camera.isOpened():
