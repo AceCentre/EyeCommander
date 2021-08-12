@@ -1,6 +1,4 @@
 import os
-import simpleaudio as sa
-from playsound import playsound
 import pygame 
 pygame.init()
 pygame.mixer.init()
