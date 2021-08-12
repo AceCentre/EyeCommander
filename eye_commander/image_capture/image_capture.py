@@ -106,7 +106,8 @@ class Camera:
                     # end demo when ESC key is entered 
                     
                 for direction in ['center', 'down', 'left', 'right', 'up']:
-                    sounds.play_tone() ####
+                    if direction != 'center':
+                        sounds.play_tone()
                     while self.camera.isOpened():
                         
                         # capture a frame and extract eye images
@@ -132,9 +133,9 @@ class Camera:
                 break
         
         sounds.play_tone()
-        
+      
         return data
     
 
     
-    
+

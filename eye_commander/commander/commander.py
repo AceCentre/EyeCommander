@@ -118,7 +118,7 @@ class EyeCommander:
                             # set label_state
                             label_state = label
                             # skip inference on the next 8 frames
-                            skip = frame_count + 14
+                            skip = frame_count + 12
                             # play sound if param set
                             if self.sounds == True:
                                 sounds.play(label=label)
