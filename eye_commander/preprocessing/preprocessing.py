@@ -57,21 +57,14 @@ class ImageProcessor:
         
         return resized
     
-    def preprocess_eyes(self, images:tuple):
-        
-        left, right = images
-        
-        left_processed = self._process(left)
-        
-        right_processed = self._process(right)
-        
-        return (left_processed, right_processed)
-    
     def preprocess(self, images:list):
         
         output = [self._process(img) for img in images]
         
         return output
+    
+    
+    
     
 # class FeatureExtractor:
 #     def __init__(self):

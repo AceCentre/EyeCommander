@@ -1,5 +1,29 @@
 import numpy as np
-import queue
+from collections import deque
+# class Window:
+    
+#     def __init__(self, size:int=4, threshold:float=0.9):
+        
+#         self.queue = deque(maxlen=size)
+        
+#         self.threshold = threshold
+    
+#     def insert(self, prediction, probability):
+        
+#         if probability >= self.threshold:
+            
+#             if len(self.queue) == self.queue.maxlen: 
+                
+#                 self.queue.append(prediction)
+        
+    
+#     def consensus(self):
+        
+#         if len(self.queue) == 0:
+            
+#             return False
+        
+#         return self.queue.count(self.queue[0]) == len(self.queue)
 
 class Window:
     

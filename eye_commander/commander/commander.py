@@ -5,6 +5,7 @@ from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
 from eye_commander.calibration import calibration
 from eye_commander.keystroke import keystroke 
+from eye_commander.sounds import sounds
 import cv2 
 import numpy as np
 import os
@@ -15,7 +16,8 @@ class EyeCommander:
     
     def __init__(self,  camera:int=0, confidence:float=0.9, 
                  log_output:bool=False, output_keys:bool=True,
-                 calibrate:bool=True, keep_data:bool=True):
+                 calibrate:bool=True, keep_data:bool=True,
+                 sounds:bool=True):
         
         self.camera = image_capture.Camera(source=camera)
         self.face_detection = face_detection.FaceDetector()
@@ -26,6 +28,8 @@ class EyeCommander:
         self.log_output = log_output
         self.output_keys = output_keys
         self.run_calibration = calibrate
+        self.sounds = sounds
+        
 
     def _class_name(self,prediction):
         """converts prediction output into class name string
@@ -85,6 +89,10 @@ class EyeCommander:
         if self.run_calibration == True:
             
             self.model = self.calibrator.calibrate()
+            
+        frame_count = 0
+        skip = None
+        label_state = None
         # open camera lense  
         while self.camera.open():
             # attempt to capture a frame
@@ -98,27 +106,57 @@ class EyeCommander:
                     # make a prediction based on the eye images
                     prediction, probability = self.model.predict(eyes)
                     # determine if prediction proba is > than proba threshold
-                    output = self.output_filter(prediction, probability)
+                    output = self.output_filter(prediction, probability)    
                     # if so, output will be a prediction and not None
                     if output:
                         # get class label from integer prediction value
                         label = self._class_name(output)
-                        # draw class label text onto frame
-                        display.display_prediction(label=label, frame=frame)
-                        # output keystroke if parameter specified
-                        if self.output_keys:
+                      
+                        if not skip or frame_count >= skip:
                             
-                            keystroke.output_keystrokes(label)
+                            # set label_state
+                            label_state = label
+                            
+                            if self.sounds == True:
+                                
+                                sounds.play(label=label)
+                            
+                            # skip inference on the next 8 frames
+                            skip = frame_count + 14
+                            
+                    elif not skip or frame_count >= skip:
+                        
+                        label_state = None     
+                    
+                    # display probability regardless of whether it exceeds threshold   
+                    display.display_probability(frame=frame, probability=probability)      
+                    
+                        # output keystroke if parameter specified
+                        # if self.output_keys:
+                        #     keystroke.output_keystrokes(label=label)
+                        # if self.sounds == True:
+                        #     # sounds.play(label=label)
+                        #     pass
+                            
                     # log prediction, probability, mean_pixel if param specified
                     if self.log_output == True:
                         
                         self.log(frame=frame, pred=prediction, proba=probability)
-                    # display probability regardless of whether it exceeds threshold   
-                    display.display_probability(frame=frame, probability=probability)
+                         
+                # if we are not in a prediction state, set label_state to None and reset frame_count
+                # if skip_to and frame_count > skip_to:
+                #     label_state = None
+                #     frame_count = 0
+                # if a label_state exists, display it 
+                
+            if label_state:
+                display.display_prediction(label=label_state, frame=frame)
+                        
             # draw guid for head placement
             display.draw_position_rect(frame=frame, color='white')
             # show frame
             cv2.imshow('EyeCommander', frame)
+            frame_count += 1 #####
             
             # trigger calibration by hitting the c key
             if cv2.waitKey(1) & 0xFF == ord('c'):

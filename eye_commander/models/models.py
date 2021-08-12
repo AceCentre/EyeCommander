@@ -27,7 +27,7 @@ class CNNModel:
             np.array : np.array with dimensions (2, h, w)
         """
         # preprocessing 
-        eyes = self.image_processor.preprocess_eyes(images)
+        eyes = self.image_processor.preprocess(images)
         
         # add batch dimension for tensorflow
         left = np.expand_dims(eyes[0], 0)
@@ -53,17 +53,14 @@ class CNNModel:
         batch = self._prep_batch(images)
         
         # make prediction on batch -- returns two vectors
-        predictions = self.model.predict(batch)
+        pred_vecs = self.model.predict(batch)
         
         #### select the prediction from the eye with higher probability
-        eye_predictions = [(predictions[0].max(), predictions[0].argmax()), 
-                           (predictions[1].max(), predictions[1].argmax())]
+        left_pred = (pred_vecs[0].max(), pred_vecs[0].argmax())
         
-        strongest_eye = max(eye_predictions, key=itemgetter(0))
+        right_pred = (pred_vecs[1].max(), pred_vecs[1].argmax())
         
-        probability = strongest_eye[0]
-        
-        prediction = strongest_eye[1]
+        probability, prediction = max([left_pred, right_pred], key=itemgetter(0))
         
         return prediction, probability
     
