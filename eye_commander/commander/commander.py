@@ -5,6 +5,7 @@ from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
 from eye_commander.calibration import calibration
 from eye_commander.keystroke import keystroke 
+from eye_commander.utils import resource_path
 import cv2 
 import numpy as np
 import os

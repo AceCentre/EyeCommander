@@ -3,6 +3,8 @@ import os
 import cv2
 import numpy as np
 import sys
+from eye_commander.utils import resource_path
+
 class FaceDetector(object):
     MODEL_PATH = resource_path("models/shape_predictor_68_face_landmarks.dat")
 

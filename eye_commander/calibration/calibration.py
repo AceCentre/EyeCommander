@@ -1,6 +1,8 @@
 from eye_commander.image_capture import image_capture
 from eye_commander.face_detection import face_detection
 from eye_commander.models import models
+from eye_commander.utils import resource_path
+
 import os
 import shutil
 import cv2
