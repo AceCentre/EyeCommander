@@ -35,7 +35,7 @@ jobs:
 
       # Run pyinstaller to generated the executables
       - name: Bundle with pyinstaller
-        run: pyinstaller entry.py --onefile --name EyeCommander
+        run: pyinstaller example.spec --onedir --console --name EyeCommander
 
       # Upload the result to Github
       - name: Upload Build
