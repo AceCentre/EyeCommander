@@ -20,9 +20,9 @@ class Camera:
         
         if cam_status == True:
             frame.flags.writeable = False
-            output_frame = cv2.flip(frame, 1)
-        
-        return cam_status, output_frame
+            frame = cv2.flip(frame, 1)
+    
+        return cam_status, frame
         
     def open(self):
         return self.camera.isOpened()
