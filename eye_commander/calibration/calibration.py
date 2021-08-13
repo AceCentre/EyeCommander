@@ -9,6 +9,7 @@ import glob
 import numpy as np
 import tensorflow as tf
 
+
 class Calibrator:
     TEMP_PATH = resource_path('eye_commander/temp')
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
@@ -25,60 +26,96 @@ class Calibrator:
         """
         
         path = os.path.join(self.TEMP_PATH,'data')
+        
         # delete any leftover temp data from the last session
         if os.path.exists(path) == True:
+            
             shutil.rmtree(path)
+            
         os.mkdir(path)
+        
         for label in self.CLASS_LABELS:
+            
             newpath = os.path.join(path,label)
+            
             os.mkdir(newpath)
     
     def _remove_temp_data(self):
+        
         shutil.rmtree(self.TEMP_PATH)
           
     def _load_data(self):
+        
         path = os.path.join(self.TEMP_PATH, 'data')
+        
         d = {}
+        
         for idx, label in enumerate(['center', 'down', 'left', 'right', 'up']):
+            
             subpath = os.path.join(path, label)
+            
             files = glob.glob(subpath + '/*.jpg')
+            
             data = []
+            
             for f in files:
+                
                 img = cv2.imread(f, cv2.IMREAD_UNCHANGED)
+                
                 data.append(img)
+                
             d[idx] = data
-        # shapes = {key:len(val) for key,val in d.items()}
+            
         images = []
+        
         labels = []
+        
         for key, val in d.items():
+            
             images.extend(val)
+            
             labels.extend([key]*len(val))
         
         print(f'dataset size: {len(images)}')
+        
         return images, labels
     
     def _process_caputred_frames(self, data:dict):
+        
         basepath = os.path.join(self.TEMP_PATH,'data')
+        
         for key, frames in data.items():   
+            
             class_path = os.path.join(basepath, key)
+            
             count = 1   
+            
             for frame in frames:
+                
                 eyes = self.face_detector.eyes(frame=frame)
+                
                 if eyes:
+                    
                     left, right = eyes
+                    
                     cv2.imwrite(os.path.join(class_path,f'{key}{count}.jpg'), left)
+                    
                     cv2.imwrite(os.path.join(class_path,f'{key}{count+1}.jpg'), right)
+                    
                     count += 2
     
-    def calibrate(self):
+    def calibrate(self, directions:list):
+        
         # build temp data directory
         if os.path.exists(self.TEMP_PATH) == False:
+            
             os.mkdir(self.TEMP_PATH)
+            
         self._build_temp_data_directory()
         print('directory built successfully')
         
         # capture data
-        data = self.camera.gather_data()
+        data = self.camera.gather_data(directions=directions)
         print('data capture completed')
         
         # process data
@@ -104,4 +141,3 @@ class Calibrator:
             self._remove_temp_data()
         
         return model
-

@@ -7,7 +7,9 @@ params = {'camera': 0,
           'log_output': False, 
           'output_keys': True,
           'calibrate': False,
-          'keep_data': False}
+          'keep_data': False,
+          'sounds': True,
+          'directions':['left','right','up','down','center']}
 
 eyecommander = commander.EyeCommander(**params)
 
