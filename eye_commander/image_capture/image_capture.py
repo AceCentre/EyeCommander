@@ -105,8 +105,8 @@ class Camera:
             if cv2.waitKey(1) & 0xFF == ord('n'):
                     # end demo when ESC key is entered 
                     
-                for direction in directions:
-                    if direction != 'center':
+                for ind, direction in enumerate(directions):
+                    if ind != 0:
                         sounds.play_tone()
                     while self.camera.isOpened():
                         
