@@ -1,6 +1,7 @@
 from eye_commander.image_capture import image_capture
 from eye_commander.face_detection import face_detection
 from eye_commander.models import models
+from eye_commander.utils.funcs import resource_path
 import os
 import shutil
 import cv2
@@ -10,8 +11,7 @@ import tensorflow as tf
 
 
 class Calibrator:
-    
-    TEMP_PATH = os.path.join(os.getcwd(),'eye_commander/temp')
+    TEMP_PATH = resource_path('eye_commander/temp')
     CLASS_LABELS = ['center', 'down', 'left', 'right', 'up']
     
     def __init__(self, keep_data:bool=True):

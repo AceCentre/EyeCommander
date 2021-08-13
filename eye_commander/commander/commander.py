@@ -5,6 +5,7 @@ from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
 from eye_commander.calibration import calibration
 from eye_commander.keystroke import keystroke 
+from eye_commander.utils.funcs import resource_path
 from eye_commander.sounds import sounds
 import cv2 
 import numpy as np
@@ -72,6 +73,8 @@ class EyeCommander:
                         return prediction
     
     def log(self, frame, pred:int, proba:float):
+        
+        
         """log
 
         Args:
@@ -80,7 +83,7 @@ class EyeCommander:
             proba (float): prediction probability
         """
         # open file
-        log = open(os.path.join(os.getcwd(),'eye_commander/log/log.txt'), "a")
+        log = open(resource_path('eye_commander\log\log.txt'), "a")
         # write contents
         log.write(f'{pred}, {proba}, {np.mean(frame)} \n')
         # close file

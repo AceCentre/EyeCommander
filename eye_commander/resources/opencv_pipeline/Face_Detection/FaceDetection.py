@@ -1,12 +1,11 @@
+from eye_commander.utils.funcs import resource_path
 import dlib
 import os
 import cv2
 import numpy as np
 
-
 class FaceDetector(object):
-    CWD = os.getcwd()
-    MODEL_PATH = CWD + "/models/shape_predictor_68_face_landmarks.dat"
+    MODEL_PATH = resource_path("models/shape_predictor_68_face_landmarks.dat")
 
     def __init__(self):
         self._face_detector = dlib.get_frontal_face_detector()

@@ -4,11 +4,13 @@ import os
 import numpy as np
 from operator import itemgetter
 from eye_commander.preprocessing import preprocessing
+from eye_commander.utils.funcs import resource_path
+import glob
+import cv2
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class CNNModel:
-    
-    PATH = os.path.join(os.getcwd(),'eye_commander/models/trained_models/cnn_filtered.h5')
+    PATH = resource_path('eye_commander/models/trained_models/cnn_filtered.h5')
     
     def __init__(self):
         

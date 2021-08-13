@@ -1,0 +1,20 @@
+name: Comment on PR
+on:
+  workflow_run:
+    workflows: ["Pull Request Build"]
+    types:
+      - completed
+
+jobs:
+  comment-on-pr:
+    name: Add a link to an artifact to a PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add a link to an artifact to a PR
+        uses: tonyhallett/artifacts-url-comments@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prefix: Here is a link to the Windows build of eye commander.
+          format: name
+          addTo: pull

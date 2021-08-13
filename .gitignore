@@ -3,3 +3,5 @@ venv/
 .DS_Store
 notebooks/
 __pycache__
+
+build

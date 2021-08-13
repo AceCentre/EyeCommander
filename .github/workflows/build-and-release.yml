@@ -1,0 +1,53 @@
+name: Build and Release
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      # Pull the latest code onto the runner
+      - name: Get Code
+        uses: actions/checkout@v2
+
+      # Install Python
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+
+      # Setup the cache so we don't have to reinstall dependencies
+      - uses: actions/cache@v2
+        name: Cache dependencies
+        with:
+          path: ~\AppData\Local\pip\Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Install the dependencies (uses cache if available)
+      - name: Install dependencies
+        run: pip install -r ./eye_commander/requirements.txt
+
+      # Install pyinstaller separately, don't want it be a main requirement
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      # Run pyinstaller to generated the executables
+      - name: Bundle with pyinstaller
+        run: pyinstaller installer.spec --onedir --console --name EyeCommander
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/EyeCommander.exe
+
+      # Upload the result to Github
+      - name: Upload Build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: dist
+          retention-days: 1
