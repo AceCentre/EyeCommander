@@ -5,7 +5,7 @@
 
 #### There are two pipelines in this project the first is a OpenCV pipeline. This works  but it can be a bit unreliable with glasses and low light levels. The other is a ML approach. We currently have a Tensorflow ML approach documented here. Initally we are building this up as a docker image and some scripts to validate this more in the field. 
 
-##How to Use
+## How to Use
 
 ```python
 git clone https://github.com/AceCentre/EyeCommander.git
