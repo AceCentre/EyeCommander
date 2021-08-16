@@ -43,6 +43,15 @@ Options:
   --help              Show this message and exit.
 ```
 
+## To re-train the base model
+
+Info here.. 
+
+## To share your data directory with the developers
+
+1. Read and consent to sharing your data with us. 
+2. Submit the contents of your ``filepath-here`` with us at adsada@adsad.com
+
 ## Licence
 
 [GNU GPL v3](LICENCE.txt)
