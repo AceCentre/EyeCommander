@@ -52,6 +52,14 @@ Info here..
 1. Read and consent to sharing your data with us. 
 2. Submit the contents of your ``filepath-here`` with us at adsada@adsad.com
 
+# Operatimg System specific guides
+
+## Windows 
+### To build an executable 
+
+### To build an installer
+
+
 ## Licence
 
 [GNU GPL v3](LICENCE.txt)
