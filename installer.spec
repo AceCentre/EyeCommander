@@ -11,7 +11,7 @@ added_files = [
     ( './eye_commander/models/trained_models', './eye_commander/models/trained_models' ),
 ]
 
-a = Analysis(['example.py'],
+a = Analysis(['eyecommand.py'],
              pathex=['.'],
              binaries=[],
              datas=added_files,
