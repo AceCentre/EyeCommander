@@ -29,18 +29,21 @@ These are the options:
 Usage: eyecommand.py [OPTIONS]
 
 Options:
-  --camera INTEGER    Which camera? A number starting at 0
-  --confidence FLOAT  Sensitivity of model. Closer to 0 its going to be more
-                      fuzzy
+  --camera INTEGER                Which camera? A number starting at 0
+  --confidence FLOAT              Sensitivity of model. Closer to 0 its going
+                                  to be more fuzzy
 
-  -d, --debug         Want to log the output?
-  -k, --outputkeys    Presses arrow keys depending which way you look
-  -c, --calibrate     Do you want it to calibrate first?
-  --keepdata          Do you want it to keep your trained data?
-  --sounds            Do you want it to speak which direction it thinks you
-                      are looking?
+  --debug / --no-debug            Want to log the output?
+  --outputkeys / --no-outputkeys  Presses arrow keys depending which way you
+                                  look
 
-  --help              Show this message and exit.
+  --calibrate / --no-calibrate    Do you want it to calibrate first?
+  --keepdata / --no-keepdata      Do you want it to keep your trained data?
+  --sounds / --no-sounds          Do you want it to speak which direction it
+                                  thinks you are looking?
+
+  --help                          Show this message and exit.
+
 ```
 
 ## To re-train the base model
@@ -52,13 +55,37 @@ Info here..
 1. Read and consent to sharing your data with us. 
 2. Submit the contents of your ``filepath-here`` with us at adsada@adsad.com
 
-# Operatimg System specific guides
+# Operating System specific guides
 
-## Windows 
+## Windows
+### Install/Run notes
+
+- You might get an error like ``Could not find the DLL(s) 'msvcp140_1.dll'``. If so  go to https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads and download ``x64: vc_redist.x64.exe`` and install that. Then try again.
+- If you want to run a batch script to run the python version this might help:
+
+```
+@echo off
+"C:\Users\Ron\AppData\Local\Programs\Python\Python39\python.exe" "C:\EyeCommander\eyecommand.py"
+pause
+```
+
 ### To build an executable 
+
+``
+cd EyeCommander
+pip install -r eye_commander/requirements.txt 
+pip install pyinstaller
+pyinstaller installer.spec --onedir --console --name EyeCommander
+``
 
 ### To build an installer
 
+(NB: Windows Only)
+
+- Follow instructions to build an executable above.
+- Install [NSIS](https://nsis.sourceforge.io/Download)
+- ``cd build_scripts``
+- ``makensis build_installer.nsi``
 
 ## Licence
 
