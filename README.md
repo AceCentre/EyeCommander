@@ -71,12 +71,12 @@ pause
 
 ### To build an executable 
 
-``
+```
 cd EyeCommander
 pip install -r eye_commander/requirements.txt 
 pip install pyinstaller
 pyinstaller installer.spec --onedir --console --name EyeCommander
-``
+```
 
 ### To build an installer
 
