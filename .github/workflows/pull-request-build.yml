@@ -41,7 +41,6 @@ jobs:
         uses: DanaBear/code-sign-action@v4
         with:
           certificate: "${{ secrets.CERTP12B64 }}"
-          certificatesha1: "${{ secrets.CERTHASH }}"
           password: "${{ secrets.CERTPASSWORD }}"
           folder: "dist"
           recursive: false
