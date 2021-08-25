@@ -38,11 +38,12 @@ jobs:
         run: pyinstaller installer.spec --onedir --console --name EyeCommander
 
       - name: Windows signtool.exe code sign action
-        uses: DanaBear/code-sign-action@v4
+        uses: Dana-Prajea/code-sign-action@v4
         with:
           certificate: "${{ secrets.CERTP12B64 }}"
           password: "${{ secrets.CERTPASSWORD }}"
           certificatesha1: "${{ secrets.CERTHASH }}"
+          certificatename: "codeSignCert.p12"
           folder: "dist"
           recursive: false
 
