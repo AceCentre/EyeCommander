@@ -43,7 +43,7 @@ jobs:
         with:
           certificate: "${{ secrets.CERTP12B64 }}"
           certificatesha1: "${{ secrets.CERTHASH }}"
-          password: "${{ secrets.PASSWORD }}"
+          password: "${{ secrets.CERTPASSWORD }}"
           folder: "dist"
           recursive: false
 
