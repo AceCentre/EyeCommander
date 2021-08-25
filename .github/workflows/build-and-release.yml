@@ -37,6 +37,15 @@ jobs:
       # Run pyinstaller to generated the executables
       - name: Bundle with pyinstaller
         run: pyinstaller installer.spec --onedir --console --name EyeCommander
+        
+      - name: Windows signtool.exe code sign action
+        uses: DanaBear/code-sign-action@v4
+        with:
+          certificate: '${{ secrets.CERTP12B64 }}'
+          certificatesha1: '${{ secrets.CERTHASH }}'
+          password: '${{ secrets.PASSWORD }}'
+          folder: 'files'
+          recursive: false
 
       - name: Release
         uses: softprops/action-gh-release@v1
