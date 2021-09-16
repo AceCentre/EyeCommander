@@ -38,12 +38,13 @@ jobs:
         run: pyinstaller installer.spec --onedir --console --name EyeCommander
 
       - name: Windows signtool.exe code sign action
-        uses: skymatic/code-sign-action@v1
+        uses: phuonghuynh/code-sign-action@v2.0.8
         with:
           certificate: "${{ secrets.CERTP12B64 }}"
           password: "${{ secrets.CERTPASSWORD }}"
           certificatesha1: "${{ secrets.CERTHASH }}"
           certificatename: "codeSignCert.p12"
+          sign_args: "/v /debug"
           folder: "dist"
           recursive: false
 
