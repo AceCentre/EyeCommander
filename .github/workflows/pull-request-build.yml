@@ -38,7 +38,7 @@ jobs:
         run: pyinstaller installer.spec --onedir --console --name EyeCommander
 
       - name: Windows signtool.exe code sign action
-        uses: Dana-Prajea/code-sign-action@v4
+        uses: skymatic/code-sign-action@v1
         with:
           certificate: "${{ secrets.CERTP12B64 }}"
           password: "${{ secrets.CERTPASSWORD }}"
