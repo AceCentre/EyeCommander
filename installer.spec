@@ -1,5 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
+from PyInstaller.utils.hooks import get_package_paths
+pyvjoy_ = get_package_paths('pyvjoy')[1]
+pvJoyBinary = os.path.join(pyvjoy_, 'utils', 'x64', 'vJoyInterface.dll') 
 block_cipher = None
 
 def get_mediapipe_path():
@@ -13,7 +17,7 @@ added_files = [
 
 a = Analysis(['eyecommand.py'],
              pathex=['.'],
-             binaries=[],
+             binaries=[(pvJoyBinary, r"pyvjoy\utils\x64")],
              datas=added_files,
              hiddenimports=["skimage.filters.rank.core_cy_3d","pynput.keyboard._win32", "pynput.mouse._win32"],
              hookspath=[],
