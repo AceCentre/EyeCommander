@@ -5,7 +5,7 @@ from eye_commander.prediction_window import prediction_window
 from eye_commander.display_tools import display
 from eye_commander.calibration import calibration
 from eye_commander.keystroke import keystroke 
-from eye_commander.grid3_switch import grid3_switch 
+from eye_commander.vjoy_switch import vjoy_switch 
 from eye_commander.utils.funcs import resource_path
 from eye_commander.sounds import sounds
 import cv2 
@@ -18,7 +18,7 @@ class EyeCommander:
     
     def __init__(self,  camera:int=0, confidence:float=0.9, 
                  log_output:bool=False, output_keys:bool=True, 
-                 output_grid3switch:bool=False,
+                 output_vjoyswitch:bool=False,
                  calibrate:bool=True, keep_data:bool=True,
                  sounds:bool=True, directions:list=['center', 'down', 'left', 'right', 'up']):
         
@@ -30,7 +30,7 @@ class EyeCommander:
         self.confidence = confidence
         self.log_output = log_output
         self.output_keys = output_keys
-        self.output_grid3switch = grid3_switch
+        self.output_vjoyswitch = vjoy_switch
         self.run_calibration = calibrate
         self.sounds = sounds
         self.directions = directions
@@ -135,11 +135,11 @@ class EyeCommander:
                             # output keystroke if param set
                             if self.output_keys:
                                 keystroke.output_keystrokes(label=label)
-                            # output grid3 switch press if param set
-                            # NB: WINDOWS ONLY
-                            if self.output_grid3switch:
+                            # output vjoy switch press if param set
+                            # NB: WINDOWS ONLY AND REQUIRES VJOY INSTALLED
+                            if self.output_vjpyswitch:
                                 switches = {'up':1,'right':2,'down':3,'right':4,'center':5}
-                                grid3_switch.Switch_Press_Release(switches.get(label))
+                                vjoy_switch.Switch_Press_Release(switches.get(label))
                                 
                     # if not in a current label state but there is no prediction
                     elif not skip or frame_count >= skip:
