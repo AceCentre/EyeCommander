@@ -1,18 +1,18 @@
 from eye_commander.commander import commander
 
-#### set parameters
+# set parameters
 
-params = {'camera': 0, 
-          'confidence': 0.9, 
-          'log_output': False, 
+params = {'camera': 0,
+          'confidence': 0.9,
+          'log_output': False,
           'output_keys': True,
           'output_grid3switch': False,
+          'output_vjoyswitch': False,
           'calibrate': False,
-          'keep_data': False,
+          'keep_data': True,
           'sounds': True,
-          'directions':['left','right','up','down','center']}
+          'directions': ['up']}
 
 eyecommander = commander.EyeCommander(**params)
 
-eyecommander.run()   
-
+eyecommander.run()
