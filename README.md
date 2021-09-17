@@ -45,6 +45,25 @@ Options:
   --help                          Show this message and exit.
 
 ```
+## To use with Windows AAC software
+
+- For software like The Grid 3 or Communicator you will need to download and install https://sourceforge.net/projects/vjoystick/ 
+- Once installed run eyecommander with the ``-j`` flag
+- In your software set it to use "Joystick" as an input for switches
+
+## To easily run eyecommander with your AAC software.
+
+- Put EyeCommander somewhere sensible (e.g. C:/EyeCommander)
+- Create a shortcut to it
+- Alter the shortcut to put in the aspects you want e.g In Target of Shortcut  ``"C:\Users\wwade\Dekstop\EyeCommander.exe" -j`` (to allow it to send output to the joystick)
+
+Alternatively create a batch script which runs EyeCommander - then your AAC software. E.g.
+
+```
+@echo off  
+start "C:\Program Files (x86)\Smartbox\Grid 3\Grid 3.exe"
+start "C:\Users\wwade\Dekstop\EyeCommander.exe" -j
+```
 
 ## To re-train the base model
 
