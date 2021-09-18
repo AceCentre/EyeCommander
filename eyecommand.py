@@ -1,6 +1,7 @@
 import click
+import ast
 
-#### set parameters
+# set parameters
 
 
 @click.command()
@@ -12,7 +13,11 @@ import click
 @click.option('--calibrate', '-c', is_flag=True, flag_value=False, help='Do you want it to calibrate first?')
 @click.option('--keepdata', is_flag=True, flag_value=False, help='Do you want it to keep your trained data?')
 @click.option('--sounds', is_flag=True, flag_value=True, help='Do you want it to speak which direction it thinks you are looking?')
-def eyecommand(camera, confidence, debug, outputkeys, outputvjoy, calibrate, keepdata, sounds):
+@click.option('--directions', default='up,down,left,right,center', help='Which directions do you want it to capture?')
+def eyecommand(camera, confidence, debug, outputkeys, outputvjoy, calibrate, keepdata, sounds, directions):
+    # rework params for direction
+    directions = ast.literal_eval('["'+directions+'"]')
+    directions = [directions.strip() for directions in directions]
     params = {'camera': camera,
               'confidence': confidence,
               'log_output': debug,
@@ -28,4 +33,3 @@ def eyecommand(camera, confidence, debug, outputkeys, outputvjoy, calibrate, kee
 
 if __name__ == '__main__':
     eyecommand()
-
