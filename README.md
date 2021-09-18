@@ -29,20 +29,18 @@ These are the options:
 Usage: eyecommand.py [OPTIONS]
 
 Options:
-  --camera INTEGER                Which camera? A number starting at 0
-  --confidence FLOAT              Sensitivity of model. Closer to 0 its going
-                                  to be more fuzzy
-
-  --debug / --no-debug            Want to log the output?
-  --outputkeys / --no-outputkeys  Presses arrow keys depending which way you
-                                  look
-
-  --calibrate / --no-calibrate    Do you want it to calibrate first?
-  --keepdata / --no-keepdata      Do you want it to keep your trained data?
-  --sounds / --no-sounds          Do you want it to speak which direction it
-                                  thinks you are looking?
-
-  --help                          Show this message and exit.
+  --camera INTEGER    Which camera? A number starting at 0
+  --confidence FLOAT  Sensitivity of model. Closer to 0 its going to be more
+                      fuzzy
+  -d, --debug         Want to log the output?
+  -k, --outputkeys    Presses arrow keys depending which way you look
+  -j, --outputvjoy    Presses vjoy buttons depending which way you look
+  -c, --calibrate     Do you want it to calibrate first?
+  --keepdata          Do you want it to keep your trained data?
+  --sounds            Do you want it to speak which direction it thinks you
+                      are looking?
+  --directions TEXT   Which directions do you want it to capture?
+  --help              Show this message and exit.
 
 ```
 ## To use with Windows AAC software
