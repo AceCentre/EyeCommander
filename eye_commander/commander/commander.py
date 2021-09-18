@@ -21,13 +21,15 @@ class EyeCommander:
                  log_output: bool = False, output_keys: bool = True,
                  output_vjoyswitch: bool = False,
                  calibrate: bool = True, keep_data: bool = True,
-                 sounds: bool = True, directions: list = ['center', 'down', 'left', 'right', 'up']):
+                 sounds: bool = True, directions: list = ['center', 'down', 'left', 'right', 'up'],
+                 datapath: str = 'eye_commander/temp'):
 
         self.camera = image_capture.Camera(source=camera)
         self.face_detection = face_detection.FaceDetector()
         self.prediction_window = prediction_window.Window(size=6)
         self.model = models.CNNModel()
-        self.calibrator = calibration.Calibrator(keep_data=keep_data)
+        self.calibrator = calibration.Calibrator(
+            keep_data=keep_data, datapath=datapath, cameraid=camera)
         self.confidence = confidence
         self.log_output = log_output
         self.output_keys = output_keys

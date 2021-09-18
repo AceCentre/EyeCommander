@@ -10,7 +10,8 @@ params = {'camera': 0,
           'calibrate': False,
           'keep_data': True,
           'sounds': True,
-          'directions': ['up']}
+          'directions': ['up'],
+          'datapath': 'eye_commander/temp'}
 
 eyecommander = commander.EyeCommander(**params)
 
