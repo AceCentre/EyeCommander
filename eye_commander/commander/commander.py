@@ -138,7 +138,7 @@ class EyeCommander:
                             # NB: WINDOWS ONLY AND REQUIRES VJOY INSTALLED
                             if self.output_vjoyswitch:
                                 switches = {'up': 1, 'right': 2,
-                                            'down': 3, 'right': 4, 'center': 5}
+                                            'down': 3, 'left': 4, 'center': 5}
                                 if label in switches:
                                     vjoy_switch.Switch_Press_Release(
                                         switches[label])
