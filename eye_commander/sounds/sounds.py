@@ -5,12 +5,6 @@ pygame.init()
 pygame.mixer.init()
 
 PATH = os.path.join(os.getcwd(),'eye_commander/sounds/sound_files')
-# UP       = sa.WaveObject.from_wave_file(os.path.join(PATH, 'up.wav'))
-# DOWN     = sa.WaveObject.from_wave_file(os.path.join(PATH, 'down.wav'))
-# LEFT     = sa.WaveObject.from_wave_file(os.path.join(PATH, 'left.wav'))
-# RIGHT     = sa.WaveObject.from_wave_file(os.path.join(PATH, 'right.wav'))
-# KEEP     = sa.WaveObject.from_wave_file(os.path.join(PATH, 'keep.wav'))
-# TONE = sa.WaveObject.from_wave_file(os.path.join(PATH, 'ding.wave'))
 
 def play(label:str):
     if label == 'up':
