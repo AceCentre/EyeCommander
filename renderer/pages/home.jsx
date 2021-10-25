@@ -1,47 +1,47 @@
-import React from 'react';
-import Head from 'next/head';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
-import Typography from '@material-ui/core/Typography';
-import Link from '../components/Link';
+import { useState, useEffect, useCallback } from "react";
+import Head from "next/head";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
+
+import Typography from "@material-ui/core/Typography";
+import electron from "electron";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      textAlign: 'center',
+      textAlign: "center",
       paddingTop: theme.spacing(4),
     },
   })
 );
 
+const ipcRenderer = electron.ipcRenderer || false;
+
 function Home() {
   const classes = useStyles({});
-  const [open, setOpen] = React.useState(false);
-  const handleClose = () => setOpen(false);
-  const handleClick = () => setOpen(true);
+
+  const onClickWithIpcSync = (key) => () => {
+    ipcRenderer.send("trigger-keypress", key);
+  };
+
+  const triggerKeypressSuccess = (event, data) => {
+    console.log("trigger success", data);
+  };
+
+  useEffect(() => {
+    ipcRenderer.on("trigger-keypress-success", triggerKeypressSuccess);
+
+    return () => {
+      ipcRenderer.removeAllListeners("trigger-keypress-success");
+    };
+  }, []);
 
   return (
-    <React.Fragment>
+    <>
       <Head>
-        <title>Home - Nextron (with-javascript-material-ui)</title>
+        <title>Eye Commander</title>
       </Head>
       <div className={classes.root}>
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Super Secret Password</DialogTitle>
-          <DialogContent>
-            <DialogContentText>1-2-3-4-5</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button color="primary" onClick={handleClose}>
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
         <Typography variant="h4" gutterBottom>
           Material-UI
         </Typography>
@@ -49,15 +49,45 @@ function Home() {
           with Nextron
         </Typography>
         <img src="/images/logo.png" />
-        <Typography gutterBottom>
-          <Link href="/next">Go to the next page</Link>
-        </Typography>
-        <Button variant="contained" color="secondary" onClick={handleClick}>
-          Super Secret Password
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={onClickWithIpcSync("up")}
+          >
+            Send 'up' keypress
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={onClickWithIpcSync("down")}
+          >
+            Send 'down' keypress
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={onClickWithIpcSync("left")}
+          >
+            Send 'left' keypress
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={onClickWithIpcSync("right")}
+          >
+            Send 'right' keypress
+          </Button>
+        </div>
       </div>
-    </React.Fragment>
+    </>
   );
-};
+}
 
 export default Home;
