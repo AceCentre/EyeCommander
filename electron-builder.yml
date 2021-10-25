@@ -1,6 +1,6 @@
-appId: com.example.nextron
-productName: My Nextron App
-copyright: Copyright © 2018 Yoshihide Shiono
+appId: com.acecentre.eye-commander
+productName: Eye Commander
+copyright: Copyright © 2021 Ace Centre
 directories:
   output: dist
   buildResources: resources
