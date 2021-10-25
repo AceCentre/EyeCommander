@@ -21,7 +21,7 @@ jobs:
       - name: Install NPM deps
         run: yarn install
 
-      - name: Build Linux
+      - name: Build
         run: yarn build:linux
 
       - uses: actions/upload-artifact@v2
@@ -50,7 +50,7 @@ jobs:
       - name: Install NPM deps
         run: yarn install
 
-      - name: Build Linux
+      - name: Build
         run: yarn build:mac
 
       - uses: actions/upload-artifact@v2
@@ -79,7 +79,7 @@ jobs:
       - name: Install NPM deps
         run: yarn install
 
-      - name: Build Linux
+      - name: Build
         run: yarn build:win32
 
       - uses: actions/upload-artifact@v2
@@ -108,7 +108,7 @@ jobs:
       - name: Install NPM deps
         run: yarn install
 
-      - name: Build Linux
+      - name: Build
         run: yarn build:win64
 
       - uses: actions/upload-artifact@v2
