@@ -32,7 +32,7 @@ jobs:
           retention-days: 1
 
   Mac:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - name: Get Code
         uses: actions/checkout@v2
