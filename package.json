@@ -1,20 +1,25 @@
 {
+  "private": true,
   "name": "eye-commander",
   "version": "0.0.1",
-  "license": "GNU",
+  "license": "GPL-3.0-or-later",
+  "main": "app/background.js",
   "scripts": {
-    "dev": "electron-webpack dev",
-    "compile": "electron-webpack",
-    "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
+    "dev": "nextron",
+    "build": "nextron build",
+    "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "source-map-support": "^0.5.16"
+    "electron-serve": "^1.1.0",
+    "electron-store": "^8.0.1"
   },
   "devDependencies": {
-    "electron": "8.2.0",
-    "electron-builder": "^22.4.1",
-    "electron-webpack": "^2.8.2",
-    "webpack": "~4.42.1"
+    "@material-ui/core": "^4.12.3",
+    "electron": "^15.0.0",
+    "electron-builder": "^22.11.7",
+    "next": "^11.1.2",
+    "nextron": "^7.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
   }
 }
