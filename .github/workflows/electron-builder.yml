@@ -89,7 +89,7 @@ jobs:
           # Github has size limits so this avoids hitting them
           retention-days: 1
 
-  Win6:
+  Win64:
     runs-on: windows-latest
     steps:
       - name: Get Code
