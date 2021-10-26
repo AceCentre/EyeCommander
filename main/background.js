@@ -1,9 +1,11 @@
 import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
-import robot from "robotjs";
+import { createKeyboardEmulator } from "./helpers/keyboard-emulator";
 
 const isProd = process.env.NODE_ENV === "production";
+
+let keyboardEmulator = createKeyboardEmulator();
 
 if (isProd) {
   serve({ directory: "app" });
@@ -35,23 +37,7 @@ app.on("window-all-closed", () => {
 ipcMain.on("trigger-keypress", async (event, key) => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const result = robot.keyTap("enter");
-  // Speed up the mouse.
-  robot.setMouseDelay(2);
-  const twoPI = Math.PI * 2.0;
-  const screenSize = robot.getScreenSize();
-  const height = screenSize.height / 2 - 10;
-  const width = screenSize.width;
-
-  console.log({ twoPI, screenSize, height, width });
-
-  for (var x = 0; x < width; x++) {
-    const y = height * Math.sin((twoPI * x) / width) + height;
-
-    console.log({ x, y });
-
-    robot.moveMouse(x, y);
-  }
+  keyboardEmulator.pressKey(key);
 
   event.sender.send(
     "trigger-keypress-success",
