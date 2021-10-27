@@ -2,35 +2,6 @@ name: Electron Builder
 on: [pull_request]
 
 jobs:
-  Linux:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get Code
-        uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-
-      - uses: actions/cache@v2
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install NPM deps
-        run: yarn install
-
-      - name: Build
-        run: yarn build:linux
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Linux
-          path: dist
-          # Github has size limits so this avoids hitting them
-          retention-days: 1
-
   Mac:
     runs-on: macos-11
     steps:
@@ -56,35 +27,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Mac
-          path: dist
-          # Github has size limits so this avoids hitting them
-          retention-days: 1
-
-  Win32:
-    runs-on: windows-latest
-    steps:
-      - name: Get Code
-        uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-
-      - uses: actions/cache@v2
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install NPM deps
-        run: yarn install
-
-      - name: Build
-        run: yarn build:win32
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Win32
           path: dist
           # Github has size limits so this avoids hitting them
           retention-days: 1
