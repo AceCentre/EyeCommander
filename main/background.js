@@ -1,12 +1,12 @@
 import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
-import { getCurrentKeyoardEmulator } from "./helpers/keyboard-emulator";
+import { getCurrentKeyboardEmulator } from "./helpers/keyboard-emulator";
 
 const isProd = process.env.NODE_ENV === "production";
 
-const KeyboardEmulator = getCurrentKeyoardEmulator();
-let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 })
+const KeyboardEmulator = getCurrentKeyboardEmulator();
+let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 });
 
 if (isProd) {
   serve({ directory: "app" });
