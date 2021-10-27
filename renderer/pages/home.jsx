@@ -5,7 +5,8 @@ import Button from "@material-ui/core/Button";
 
 import Typography from "@material-ui/core/Typography";
 import electron from "electron";
-import { OutputCameraDemo } from "../components/OutputCameraDemo";
+import { OpenCvObjectDetection } from "../components/OpenCvObjectDetection";
+import { MediaPipeFaceMesh } from "../components/MediaPipeFaceMesh";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -43,7 +44,8 @@ function Home() {
         <title>Eye Commander</title>
       </Head>
       <div className={classes.root}>
-        <OutputCameraDemo />
+        <OpenCvObjectDetection />
+        <MediaPipeFaceMesh />
         <Typography variant="h4" gutterBottom>
           Material-UI
         </Typography>
