@@ -17,7 +17,8 @@
   "dependencies": {
     "electron-serve": "^1.1.0",
     "electron-store": "^8.0.1",
-    "robotjs": "^0.6.0"
+    "robotjs": "^0.6.0",
+    "vjoy": "^1.2.2"
   },
   "devDependencies": {
     "@material-ui/core": "^4.12.3",

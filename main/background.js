@@ -1,11 +1,12 @@
 import { app, ipcMain } from "electron";
 import serve from "electron-serve";
 import { createWindow } from "./helpers";
-import { createKeyboardEmulator } from "./helpers/keyboard-emulator";
+import { getCurrentKeyoardEmulator } from "./helpers/keyboard-emulator";
 
 const isProd = process.env.NODE_ENV === "production";
 
-let keyboardEmulator = createKeyboardEmulator();
+const KeyboardEmulator = getCurrentKeyoardEmulator();
+let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 })
 
 if (isProd) {
   serve({ directory: "app" });
@@ -31,13 +32,12 @@ if (isProd) {
 })();
 
 app.on("window-all-closed", () => {
+  keyboardEmulator.onExit();
   app.quit();
 });
 
 ipcMain.on("trigger-keypress", async (event, key) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  keyboardEmulator.pressKey(key);
+  await keyboardEmulator.pressKey(key);
 
   event.sender.send(
     "trigger-keypress-success",
