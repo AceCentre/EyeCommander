@@ -44,7 +44,7 @@ function Home() {
         <title>Eye Commander</title>
       </Head>
       <div className={classes.root}>
-        <OpenCvObjectDetection />
+        {/* <OpenCvObjectDetection /> */}
         <MediaPipeFaceMesh />
         <Typography variant="h4" gutterBottom>
           Material-UI

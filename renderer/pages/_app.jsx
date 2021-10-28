@@ -3,7 +3,7 @@ import Head from "next/head";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { theme } from "../lib/theme";
-import { OpenCvProvider } from "../components/OpenCvProvider";
+// import { OpenCvProvider } from "../components/OpenCvProvider";
 
 export default function App(props) {
   const { Component, pageProps } = props;
@@ -23,12 +23,12 @@ export default function App(props) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <OpenCvProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </OpenCvProvider>
+      {/* <OpenCvProvider> */}
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+      {/* </OpenCvProvider> */}
     </React.Fragment>
   );
 }

@@ -15,6 +15,10 @@
     "build:linux": "nextron build --linux"
   },
   "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1632432234",
+    "@mediapipe/control_utils": "^0.6.1629159505",
+    "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
     "electron-serve": "^1.1.0",
     "electron-store": "^8.0.1",
     "react-webcam": "^6.0.0",
