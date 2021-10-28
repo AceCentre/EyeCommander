@@ -53,7 +53,10 @@
                 {
                   "html": "./src/index.html",
                   "js": "./src/renderer.js",
-                  "name": "main_window"
+                  "name": "main_window",
+                  "preload": {
+                    "js": "./src/preload.ts"
+                  }
                 }
               ]
             }
@@ -86,6 +89,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-webcam": "^6.0.0"
+    "react-webcam": "^6.0.0",
+    "robotjs": "^0.6.0"
   }
 }

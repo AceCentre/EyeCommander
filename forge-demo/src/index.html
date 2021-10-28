@@ -5,11 +5,11 @@
     <title>Hello World!</title>
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src *; script-src-elem: *;"
+      content="default-src data: *; style-src data: * 'unsafe-inline'; script-src * data: 'unsafe-inline' 'unsafe-eval'; img-src * data: 'unsafe-inline'; connect-src * data: 'unsafe-inline'; frame-src data: *; script-src-elem: * data:;"
     />
+    <script src="./public/open-cv.js" type="text/javascript"></script>
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <div id="root"></div>
   </body>
 </html>
