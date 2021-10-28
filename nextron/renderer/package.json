@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "name": "eye-commander",
+  "version": "0.0.1",
+  "license": "GPL-3.0-or-later",
+  "main": "app/background.js",
+  "scripts": {
+    "dev": "nextron",
+    "postinstall": "electron-builder install-app-deps",
+    "build": "nextron build",
+    "build:all": "nextron build --all",
+    "build:win32": "nextron build --win --ia32",
+    "build:win64": "nextron build --win --x64",
+    "build:mac": "nextron build --mac --x64",
+    "build:linux": "nextron build --linux"
+  },
+  "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1632432234",
+    "@mediapipe/control_utils": "^0.6.1629159505",
+    "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
+    "electron-serve": "^1.1.0",
+    "electron-store": "^8.0.1",
+    "react-webcam": "^6.0.0",
+    "robotjs": "^0.6.0"
+  },
+  "devDependencies": {
+    "@material-ui/core": "^4.12.3",
+    "electron": "^15.0.0",
+    "electron-builder": "^22.11.7",
+    "next": "^11.1.2",
+    "nextron": "^7.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
