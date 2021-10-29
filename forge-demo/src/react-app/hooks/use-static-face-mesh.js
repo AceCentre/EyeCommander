@@ -92,8 +92,6 @@ export const useStaticFaceMesh = (openCvRawRef) => {
       );
       rightDestination = rawFrame.roi(rightRect);
       cv.imshow(rightEyeCanvasRef.current, rightDestination);
-
-      console.log(rawFrame);
     });
 
     faceMesh.initialize();
