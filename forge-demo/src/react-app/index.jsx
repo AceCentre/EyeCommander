@@ -13,6 +13,7 @@ export const Home = () => {
   return (
     <div>
       <DebugView />
+      {/* <FaceMeshComponent /> */}
       {/* <h1>My Home</h1>
       <button onClick={onClick("up")}>Click Me To Send Button Click</button>
       <OpenCvObjectDetection />
