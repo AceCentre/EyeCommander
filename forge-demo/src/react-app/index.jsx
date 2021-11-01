@@ -1,7 +1,5 @@
 import React from "react";
-import { DebugView } from "./debug-view.jsx";
-import FaceMeshComponent from "./face-mesh.jsx";
-import { OpenCvObjectDetection } from "./open-cv.jsx";
+import { FaceMeshBlinking } from "./face-mesh-blinking.jsx";
 
 const { ipcRenderer } = electronInternals;
 
@@ -12,12 +10,7 @@ export const Home = () => {
 
   return (
     <div>
-      <DebugView />
-      {/* <FaceMeshComponent /> */}
-      {/* <h1>My Home</h1>
-      <button onClick={onClick("up")}>Click Me To Send Button Click</button>
-      <OpenCvObjectDetection />
-      <FaceMeshComponent /> */}
+      <FaceMeshBlinking />
     </div>
   );
 };

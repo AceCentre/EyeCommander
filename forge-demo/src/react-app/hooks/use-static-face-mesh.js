@@ -4,6 +4,9 @@ import {
   FACEMESH_LEFT_EYE,
   FACEMESH_RIGHT_EYE,
 } from "@mediapipe/face_mesh";
+import { predict } from "./predict";
+import { preprocess } from "./preprocess";
+import * as tf from "@tensorflow/tfjs";
 
 const getBoxAroundLandmark = (
   LANDMARK_LIST,
@@ -34,7 +37,16 @@ const getBoxAroundLandmark = (
 export const useStaticFaceMesh = (openCvRawRef) => {
   const [staticFaceMesh, setStaticFaceMesh] = useState(null);
   const leftEyeCanvasRef = React.useRef(null);
+  const rightEyeCanvasProcessedRef = React.useRef(null);
+  const leftEyeCanvasProcessedRef = React.useRef(null);
   const rightEyeCanvasRef = React.useRef(null);
+
+  const [model, setModel] = useState(null);
+
+  useEffect(async () => {
+    const loadedModel = await tf.loadLayersModel("/public/model.json");
+    setModel(loadedModel);
+  }, []);
 
   useEffect(() => {
     const faceMesh = new FaceMesh({
@@ -50,7 +62,15 @@ export const useStaticFaceMesh = (openCvRawRef) => {
       enableFaceGeometry: true,
     });
 
-    faceMesh.onResults((results) => {
+    faceMesh.initialize();
+
+    setStaticFaceMesh(faceMesh);
+  }, []);
+
+  useEffect(() => {
+    if (!staticFaceMesh) return;
+
+    staticFaceMesh.onResults((results) => {
       const firstFaceLandmarks = results.multiFaceLandmarks[0];
       const firstFaceGeometry = results.multiFaceGeometry[0];
 
@@ -92,16 +112,22 @@ export const useStaticFaceMesh = (openCvRawRef) => {
       );
       rightDestination = rawFrame.roi(rightRect);
       cv.imshow(rightEyeCanvasRef.current, rightDestination);
+
+      const leftProcessed = preprocess(leftDestination);
+      const rightProcessed = preprocess(rightDestination);
+
+      cv.imshow(rightEyeCanvasProcessedRef.current, rightProcessed);
+      cv.imshow(leftEyeCanvasProcessedRef.current, leftProcessed);
+
+      predict(leftProcessed, rightProcessed, model);
     });
-
-    faceMesh.initialize();
-
-    setStaticFaceMesh(faceMesh);
-  }, []);
+  }, [staticFaceMesh, model]);
 
   return {
     faceMeshInstance: staticFaceMesh,
     leftEyeCanvasRef,
     rightEyeCanvasRef,
+    leftEyeCanvasProcessedRef,
+    rightEyeCanvasProcessedRef,
   };
 };

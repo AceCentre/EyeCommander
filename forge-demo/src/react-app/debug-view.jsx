@@ -24,8 +24,13 @@ export const DebugView = () => {
 
   const { devices, selectedDeviceId, setDeviceId } = useWebcamSelector();
 
-  const { faceMeshInstance, leftEyeCanvasRef, rightEyeCanvasRef } =
-    useStaticFaceMesh(openCvRawRef);
+  const {
+    faceMeshInstance,
+    leftEyeCanvasRef,
+    rightEyeCanvasRef,
+    rightEyeCanvasProcessedRef,
+    leftEyeCanvasProcessedRef,
+  } = useStaticFaceMesh(openCvRawRef);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), LOADING_TIME);
@@ -70,6 +75,9 @@ export const DebugView = () => {
       <canvas ref={openCvRawRef} />
       <canvas ref={leftEyeCanvasRef} height={450} width={600} />
       <canvas ref={rightEyeCanvasRef} height={450} width={600} />
+
+      <canvas ref={leftEyeCanvasProcessedRef} height={450} width={600} />
+      <canvas ref={rightEyeCanvasProcessedRef} height={450} width={600} />
     </>
   );
 };
