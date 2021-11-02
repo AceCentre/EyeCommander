@@ -4,6 +4,11 @@
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AceCentre/EyeCommander.git",
+    "directory": "forge-demo"
+  },
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
