@@ -4,6 +4,9 @@ on: [pull_request]
 jobs:
   release:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ./forge-demo
     strategy:
       fail-fast: false
       matrix:
@@ -21,9 +24,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
-
-      - name: Step into forge folder
-        run: cd ./forge-demo
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
