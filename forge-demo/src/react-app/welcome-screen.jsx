@@ -11,6 +11,8 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Button, Paper } from "@mui/material";
+import { SelectedWebcam } from "./selected-webcam.jsx";
+import { FaceFramer } from "./face-framer.jsx";
 
 const getTaskProps = (taskNumber, current) => ({
   completed: current > taskNumber,
@@ -55,6 +57,7 @@ export const WelcomeScreen = () => {
       <TaskController
         activeTask={activeTask}
         nextTask={() => setActiveTask((current) => current + 1)}
+        prevTask={() => setActiveTask((current) => current - 1)}
       />
     </>
   );
@@ -119,9 +122,13 @@ const WebcamDeviceSelector = ({ nextTask }) => {
   );
 };
 
-const TaskController = ({ activeTask, nextTask }) => {
+const TaskController = ({ activeTask, nextTask, prevTask }) => {
   if (activeTask === 1) {
     return <WebcamDeviceSelector nextTask={nextTask} />;
+  }
+
+  if (activeTask == 2) {
+    return <FaceFramer nextTask={nextTask} prevTask={prevTask} />;
   }
 
   throw new Error(`No task: ${activeTask}`);
