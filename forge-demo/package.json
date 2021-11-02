@@ -78,6 +78,7 @@
     "babel-loader": "^8.2.3",
     "css-loader": "^6.0.0",
     "electron": "15.3.0",
+    "electron-builder": "^22.13.1",
     "node-loader": "^2.0.0",
     "style-loader": "^3.0.0"
   },
@@ -92,7 +93,6 @@
     "@mui/material": "^5.0.6",
     "@tensorflow/tfjs": "^3.11.0",
     "copy-webpack-plugin": "^9.0.1",
-    "electron-builder": "^22.13.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
     "react": "^17.0.2",
