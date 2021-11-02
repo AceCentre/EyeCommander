@@ -83,7 +83,6 @@
     "babel-loader": "^8.2.3",
     "css-loader": "^6.0.0",
     "electron": "15.3.0",
-    "electron-builder": "^22.13.1",
     "node-loader": "^2.0.0",
     "style-loader": "^3.0.0"
   },
