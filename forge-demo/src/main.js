@@ -1,6 +1,9 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const { getCurrentKeyboardEmulator } = require("./backend/keyboard-emulator");
+const Store = require("electron-store");
+
+const store = new Store();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -52,6 +55,17 @@ app.on("activate", () => {
   }
 });
 
+ipcMain.handle("getStoreValue", (event, key) => {
+  console.log("Getting: ", key);
+
+  return store.get(key);
+});
+
+ipcMain.handle("setStoreValue", (event, key, value) => {
+  console.log("Setting: ", key, value);
+
+  return store.set(key, value);
+});
 ipcMain.on("trigger-keypress", async (event, key) => {
   await keyboardEmulator.pressKey(key);
 
