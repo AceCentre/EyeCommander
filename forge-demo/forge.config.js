@@ -1,5 +1,8 @@
 module.exports = {
-,
+  electronRebuildConfig: {
+    force: true,
+    useCache: false,
+  },
   packagerConfig: {},
   makers: [
     {
