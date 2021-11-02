@@ -15,6 +15,7 @@ import {
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useLoading } from "./hooks/use-loading.js";
 import { red } from "@mui/material/colors";
+import { useFaceMesh } from "./hooks/use-face-mesh.js";
 
 export const FaceFramer = ({ nextTask, prevTask }) => {
   const webcamRef = useRef(null);
@@ -75,29 +76,7 @@ export const FaceFramer = ({ nextTask, prevTask }) => {
     canvasCtx.restore();
   }
 
-  useEffect(() => {
-    if (!loading) {
-      const faceMesh = new FaceMesh({
-        locateFile: (file) => {
-          return `/public/face/${file}`;
-        },
-      });
-
-      faceMesh.setOptions({
-        maxNumFaces: 1,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      });
-
-      faceMesh.onResults(onResults);
-
-      new Camera(webcamRef.current.video, {
-        onFrame: async () => {
-          await faceMesh.send({ image: webcamRef.current.video });
-        },
-      }).start();
-    }
-  }, [loading]);
+  useFaceMesh({ loading, webcamRef }, onResults);
 
   return (
     <Paper
