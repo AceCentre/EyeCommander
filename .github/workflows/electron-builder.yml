@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Install robotjs deps for linux
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install -y libxml2-utils
+        run: sudo apt-get install -y libxml2-utils libxtst-dev libpng++-dev
 
       - name: Check out Git repository
         uses: actions/checkout@v1
