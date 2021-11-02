@@ -28,6 +28,11 @@ jobs:
       - name: Install deps
         run: yarn install
 
+      - name: Electron rebuild
+        # Ignore when this fails, its a total hack but for some reason
+        # electron forge only builds on start, run-as-node forces it to crash out
+        run: yarn start --run-as-node || true
+
       - name: Forge make
         run: yarn make
 
