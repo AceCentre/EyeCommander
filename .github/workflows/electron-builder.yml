@@ -2,60 +2,23 @@ name: Electron Builder
 on: [pull_request]
 
 jobs:
-  Mac:
-    runs-on: macos-11
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
     steps:
-      - name: Get Code
-        uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v1
 
-      - name: Install Node
-        uses: actions/setup-node@v2
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
         with:
-          node-version: "14"
+          node-version: 16
 
-      - uses: actions/cache@v2
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
         with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install NPM deps
-        run: yarn install
-
-      - name: Build
-        run: yarn build:mac
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Mac
-          path: dist
-          # Github has size limits so this avoids hitting them
-          retention-days: 1
-
-  Win64:
-    runs-on: windows-latest
-    steps:
-      - name: Get Code
-        uses: actions/checkout@v2
-
-      - name: Install Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14"
-
-      - uses: actions/cache@v2
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install NPM deps
-        run: yarn install
-
-      - name: Build
-        run: yarn build:win64
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: Win64
-          path: dist
-          # Github has size limits so this avoids hitting them
-          retention-days: 1
+          package_root: "./forge-demo"
+          github_token: ${{ secrets.github_token }}
