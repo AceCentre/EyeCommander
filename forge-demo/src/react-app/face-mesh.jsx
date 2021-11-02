@@ -8,6 +8,7 @@ import Webcam from "react-webcam";
 function FaceMeshComponent() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+
   const connect = draw.drawConnectors;
   var camera = null;
   function onResults(results) {
@@ -30,6 +31,7 @@ function FaceMeshComponent() {
       canvasElement.width,
       canvasElement.height
     );
+
     if (results.multiFaceLandmarks) {
       for (const landmarks of results.multiFaceLandmarks) {
         connect(canvasCtx, landmarks, Facemesh.FACEMESH_RIGHT_EYE, {
