@@ -42,3 +42,10 @@ jobs:
 
       - name: Forge make
         run: yarn make
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}-build
+          path: forge-demo/out
+          # Github has size limits so this avoids hitting them
+          retention-days: 1
