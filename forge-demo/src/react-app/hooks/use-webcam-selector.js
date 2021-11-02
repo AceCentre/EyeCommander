@@ -8,13 +8,18 @@ export const useWebcamSelector = () => {
   const [loading, setLoading] = useState(true);
   const {
     loading: loadingDevice,
-    value: primaryDeviceId,
-    update: storeDeviceId,
+    value: primaryDeviceName,
+    update: storeDeviceName,
   } = useStoreValue(PRIMARY_DEVICE_ID);
 
   const updateDeviceId = (newDeviceId) => {
     setDeviceId(newDeviceId);
-    storeDeviceId(newDeviceId);
+
+    const newDevice = devices.find((device) => device.deviceId === newDeviceId);
+
+    if (!newDevice) throw new Error("Device not found");
+
+    storeDeviceName(newDevice.label);
   };
 
   useEffect(() => {
@@ -25,17 +30,29 @@ export const useWebcamSelector = () => {
       );
       setDevices(cameraDevices);
 
-      if (primaryDeviceId == null && cameraDevices.length > 0) {
-        updateDeviceId(cameraDevices[0].deviceId);
-      } else if (
-        cameraDevices.find(({ deviceId }) => deviceId === primaryDeviceId) !==
-        -1
-      ) {
-        updateDeviceId(primaryDeviceId);
+      const currentDevice = cameraDevices.find(
+        ({ label }) => label === primaryDeviceName
+      );
+
+      if (primaryDeviceName == null && cameraDevices.length > 0) {
+        console.log("Picking the first device because no device set");
+
+        setDeviceId(cameraDevices[0].deviceId);
+        storeDeviceName(cameraDevices[0].label);
+      } else if (currentDevice) {
+        setDeviceId(currentDevice.deviceId);
+        storeDeviceName(currentDevice.label);
       } else if (cameraDevices.length > 0) {
-        updateDeviceId(cameraDevices[0].deviceId);
+        console.log(
+          `Picking the first device because we couldn't find the device with name ${primaryDeviceName}`
+        );
+
+        setDeviceId(cameraDevices[0].deviceId);
+        storeDeviceName(cameraDevices[0].label);
       } else {
-        updateDeviceId(null);
+        console.log("No devices found");
+        setDeviceId(null);
+        storeDeviceName(null);
       }
 
       setLoading(false);
