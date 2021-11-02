@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 16
+          node-version: 14
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -49,3 +49,12 @@ jobs:
           path: forge-demo/out
           # Github has size limits so this avoids hitting them
           retention-days: 1
+
+      - uses: tzkhan/pr-update-action@v2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          body-template: |
+            Merging into '%basebranch%'
+            [Link to %headbranch%](https://url/to/browse/ticket/%headbranch%)
+          body-update-action: "suffix"
+          body-uppercase-base-match: false
