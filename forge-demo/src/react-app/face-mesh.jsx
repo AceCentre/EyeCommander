@@ -75,6 +75,7 @@ function FaceMeshComponent() {
       camera.start();
     }
   }, []);
+
   return (
     <center>
       <div className="App">

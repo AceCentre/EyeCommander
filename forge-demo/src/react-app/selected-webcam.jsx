@@ -3,8 +3,9 @@ import { Typography } from "@mui/material";
 import Webcam from "react-webcam";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { red } from "@mui/material/colors";
+import { Box } from "@mui/system";
 
-export const SelectedWebcam = (props) => {
+export const SelectedWebcam = ({ webcamRef, sx = {}, ...props }) => {
   const { devices, loading, setDeviceId, selectedDeviceId } =
     useWebcamSelector();
 
@@ -22,9 +23,12 @@ export const SelectedWebcam = (props) => {
   const videoConstraints = props.videoConstraints || {};
 
   return (
-    <Webcam
-      {...props}
-      videoConstraints={{ deviceId: selectedDeviceId, ...videoConstraints }}
-    />
+    <Box sx={sx}>
+      <Webcam
+        {...props}
+        ref={webcamRef}
+        videoConstraints={{ deviceId: selectedDeviceId, ...videoConstraints }}
+      />
+    </Box>
   );
 };
