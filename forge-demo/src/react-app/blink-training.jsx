@@ -31,7 +31,8 @@ import { useStoreValue } from "./hooks/use-store.js";
 import { CHANGE_THRESHOLD_KEY, THROTTLE_TIME_KEY } from "./lib/store-consts.js";
 
 const CHANGE_THRESHOLD = 8;
-const KEEP_NUMBER_OF_VALUES = 10;
+const KEEP_NUMBER_OF_VALUES = 100;
+const TIME_BETWEEN = 100;
 const THROTTLE_TIME = 1000;
 
 const euclaideanDistance = (point, point1) => {
@@ -130,8 +131,23 @@ export const BlinkTraining = ({ nextTask, prevTask }) => {
 
           const ratio = (reRatio + leRatio) / 2;
 
-          if (ratio > blinkThreshold) {
-            console.log("Blink detected");
+          const currentFrame = {
+            time: currentTimestamp,
+            ratio,
+          };
+
+          distanceHistory.current.push(currentFrame);
+          distanceHistory.current.shift();
+
+          const firstFrame = distanceHistory.current.find(
+            (x) => currentTimestamp - x.time < TIME_BETWEEN
+          );
+
+          const timeChange = currentFrame.time - firstFrame.time;
+          const ratioChange = currentFrame.ratio - firstFrame.ratio;
+          const totalChange = (ratioChange / timeChange) * 100;
+
+          if (totalChange > blinkThreshold) {
             throttled();
           }
 

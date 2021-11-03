@@ -21,7 +21,7 @@ const getTaskProps = (taskNumber, current) => ({
 });
 
 export const WelcomeScreen = () => {
-  const [activeTask, setActiveTask] = useState(3);
+  const [activeTask, setActiveTask] = useState(1);
 
   return (
     <>
