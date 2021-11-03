@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { FaceMesh } from "@mediapipe/face_mesh";
 import { Camera } from "@mediapipe/camera_utils";
 
 export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
+  const [currentMesh, setCurrentMesh] = useState(null);
   useEffect(() => {
     if (!loading) {
       const faceMesh = new FaceMesh({
@@ -16,6 +17,7 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
         maxNumFaces: 1,
         minDetectionConfidence: 0.5,
         minTrackingConfidence: 0.5,
+        refineLandmarks: true,
       });
 
       faceMesh.onResults(onResults);
@@ -25,6 +27,14 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
           await faceMesh.send({ image: webcamRef.current.video });
         },
       }).start();
+
+      setCurrentMesh(faceMesh);
     }
-  }, [loading, onResults]);
+  }, [loading]);
+
+  useEffect(() => {
+    if (currentMesh) {
+      currentMesh.onResults(onResults);
+    }
+  }, [onResults]);
 };

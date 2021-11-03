@@ -13,6 +13,7 @@ import Select from "@mui/material/Select";
 import { Button, Paper } from "@mui/material";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { FaceFramer } from "./face-framer.jsx";
+import { BlinkTraining } from "./blink-training.jsx";
 
 const getTaskProps = (taskNumber, current) => ({
   completed: current > taskNumber,
@@ -20,7 +21,7 @@ const getTaskProps = (taskNumber, current) => ({
 });
 
 export const WelcomeScreen = () => {
-  const [activeTask, setActiveTask] = useState(1);
+  const [activeTask, setActiveTask] = useState(3);
 
   return (
     <>
@@ -51,7 +52,7 @@ export const WelcomeScreen = () => {
         <Task {...getTaskProps(2, activeTask)}>
           Make sure your face is in frame
         </Task>
-        <Task {...getTaskProps(3, activeTask)}>Try a blink</Task>
+        <Task {...getTaskProps(3, activeTask)}>Setup blink sensitivity</Task>
       </Box>
 
       <TaskController
@@ -129,6 +130,10 @@ const TaskController = ({ activeTask, nextTask, prevTask }) => {
 
   if (activeTask == 2) {
     return <FaceFramer nextTask={nextTask} prevTask={prevTask} />;
+  }
+
+  if (activeTask == 3) {
+    return <BlinkTraining nextTask={nextTask} prevTask={prevTask} />;
   }
 
   throw new Error(`No task: ${activeTask}`);

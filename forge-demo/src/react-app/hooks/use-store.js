@@ -45,6 +45,7 @@ export const useStoreValue = (key, defaultValue = null) => {
 
   const update = async (newValue) => {
     await electronInternals.ipcRenderer.invoke("setStoreValue", key, newValue);
+    setValue(newValue);
   };
 
   return { value, loading, update };

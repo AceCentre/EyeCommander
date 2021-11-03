@@ -14,7 +14,7 @@ import {
 
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useLoading } from "./hooks/use-loading.js";
-import { red } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import { useFaceMesh } from "./hooks/use-face-mesh.js";
 
 export const FaceFramer = ({ nextTask, prevTask }) => {
@@ -90,11 +90,18 @@ export const FaceFramer = ({ nextTask, prevTask }) => {
         maxWidth: "540px",
       }}
     >
-      {!allowNext && (
+      {!allowNext ? (
         <Box>
           <Typography sx={{ color: red[500] }}>
             We cannot find a face in the window. Try getting closer to the
             webcam or improve the lighting of your face.
+          </Typography>
+        </Box>
+      ) : (
+        <Box>
+          <Typography sx={{ color: green[500], fontWeight: "bold" }}>
+            We found your face in the frame. Click 'Next step below to
+            continues'
           </Typography>
         </Box>
       )}
