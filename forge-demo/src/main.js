@@ -18,7 +18,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 700,
     height: 1114,
-    // resizable: false,
+    resizable: process.env.NODE_ENV === "development",
     webPreferences: {
       nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution
