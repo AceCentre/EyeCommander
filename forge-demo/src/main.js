@@ -22,8 +22,8 @@ let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 });
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 700,
-    height: 1255,
+    width: 400,
+    height: 400,
     resizable: process.env.NODE_ENV === "development",
     webPreferences: {
       nodeIntegration: false, // is default value after Electron v5
@@ -77,11 +77,17 @@ ipcMain.handle("getStoreValue", (event, key) => {
   return store.get(key);
 });
 
+ipcMain.on("resize-window", (event, width, height) => {
+  let browserWindow = BrowserWindow.fromWebContents(event.sender);
+  browserWindow.setSize(width, height);
+});
+
 ipcMain.handle("setStoreValue", (event, key, value) => {
   console.log("Setting: ", key, value);
 
   return store.set(key, value);
 });
+
 ipcMain.on("trigger-keypress", async (event, key) => {
   await keyboardEmulator.pressKey(key);
 

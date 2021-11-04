@@ -14,6 +14,7 @@ import { Button, Paper } from "@mui/material";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { FaceFramer } from "./face-framer.jsx";
 import { BlinkTraining } from "./blink-training.jsx";
+import { useResizer } from "./hooks/use-resizer";
 
 const getTaskProps = (taskNumber, current) => ({
   completed: current > taskNumber,
@@ -22,6 +23,8 @@ const getTaskProps = (taskNumber, current) => ({
 
 export const WelcomeScreen = () => {
   const [activeTask, setActiveTask] = useState(1);
+
+  useResizer({ width: 700, height: 1255 });
 
   return (
     <>
