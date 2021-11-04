@@ -21,7 +21,7 @@ import {
 
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useLoading } from "./hooks/use-loading.js";
-import { red } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import { useFaceMesh } from "./hooks/use-face-mesh.js";
 import { useSound } from "use-sound";
 
@@ -29,6 +29,7 @@ import { throttle } from "lodash";
 import { SliderWithValue } from "./slider-with-value.jsx";
 import { useStoreValue } from "./hooks/use-store.js";
 import { CHANGE_THRESHOLD_KEY, THROTTLE_TIME_KEY } from "./lib/store-consts.js";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const CHANGE_THRESHOLD = 8;
 const KEEP_NUMBER_OF_VALUES = 100;
@@ -42,12 +43,20 @@ const euclaideanDistance = (point, point1) => {
   return distance;
 };
 
+const getColorProp = (blinkCount, iconNumber) => {
+  if (blinkCount >= iconNumber) {
+    return { backgroundColor: green[500] };
+  }
+  return {};
+};
+
 const min = 0;
 const max = 10;
 const normaliseProgress = (value) =>
   Math.floor(((value - min) * 100) / (max - min));
 
 export const BlinkTraining = ({ nextTask, prevTask }) => {
+  const [blinkCount, setBlinkCount] = useState(0);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const distanceHistory = useRef(
@@ -61,7 +70,7 @@ export const BlinkTraining = ({ nextTask, prevTask }) => {
     loading: loadingBlinkThreshold,
     value: blinkThreshold,
     update: updateBlinkThreshold,
-  } = useStoreValue(CHANGE_THRESHOLD_KEY, 6);
+  } = useStoreValue(CHANGE_THRESHOLD_KEY, 5);
   const {
     loading: loadingThrottleTime,
     value: throttleTime,
@@ -71,6 +80,7 @@ export const BlinkTraining = ({ nextTask, prevTask }) => {
   const throttled = useCallback(
     throttle(() => {
       play();
+      setBlinkCount((x) => x + 1);
     }, throttleTime),
     [throttleTime, play]
   );
@@ -207,6 +217,39 @@ export const BlinkTraining = ({ nextTask, prevTask }) => {
           </Typography>
         </Box>
       )}
+      <Box>
+        <Typography>
+          To finish setup you must register at least 4 blinks.
+        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-around",
+            margin: "1rem 0",
+          }}
+        >
+          <Avatar
+            sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 1) }}
+          >
+            <VisibilityIcon sx={{ width: 40, height: 40 }} />
+          </Avatar>
+          <Avatar
+            sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 2) }}
+          >
+            <VisibilityIcon sx={{ width: 40, height: 40 }} />
+          </Avatar>
+          <Avatar
+            sx={{ width: 56, height: 50, ...getColorProp(blinkCount, 3) }}
+          >
+            <VisibilityIcon sx={{ width: 40, height: 40 }} />
+          </Avatar>
+          <Avatar
+            sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 4) }}
+          >
+            <VisibilityIcon sx={{ width: 40, height: 40 }} />
+          </Avatar>
+        </Box>
+      </Box>
       <SelectedWebcam sx={{ display: "none" }} webcamRef={webcamRef} />
       <canvas ref={canvasRef} />
       <Box sx={{ display: "grid", gap: "1rem", flexDirection: "column" }}>
@@ -241,11 +284,11 @@ export const BlinkTraining = ({ nextTask, prevTask }) => {
         </Button>
         <Button
           onClick={nextTask}
-          disabled={!allowNext}
+          disabled={!allowNext || blinkCount < 4}
           size="large"
           variant="contained"
         >
-          Next step
+          Finish setup
         </Button>
       </Box>
     </Paper>
