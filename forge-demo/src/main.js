@@ -1,9 +1,15 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, session } = require("electron");
 const path = require("path");
+import express from "express";
+
 const { getCurrentKeyboardEmulator } = require("./backend/keyboard-emulator");
 const Store = require("electron-store");
 
 const store = new Store();
+
+function isDebug() {
+  return process.env.npm_lifecycle_event === "start";
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -23,16 +29,23 @@ const createWindow = () => {
       nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
-      preload: path.join(__dirname, "preload.js"), // use a preload script
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-  // Open the DevTools.
-  if (process.env.NODE_ENV === "development") {
+  if (isDebug()) {
+    // Create the browser window.
+    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
     mainWindow.webContents.openDevTools();
+  } else {
+    const exApp = express();
+    exApp.use(express.static(path.resolve(__dirname, "..", "renderer")));
+    const server = exApp.listen(0, () => {
+      console.log(`port is ${server.address().port}`);
+      mainWindow.loadURL(
+        `http://localhost:${server.address().port}/main_window/`
+      );
+    });
   }
 };
 
