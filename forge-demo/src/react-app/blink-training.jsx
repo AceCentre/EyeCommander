@@ -28,7 +28,11 @@ import { useSound } from "use-sound";
 import { throttle } from "lodash";
 import { SliderWithValue } from "./slider-with-value.jsx";
 import { useStoreValue } from "./hooks/use-store.js";
-import { CHANGE_THRESHOLD_KEY, THROTTLE_TIME_KEY } from "./lib/store-consts.js";
+import {
+  CHANGE_THRESHOLD_KEY,
+  INITIAL_SETUP_REQUIRED,
+  THROTTLE_TIME_KEY,
+} from "./lib/store-consts.js";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const CHANGE_THRESHOLD = 8;
@@ -55,7 +59,11 @@ const max = 10;
 const normaliseProgress = (value) =>
   Math.floor(((value - min) * 100) / (max - min));
 
-export const BlinkTraining = ({ nextTask, prevTask }) => {
+export const BlinkTraining = ({ nextTask, prevTask, forceReload }) => {
+  const { update: updateInitialSetup } = useStoreValue(
+    INITIAL_SETUP_REQUIRED,
+    true
+  );
   const [blinkCount, setBlinkCount] = useState(0);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -283,7 +291,10 @@ export const BlinkTraining = ({ nextTask, prevTask }) => {
           Previous step
         </Button>
         <Button
-          onClick={nextTask}
+          onClick={() => {
+            updateInitialSetup(false);
+            forceReload();
+          }}
           disabled={!allowNext || blinkCount < 4}
           size="large"
           variant="contained"

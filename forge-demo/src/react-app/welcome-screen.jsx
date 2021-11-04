@@ -21,7 +21,7 @@ const getTaskProps = (taskNumber, current) => ({
   active: current == taskNumber,
 });
 
-export const WelcomeScreen = () => {
+export const WelcomeScreen = ({ forceReload }) => {
   const [activeTask, setActiveTask] = useState(1);
 
   useResizer({ width: 700, height: 1255 });
@@ -62,6 +62,7 @@ export const WelcomeScreen = () => {
         activeTask={activeTask}
         nextTask={() => setActiveTask((current) => current + 1)}
         prevTask={() => setActiveTask((current) => current - 1)}
+        forceReload={forceReload}
       />
     </>
   );
@@ -126,7 +127,7 @@ const WebcamDeviceSelector = ({ nextTask }) => {
   );
 };
 
-const TaskController = ({ activeTask, nextTask, prevTask }) => {
+const TaskController = ({ activeTask, nextTask, prevTask, forceReload }) => {
   if (activeTask === 1) {
     return <WebcamDeviceSelector nextTask={nextTask} />;
   }
@@ -136,7 +137,13 @@ const TaskController = ({ activeTask, nextTask, prevTask }) => {
   }
 
   if (activeTask == 3) {
-    return <BlinkTraining nextTask={nextTask} prevTask={prevTask} />;
+    return (
+      <BlinkTraining
+        nextTask={nextTask}
+        prevTask={prevTask}
+        forceReload={forceReload}
+      />
+    );
   }
 
   throw new Error(`No task: ${activeTask}`);

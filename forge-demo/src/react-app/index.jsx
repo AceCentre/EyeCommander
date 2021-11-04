@@ -5,19 +5,25 @@ import { INITIAL_SETUP_REQUIRED } from "./lib/store-consts.js";
 import { WelcomeScreen } from "./welcome-screen.jsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box } from "@mui/system";
+import { MainScreen } from "./main-screen.jsx";
 
 const { ipcRenderer, store } = electronInternals;
 
 export const Controller = () => {
-  const { loading, value: initialSetupRequired } = useStoreValue(
-    INITIAL_SETUP_REQUIRED,
-    true
-  );
+  const {
+    loading,
+    value: initialSetupRequired,
+    reload: reloadInitialSetup,
+  } = useStoreValue(INITIAL_SETUP_REQUIRED, true);
 
   if (loading) return null;
 
   if (initialSetupRequired) {
-    return <WelcomeScreen />;
+    return <WelcomeScreen forceReload={reloadInitialSetup} />;
+  }
+
+  if (!initialSetupRequired) {
+    return <MainScreen />;
   }
 
   return null;

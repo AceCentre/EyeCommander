@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 export const useStoreValue = (key, defaultValue = null) => {
   const [value, setValue] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [forceReloadCounter, setForceReloadCounter] = useState(0);
 
   if (!electronInternals) {
     throw new Error("Electron is not available");
@@ -41,12 +42,16 @@ export const useStoreValue = (key, defaultValue = null) => {
     };
 
     getValueFromStore();
-  }, []);
+  }, [forceReloadCounter]);
 
   const update = async (newValue) => {
     await electronInternals.ipcRenderer.invoke("setStoreValue", key, newValue);
     setValue(newValue);
   };
 
-  return { value, loading, update };
+  const reload = () => {
+    setForceReloadCounter((prev) => prev + 1);
+  };
+
+  return { value, loading, update, reload };
 };
