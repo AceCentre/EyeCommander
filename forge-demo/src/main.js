@@ -2,9 +2,11 @@ import express from "express";
 
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-
 const Store = require("electron-store");
+
+// Application state
 const store = new Store();
+let settingsWindow = null;
 
 function isDebug() {
   return process.env.npm_lifecycle_event === "start";
@@ -16,7 +18,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-const createWindow = () => {
+const createWindow = (javascriptToExecute) => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 400,
@@ -29,6 +31,11 @@ const createWindow = () => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script
     },
   });
+
+  if (javascriptToExecute) {
+    console.log("Trying to execute javascript");
+    mainWindow.webContents.executeJavaScript(javascriptToExecute, true);
+  }
 
   if (isDebug()) {
     // Create the browser window.
@@ -44,12 +51,18 @@ const createWindow = () => {
       );
     });
   }
+
+  return mainWindow;
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+app.on("ready", () => {
+  console.log("APP READY");
+
+  createWindow();
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -90,6 +103,17 @@ ipcMain.handle("setStoreValue", (event, key, value) => {
 
 ipcMain.on("blink", async () => {
   console.log("Blink got");
+});
+
+ipcMain.on("open-settings", async () => {
+  if (settingsWindow) {
+    // Close the current window
+    settingsWindow.close();
+  }
+
+  settingsWindow = createWindow("window.IS_SETTINGS_PAGE = true;");
+
+  console.log("Open settings");
 });
 
 // In this file you can include the rest of your app's specific main process
