@@ -1,5 +1,10 @@
 module.exports = {
   ignorePatterns: ["**/public/**/*.js"],
+  globals: {
+    electronInternals: "readonly",
+    MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: "readonly",
+    MAIN_WINDOW_WEBPACK_ENTRY: "readonly",
+  },
   env: {
     browser: true,
     es2021: true,

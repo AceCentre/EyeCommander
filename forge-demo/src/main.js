@@ -1,10 +1,9 @@
-const { app, BrowserWindow, ipcMain, session } = require("electron");
-const path = require("path");
 import express from "express";
 
-const { getCurrentKeyboardEmulator } = require("./backend/keyboard-emulator");
-const Store = require("electron-store");
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("path");
 
+const Store = require("electron-store");
 const store = new Store();
 
 function isDebug() {
@@ -16,8 +15,6 @@ if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
-const KeyboardEmulator = getCurrentKeyboardEmulator();
-let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 });
 
 const createWindow = () => {
   // Create the browser window.
@@ -88,13 +85,11 @@ ipcMain.handle("setStoreValue", (event, key, value) => {
   return store.set(key, value);
 });
 
-ipcMain.on("trigger-keypress", async (event, key) => {
-  await keyboardEmulator.pressKey(key);
+// const KeyboardEmulator = getCurrentKeyboardEmulator();
+// let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 });
 
-  event.sender.send(
-    "trigger-keypress-success",
-    `Successfully caused keypress ${key}`
-  );
+ipcMain.on("blink", async () => {
+  console.log("Blink got");
 });
 
 // In this file you can include the rest of your app's specific main process

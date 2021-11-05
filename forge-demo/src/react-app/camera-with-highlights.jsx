@@ -11,10 +11,12 @@ import {
 import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 
+const LOADING_TIME = 2000;
+
 export const CameraWithHighlights = ({ onFrame = () => {} }) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
-  const loading = useLoading(1000);
+  const loading = useLoading(LOADING_TIME);
 
   const onResults = useCallback(
     (results) => {

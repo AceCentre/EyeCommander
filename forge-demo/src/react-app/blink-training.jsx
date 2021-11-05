@@ -1,29 +1,13 @@
 import { Avatar, Button, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { green, red } from "@mui/material/colors";
 import { useSound } from "use-sound";
 
-import { throttle } from "lodash";
-import { SliderWithValue } from "./slider-with-value.jsx";
 import { useStoreValue } from "./hooks/use-store.js";
-import {
-  CHANGE_THRESHOLD_KEY,
-  INITIAL_SETUP_REQUIRED,
-  THROTTLE_TIME_KEY,
-} from "./lib/store-consts.js";
+import { INITIAL_SETUP_REQUIRED } from "./lib/store-consts.js";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { CameraWithHighlights } from "./camera-with-highlights.jsx";
-
-const KEEP_NUMBER_OF_VALUES = 100;
-const TIME_BETWEEN = 100;
-
-const euclaideanDistance = (point, point1) => {
-  const { x, y } = point;
-  const { x: x1, y: y1 } = point1;
-  const distance = Math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2);
-  return distance;
-};
+import { BlinkDetectionWithSliders } from "./blink-detection-with-sliders.jsx";
 
 const getColorProp = (blinkCount, iconNumber) => {
   if (blinkCount >= iconNumber) {
@@ -38,92 +22,14 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
     true
   );
   const [blinkCount, setBlinkCount] = useState(0);
-  const distanceHistory = useRef(
-    Array(KEEP_NUMBER_OF_VALUES).fill({ time: Infinity, value: 0 })
-  );
+
   const [allowNext, setAllowNext] = useState(true);
   const [play] = useSound("./public/notif.mp3");
 
-  const {
-    loading: loadingBlinkThreshold,
-    value: blinkThreshold,
-    update: updateBlinkThreshold,
-  } = useStoreValue(CHANGE_THRESHOLD_KEY, 5);
-  const {
-    loading: loadingThrottleTime,
-    value: throttleTime,
-    update: updateThrottleTime,
-  } = useStoreValue(THROTTLE_TIME_KEY, 1000);
-
-  const throttled = useCallback(
-    throttle(() => {
-      play();
-      setBlinkCount((x) => x + 1);
-    }, throttleTime),
-    [throttleTime, play]
-  );
-
-  const onFrame = useCallback(
-    (results) => {
-      const currentTimestamp = performance.now();
-
-      if (results.multiFaceLandmarks.length === 1) {
-        setAllowNext(true);
-      } else {
-        setAllowNext(false);
-      }
-
-      if (results.multiFaceLandmarks) {
-        for (const landmarks of results.multiFaceLandmarks) {
-          const rightEye = {
-            right: landmarks[33],
-            left: landmarks[133],
-            top: landmarks[159],
-            bottom: landmarks[145],
-          };
-
-          const leftEye = {
-            right: landmarks[362],
-            left: landmarks[263],
-            top: landmarks[386],
-            bottom: landmarks[374],
-          };
-
-          const rhDistance = euclaideanDistance(rightEye.right, rightEye.left);
-          const rvDistance = euclaideanDistance(rightEye.top, rightEye.bottom);
-
-          const lvDistance = euclaideanDistance(leftEye.top, leftEye.bottom);
-          const lhDistance = euclaideanDistance(leftEye.right, leftEye.left);
-
-          const reRatio = rhDistance / rvDistance;
-          const leRatio = lhDistance / lvDistance;
-
-          const ratio = (reRatio + leRatio) / 2;
-
-          const currentFrame = {
-            time: currentTimestamp,
-            ratio,
-          };
-
-          distanceHistory.current.push(currentFrame);
-          distanceHistory.current.shift();
-
-          const firstFrame = distanceHistory.current.find(
-            (x) => currentTimestamp - x.time < TIME_BETWEEN
-          );
-
-          const timeChange = currentFrame.time - firstFrame.time;
-          const ratioChange = currentFrame.ratio - firstFrame.ratio;
-          const totalChange = (ratioChange / timeChange) * 100;
-
-          if (totalChange > blinkThreshold) {
-            throttled();
-          }
-        }
-      }
-    },
-    [blinkThreshold, throttled]
-  );
+  const onBlink = useCallback(() => {
+    setBlinkCount((x) => x + 1);
+    play();
+  }, [setBlinkCount, play]);
 
   return (
     <Paper
@@ -185,33 +91,7 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
           </Avatar>
         </Box>
       </Box>
-      <CameraWithHighlights onFrame={onFrame} />
-      <Box sx={{ display: "grid", gap: "1rem", flexDirection: "column" }}>
-        {!loadingBlinkThreshold && (
-          <SliderWithValue
-            min={0}
-            max={100}
-            defaultValue={blinkThreshold * 10}
-            label="Blink depth"
-            tooltip="The higher this value the more clear you blink must be"
-            onChange={(newValue) => {
-              updateBlinkThreshold(newValue / 10);
-            }}
-          />
-        )}
-        {!loadingThrottleTime && (
-          <SliderWithValue
-            min={100}
-            max={10000}
-            defaultValue={throttleTime}
-            label="Throttle time"
-            tooltip="The minimum amount of time between blinks."
-            onChange={(newValue) => {
-              updateThrottleTime(newValue);
-            }}
-          />
-        )}
-      </Box>
+      <BlinkDetectionWithSliders faceInFrame={setAllowNext} onBlink={onBlink} />
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Button onClick={prevTask} size="large">
           Previous step
