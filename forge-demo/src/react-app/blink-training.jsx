@@ -1,28 +1,7 @@
-import {
-  Avatar,
-  Button,
-  LinearProgress,
-  Paper,
-  Slider,
-  Typography,
-} from "@mui/material";
+import { Avatar, Button, Paper, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Camera } from "@mediapipe/camera_utils";
-import { drawConnectors } from "@mediapipe/drawing_utils";
-import {
-  FaceMesh,
-  FACEMESH_RIGHT_EYE,
-  FACEMESH_LEFT_EYE,
-  FACEMESH_FACE_OVAL,
-  FACEMESH_RIGHT_IRIS,
-  FACEMESH_LEFT_IRIS,
-} from "@mediapipe/face_mesh";
-
-import { SelectedWebcam } from "./selected-webcam.jsx";
-import { useLoading } from "./hooks/use-loading.js";
+import React, { useCallback, useRef, useState } from "react";
 import { green, red } from "@mui/material/colors";
-import { useFaceMesh } from "./hooks/use-face-mesh.js";
 import { useSound } from "use-sound";
 
 import { throttle } from "lodash";
@@ -34,11 +13,10 @@ import {
   THROTTLE_TIME_KEY,
 } from "./lib/store-consts.js";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { CameraWithHighlights } from "./camera-with-highlights.jsx";
 
-const CHANGE_THRESHOLD = 8;
 const KEEP_NUMBER_OF_VALUES = 100;
 const TIME_BETWEEN = 100;
-const THROTTLE_TIME = 1000;
 
 const euclaideanDistance = (point, point1) => {
   const { x, y } = point;
@@ -54,24 +32,16 @@ const getColorProp = (blinkCount, iconNumber) => {
   return {};
 };
 
-const min = 0;
-const max = 10;
-const normaliseProgress = (value) =>
-  Math.floor(((value - min) * 100) / (max - min));
-
-export const BlinkTraining = ({ nextTask, prevTask, forceReload }) => {
+export const BlinkTraining = ({ prevTask, forceReload }) => {
   const { update: updateInitialSetup } = useStoreValue(
     INITIAL_SETUP_REQUIRED,
     true
   );
   const [blinkCount, setBlinkCount] = useState(0);
-  const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
   const distanceHistory = useRef(
     Array(KEEP_NUMBER_OF_VALUES).fill({ time: Infinity, value: 0 })
   );
   const [allowNext, setAllowNext] = useState(true);
-  const loading = useLoading(500);
   const [play] = useSound("./public/notif.mp3");
 
   const {
@@ -93,28 +63,9 @@ export const BlinkTraining = ({ nextTask, prevTask, forceReload }) => {
     [throttleTime, play]
   );
 
-  const onResults = useCallback(
+  const onFrame = useCallback(
     (results) => {
       const currentTimestamp = performance.now();
-
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
-      const canvasElement = canvasRef.current;
-      const canvasCtx = canvasElement.getContext("2d");
-
-      // Set canvas width
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
-
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      canvasCtx.drawImage(
-        results.image,
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height
-      );
 
       if (results.multiFaceLandmarks.length === 1) {
         setAllowNext(true);
@@ -168,35 +119,11 @@ export const BlinkTraining = ({ nextTask, prevTask, forceReload }) => {
           if (totalChange > blinkThreshold) {
             throttled();
           }
-
-          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
-            color: "#FF3030",
-          });
-
-          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_IRIS, {
-            color: "#FF3030",
-          });
-
-          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, {
-            color: "#30FF30",
-          });
-
-          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_IRIS, {
-            color: "#30FF30",
-          });
-
-          drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, {
-            color: "#ffffff",
-          });
         }
       }
-
-      canvasCtx.restore();
     },
-    [loading, blinkThreshold, throttled]
+    [blinkThreshold, throttled]
   );
-
-  useFaceMesh({ loading, webcamRef }, onResults);
 
   return (
     <Paper
@@ -258,8 +185,7 @@ export const BlinkTraining = ({ nextTask, prevTask, forceReload }) => {
           </Avatar>
         </Box>
       </Box>
-      <SelectedWebcam sx={{ display: "none" }} webcamRef={webcamRef} />
-      <canvas ref={canvasRef} />
+      <CameraWithHighlights onFrame={onFrame} />
       <Box sx={{ display: "grid", gap: "1rem", flexDirection: "column" }}>
         {!loadingBlinkThreshold && (
           <SliderWithValue
