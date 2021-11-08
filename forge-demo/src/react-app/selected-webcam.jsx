@@ -6,8 +6,7 @@ import { red } from "@mui/material/colors";
 import { Box } from "@mui/system";
 
 export const SelectedWebcam = ({ webcamRef, sx = {}, ...props }) => {
-  const { devices, loading, setDeviceId, selectedDeviceId } =
-    useWebcamSelector();
+  const { loading, selectedDeviceId } = useWebcamSelector();
 
   if (loading) return null;
 
