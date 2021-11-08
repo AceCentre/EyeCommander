@@ -16,8 +16,6 @@ export const Controller = () => {
   } = useStoreValue(INITIAL_SETUP_REQUIRED, true);
   const loading = useLoading(2000);
 
-  console.log({ window, isSettings: window.IS_SETTINGS_PAGE, loading });
-
   if (loading) return null;
 
   if (window && window.IS_SETTINGS_PAGE) {
