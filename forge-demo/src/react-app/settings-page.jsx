@@ -1,4 +1,5 @@
 import {
+  Button,
   Checkbox,
   FormControl,
   FormControlLabel,
@@ -21,6 +22,7 @@ import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { useStoreValue } from "./hooks/use-store";
 import { REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
+import { useSaveAndClose } from "./hooks/use-save-and-close";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -30,6 +32,7 @@ const SCREENS = {
 
 export const SettingsPage = () => {
   useResizer({ width: 700, height: 600 });
+  const saveAndClose = useSaveAndClose();
   const [currentScreen, setCurrentScreen] = useState(SCREENS.CAMERA);
 
   return (
@@ -66,9 +69,23 @@ export const SettingsPage = () => {
           </SidebarItem>
         </List>
       </Paper>
-      <Box sx={{ width: "100%", height: "100%" }}>
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          padding: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+      >
         {currentScreen === SCREENS.CAMERA && <CameraSettings />}
         {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
+        <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
+          <Button variant="contained" onClick={saveAndClose}>
+            Save and close
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
@@ -95,14 +112,7 @@ const CameraSettings = () => {
   if (reverseLoading || devicesLoading) return null;
 
   return (
-    <Box
-      sx={{
-        padding: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-      }}
-    >
+    <>
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         Camera options
       </Typography>
@@ -129,7 +139,7 @@ const CameraSettings = () => {
           ))}
         </Select>
       </FormControl>
-    </Box>
+    </>
   );
 };
 

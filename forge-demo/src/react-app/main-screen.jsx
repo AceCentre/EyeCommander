@@ -16,6 +16,7 @@ import useSound from "use-sound";
 import { red } from "@mui/material/colors";
 import { useBlinkAction } from "./hooks/use-blink-action";
 import { useOpenSettings } from "./hooks/use-open-settings";
+import { useReload } from "./hooks/use-reload";
 
 const CustomWidthTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -27,6 +28,7 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
 
 export const MainScreen = () => {
   useResizer({ width: 700, height: 750 });
+  const reloadTrigger = useReload();
   const [play] = useSound("./public/notif.mp3");
   const [isFaceInFrame, setIsFaceInFrame] = useState(false);
   const sendBlinkToBackend = useBlinkAction();
@@ -36,6 +38,10 @@ export const MainScreen = () => {
     play();
     sendBlinkToBackend();
   }, [play]);
+
+  if (reloadTrigger % 2 !== 0) {
+    return null;
+  }
 
   return (
     <Box sx={{ padding: "2rem" }}>
