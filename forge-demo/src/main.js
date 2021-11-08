@@ -113,6 +113,11 @@ ipcMain.on("open-settings", async () => {
 
   settingsWindow = createWindow("window.IS_SETTINGS_PAGE = true;");
 
+  settingsWindow.on("close", () => {
+    console.log("Settings window closed");
+    settingsWindow = null;
+  });
+
   console.log("Open settings");
 });
 
