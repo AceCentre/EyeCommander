@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { PRIMARY_DEVICE_ID } from "../lib/store-consts";
 import { useStoreValue } from "./use-store";
 
