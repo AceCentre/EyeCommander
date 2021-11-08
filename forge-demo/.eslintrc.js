@@ -21,6 +21,7 @@ module.exports = {
   plugins: ["react"],
   rules: {
     indent: ["error", 2],
+    "no-unused-vars": ["error", { varsIgnorePattern: "React" }],
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double", { avoidEscape: true }],
     semi: ["error", "always"],
