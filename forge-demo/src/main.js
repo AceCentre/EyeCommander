@@ -1,4 +1,5 @@
 import express from "express";
+import { OutputController } from "./backend/output-controller";
 
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
@@ -8,6 +9,7 @@ const Store = require("electron-store");
 const store = new Store();
 let settingsWindow = null;
 let mainWindow = null;
+let outputController = new OutputController({ store });
 
 function isDebug() {
   return process.env.npm_lifecycle_event === "start";
@@ -34,7 +36,6 @@ const createWindow = (javascriptToExecute) => {
   });
 
   if (javascriptToExecute) {
-    console.log("Trying to execute javascript");
     currentWindow.webContents.executeJavaScript(javascriptToExecute, true);
   }
 
@@ -60,8 +61,6 @@ const createWindow = (javascriptToExecute) => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-  console.log("APP READY");
-
   mainWindow = createWindow();
 
   mainWindow.on("close", () => {
@@ -91,9 +90,15 @@ app.on("activate", () => {
 });
 
 ipcMain.handle("getStoreValue", (event, key) => {
-  console.log("Getting: ", key);
-
   return store.get(key);
+});
+
+ipcMain.handle("setStoreValue", (event, key, value) => {
+  return store.set(key, value);
+});
+
+ipcMain.handle("outputController", async (event, functionName, args) => {
+  return await outputController[functionName](args);
 });
 
 ipcMain.on("resize-window", (event, width, height) => {
@@ -101,22 +106,11 @@ ipcMain.on("resize-window", (event, width, height) => {
   browserWindow.setSize(width, height);
 });
 
-ipcMain.handle("setStoreValue", (event, key, value) => {
-  console.log("Setting: ", key, value);
-
-  return store.set(key, value);
-});
-
-// const KeyboardEmulator = getCurrentKeyboardEmulator();
-// let keyboardEmulator = new KeyboardEmulator({ vJoyDeviceId: 15 });
-
 ipcMain.on("blink", async () => {
   console.log("Blink got");
 });
 
 const reloadMain = () => {
-  console.log("RELOAD MAIN");
-
   if (mainWindow) {
     mainWindow.webContents.send("reload");
   } else {
@@ -144,11 +138,7 @@ ipcMain.on("open-settings", async () => {
   settingsWindow = createWindow("window.IS_SETTINGS_PAGE = true;");
 
   settingsWindow.on("close", () => {
-    console.log("Settings window closed");
     reloadMain();
     settingsWindow = null;
   });
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

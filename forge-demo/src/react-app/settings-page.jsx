@@ -23,6 +23,7 @@ import { useStoreValue } from "./hooks/use-store";
 import { PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { useSaveAndClose } from "./hooks/use-save-and-close";
+import { OutputSettings } from "./output-settings.jsx";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -31,7 +32,7 @@ const SCREENS = {
 };
 
 export const SettingsPage = () => {
-  useResizer({ width: 700, height: 600 });
+  useResizer({ width: 900, height: 600 });
   const saveAndClose = useSaveAndClose();
   const [currentScreen, setCurrentScreen] = useState(SCREENS.CAMERA);
 
@@ -41,7 +42,7 @@ export const SettingsPage = () => {
         width: "100vw",
         height: "100vh",
         display: "grid",
-        gridTemplateColumns: "1fr 2fr",
+        gridTemplateColumns: "1fr 3fr",
       }}
     >
       <Paper sx={{ width: "100%", height: "100%" }}>
@@ -170,10 +171,6 @@ const CameraSettings = () => {
       </FormControl>
     </>
   );
-};
-
-const OutputSettings = () => {
-  return <h1>Ouput</h1>;
 };
 
 const SidebarItem = ({ children, icon, selected, onClick }) => {
