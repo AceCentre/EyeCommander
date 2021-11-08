@@ -10,6 +10,8 @@ import {
 } from "@mediapipe/face_mesh";
 import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
+import { useStoreValue } from "./hooks/use-store";
+import { REVERSE_CAMERA } from "./lib/store-consts";
 
 const LOADING_TIME = 2000;
 
@@ -17,6 +19,13 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const loading = useLoading(LOADING_TIME);
+
+  const { value: reverse, loading: reverseLoading } = useStoreValue(
+    REVERSE_CAMERA,
+    false
+  );
+
+  const canvasFlip = reverse ? { transform: "scale(-1,1)" } : {};
 
   const onResults = useCallback(
     (results) => {
@@ -30,6 +39,7 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
       canvasRef.current.height = videoHeight;
 
       canvasCtx.save();
+
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
       canvasCtx.drawImage(
         results.image,
@@ -70,12 +80,12 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
     [onFrame]
   );
 
-  useFaceMesh({ loading, webcamRef }, onResults);
+  useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
 
   return (
     <>
       <SelectedWebcam sx={{ display: "none" }} webcamRef={webcamRef} />
-      <canvas ref={canvasRef} />
+      <canvas style={canvasFlip} ref={canvasRef} />
     </>
   );
 };
