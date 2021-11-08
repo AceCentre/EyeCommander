@@ -7,6 +7,7 @@ const Store = require("electron-store");
 // Application state
 const store = new Store();
 let settingsWindow = null;
+let mainWindow = null;
 
 function isDebug() {
   return process.env.npm_lifecycle_event === "start";
@@ -20,7 +21,7 @@ if (require("electron-squirrel-startup")) {
 
 const createWindow = (javascriptToExecute) => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  const currentWindow = new BrowserWindow({
     width: 400,
     height: 400,
     resizable: process.env.NODE_ENV === "development",
@@ -34,25 +35,25 @@ const createWindow = (javascriptToExecute) => {
 
   if (javascriptToExecute) {
     console.log("Trying to execute javascript");
-    mainWindow.webContents.executeJavaScript(javascriptToExecute, true);
+    currentWindow.webContents.executeJavaScript(javascriptToExecute, true);
   }
 
   if (isDebug()) {
     // Create the browser window.
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-    mainWindow.webContents.openDevTools();
+    currentWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    currentWindow.webContents.openDevTools();
   } else {
     const exApp = express();
     exApp.use(express.static(path.resolve(__dirname, "..", "renderer")));
     const server = exApp.listen(0, () => {
       console.log(`port is ${server.address().port}`);
-      mainWindow.loadURL(
+      currentWindow.loadURL(
         `http://localhost:${server.address().port}/main_window/`
       );
     });
   }
 
-  return mainWindow;
+  return currentWindow;
 };
 
 // This method will be called when Electron has finished
@@ -61,7 +62,11 @@ const createWindow = (javascriptToExecute) => {
 app.on("ready", () => {
   console.log("APP READY");
 
-  createWindow();
+  mainWindow = createWindow();
+
+  mainWindow.on("close", () => {
+    mainWindow = null;
+  });
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -77,7 +82,11 @@ app.on("activate", () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    mainWindow = createWindow();
+
+    mainWindow.on("close", () => {
+      mainWindow = null;
+    });
   }
 });
 
@@ -105,6 +114,27 @@ ipcMain.on("blink", async () => {
   console.log("Blink got");
 });
 
+const reloadMain = () => {
+  console.log("RELOAD MAIN");
+
+  if (mainWindow) {
+    mainWindow.webContents.send("reload");
+  } else {
+    mainWindow = createWindow();
+
+    mainWindow.on("close", () => {
+      mainWindow = null;
+    });
+  }
+};
+
+ipcMain.on("save-and-close", async () => {
+  if (settingsWindow) {
+    // Close the current window
+    settingsWindow.close();
+  }
+});
+
 ipcMain.on("open-settings", async () => {
   if (settingsWindow) {
     // Close the current window
@@ -115,10 +145,9 @@ ipcMain.on("open-settings", async () => {
 
   settingsWindow.on("close", () => {
     console.log("Settings window closed");
+    reloadMain();
     settingsWindow = null;
   });
-
-  console.log("Open settings");
 });
 
 // In this file you can include the rest of your app's specific main process
