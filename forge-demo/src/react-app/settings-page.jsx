@@ -20,7 +20,7 @@ import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 import LogoutIcon from "@mui/icons-material/Logout";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { useStoreValue } from "./hooks/use-store";
-import { REVERSE_CAMERA } from "./lib/store-consts";
+import { PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { useSaveAndClose } from "./hooks/use-save-and-close";
 
@@ -81,6 +81,8 @@ export const SettingsPage = () => {
       >
         {currentScreen === SCREENS.CAMERA && <CameraSettings />}
         {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
+        {currentScreen === SCREENS.SOUND && <SoundSettings />}
+
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
           <Button variant="contained" onClick={saveAndClose}>
             Save and close
@@ -88,6 +90,33 @@ export const SettingsPage = () => {
         </Box>
       </Box>
     </Box>
+  );
+};
+
+const SoundSettings = () => {
+  const {
+    value: playSound,
+    loading: playSoundLoading,
+    update: playSoundUpdate,
+  } = useStoreValue(PLAY_SOUND, true);
+
+  if (playSoundLoading) return null;
+
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Sound options
+      </Typography>
+      <FormControlLabel
+        control={
+          <Checkbox
+            defaultChecked={playSound}
+            onChange={(event) => playSoundUpdate(event.target.checked)}
+          />
+        }
+        label="Play sound on blink"
+      />
+    </>
   );
 };
 

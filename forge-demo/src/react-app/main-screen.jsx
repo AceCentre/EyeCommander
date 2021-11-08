@@ -17,6 +17,8 @@ import { red } from "@mui/material/colors";
 import { useBlinkAction } from "./hooks/use-blink-action";
 import { useOpenSettings } from "./hooks/use-open-settings";
 import { useReload } from "./hooks/use-reload";
+import { useStoreValue } from "./hooks/use-store";
+import { PLAY_SOUND } from "./lib/store-consts";
 
 const CustomWidthTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -34,10 +36,14 @@ export const MainScreen = () => {
   const sendBlinkToBackend = useBlinkAction();
   const openSettings = useOpenSettings();
 
+  const { value: playSound } = useStoreValue(PLAY_SOUND, true);
+
   const onBlink = useCallback(() => {
-    play();
+    if (playSound) {
+      play();
+    }
     sendBlinkToBackend();
-  }, [play]);
+  }, [play, playSound, reloadTrigger]);
 
   if (reloadTrigger % 2 !== 0) {
     return null;
