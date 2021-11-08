@@ -1,5 +1,147 @@
-import React from "react";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import React, { useState } from "react";
+import { useResizer } from "./hooks/use-resizer";
+import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
+import LogoutIcon from "@mui/icons-material/Logout";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import { useStoreValue } from "./hooks/use-store";
+import { REVERSE_CAMERA } from "./lib/store-consts";
+import { useWebcamSelector } from "./hooks/use-webcam-selector";
+
+const SCREENS = {
+  CAMERA: "camera",
+  OUTPUT: "output",
+  SOUND: "sound",
+};
 
 export const SettingsPage = () => {
-  return <h1>Settings</h1>;
+  useResizer({ width: 700, height: 600 });
+  const [currentScreen, setCurrentScreen] = useState(SCREENS.CAMERA);
+
+  return (
+    <Box
+      sx={{
+        width: "100vw",
+        height: "100vh",
+        display: "grid",
+        gridTemplateColumns: "1fr 2fr",
+      }}
+    >
+      <Paper sx={{ width: "100%", height: "100%" }}>
+        <List>
+          <SidebarItem
+            selected={currentScreen === SCREENS.CAMERA}
+            icon={<VideoCameraFrontIcon />}
+            onClick={() => setCurrentScreen(SCREENS.CAMERA)}
+          >
+            Camera
+          </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.OUTPUT}
+            icon={<LogoutIcon />}
+            onClick={() => setCurrentScreen(SCREENS.OUTPUT)}
+          >
+            Output
+          </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.SOUND}
+            icon={<VolumeUpIcon />}
+            onClick={() => setCurrentScreen(SCREENS.SOUND)}
+          >
+            Sound
+          </SidebarItem>
+        </List>
+      </Paper>
+      <Box sx={{ width: "100%", height: "100%" }}>
+        {currentScreen === SCREENS.CAMERA && <CameraSettings />}
+        {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
+      </Box>
+    </Box>
+  );
+};
+
+const CameraSettings = () => {
+  const {
+    value: reverse,
+    loading: reverseLoading,
+    update: reverseUpdate,
+  } = useStoreValue(REVERSE_CAMERA, false);
+
+  const {
+    devices,
+    loading: devicesLoading,
+    setDeviceId,
+    selectedDeviceId,
+  } = useWebcamSelector();
+
+  const handleChange = (event) => {
+    setDeviceId(event.target.value);
+  };
+
+  if (reverseLoading || devicesLoading) return null;
+
+  return (
+    <Box
+      sx={{
+        padding: "2rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+      }}
+    >
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Camera options
+      </Typography>
+      <FormControlLabel
+        control={
+          <Checkbox
+            defaultChecked={reverse}
+            onChange={(event) => reverseUpdate(event.target.checked)}
+          />
+        }
+        label="Reverse camera"
+      />
+      <FormControl>
+        <InputLabel>Input device</InputLabel>
+        <Select
+          defaultValue={selectedDeviceId}
+          label="Input device"
+          onChange={handleChange}
+        >
+          {devices.map((device) => (
+            <MenuItem key={device.deviceId} value={device.deviceId}>
+              {device.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
+  );
+};
+
+const OutputSettings = () => {
+  return <h1>Ouput</h1>;
+};
+
+const SidebarItem = ({ children, icon, selected, onClick }) => {
+  return (
+    <ListItemButton selected={selected} onClick={onClick}>
+      <ListItemIcon>{icon}</ListItemIcon>
+      <ListItemText>{children}</ListItemText>
+    </ListItemButton>
+  );
 };
