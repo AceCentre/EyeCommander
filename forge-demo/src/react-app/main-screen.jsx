@@ -38,7 +38,7 @@ export const MainScreen = () => {
   }, [play]);
 
   return (
-    <Box>
+    <Box sx={{ padding: "2rem" }}>
       <Box
         sx={{
           width: "90%",

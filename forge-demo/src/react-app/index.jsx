@@ -48,7 +48,6 @@ export const Entry = () => {
           minHeight: "100vh",
           minWidth: "100vw",
           background: "rgb(234, 238, 243)",
-          padding: "2rem",
         }}
       >
         <Controller />

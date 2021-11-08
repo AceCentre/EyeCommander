@@ -11,7 +11,6 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { Button, Paper } from "@mui/material";
-import { SelectedWebcam } from "./selected-webcam.jsx";
 import { FaceFramer } from "./face-framer.jsx";
 import { BlinkTraining } from "./blink-training.jsx";
 import { useResizer } from "./hooks/use-resizer";
@@ -27,7 +26,7 @@ export const WelcomeScreen = ({ forceReload }) => {
   useResizer({ width: 700, height: 1255 });
 
   return (
-    <>
+    <Box sx={{ padding: "2rem" }}>
       <Typography variant="h1" sx={{ textAlign: "center", fontSize: "3rem" }}>
         Welcome to{" "}
         <Box component="span" sx={{ textDecoration: "underline" }}>
@@ -64,7 +63,7 @@ export const WelcomeScreen = ({ forceReload }) => {
         prevTask={() => setActiveTask((current) => current - 1)}
         forceReload={forceReload}
       />
-    </>
+    </Box>
   );
 };
 
