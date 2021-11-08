@@ -5,4 +5,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld("electronInternals", {
   ipcRenderer,
+  onReload: (...props) => {
+    ipcRenderer.on("reload", ...props);
+  },
 });
