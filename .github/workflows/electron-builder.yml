@@ -35,7 +35,7 @@ jobs:
         run: yarn make
 
       - name: Forge publish
-        run: yarn publish
+        run: yarn run publish
 
       - uses: actions/upload-artifact@v2
         with:
