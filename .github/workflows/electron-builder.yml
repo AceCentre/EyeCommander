@@ -5,8 +5,6 @@ jobs:
   release:
     runs-on: ${{ matrix.os }}
     defaults:
-      run:
-        working-directory: ./forge-demo
     strategy:
       fail-fast: false
       matrix:
