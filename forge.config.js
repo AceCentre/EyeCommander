@@ -1,9 +1,33 @@
 const os = require("os");
 
 let icon = undefined;
+let osxSigning = {};
 
 if (os.platform() === "darwin") {
   icon = "./assets/apple-icon.icns";
+
+  osxSigning = {
+    osxSign: {
+      identity: "Developer ID Application: THE ACE CENTRE-NORTH (K45HHA96ND)",
+      "hardened-runtime": true,
+      entitlements: "./assets/entitlements.plist",
+      "entitlements-inherit": "./assets/entitlements.plist",
+      "signature-flags": "library",
+      "gatekeeper-assess": false,
+    },
+  };
+
+  console.log("=========");
+  if (process.env.APPLE_ID && process.env.APPLE_ID_PASSWORD) {
+    console.log("SIGNING PARAMS ADDED");
+    osxSigning.osxNotarize = {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_ID_PASSWORD,
+    };
+  } else {
+    console.log("NO SIGNING PARAMS IN ENV");
+  }
+  console.log("=========");
 }
 
 module.exports = {
@@ -11,7 +35,10 @@ module.exports = {
     force: true,
     useCache: false,
   },
-  packagerConfig: { icon },
+  packagerConfig: {
+    icon,
+    ...osxSigning,
+  },
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
@@ -33,6 +60,12 @@ module.exports = {
         format: "ULFO",
         name: "EyeCommander",
         icon: "./assets/apple-icon.png",
+        additionalDMGOptions: {
+          "code-sign": {
+            identifier: "",
+            "signing-identity": "",
+          },
+        },
       },
     },
   ],
