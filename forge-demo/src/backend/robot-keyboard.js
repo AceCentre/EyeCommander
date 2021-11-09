@@ -1,4 +1,5 @@
 import { AbstractOutput } from "./abstract-output";
+import robot from "robotjs";
 
 export class RobotKeyboard extends AbstractOutput {
   constructor() {
@@ -6,7 +7,8 @@ export class RobotKeyboard extends AbstractOutput {
   }
 
   blink() {
-    console.log("ROBOT KEYBOARD OUTPUT");
+    console.log("tapping space");
+    robot.keyTap("space");
   }
 
   static getCompatiblePlatforms() {
