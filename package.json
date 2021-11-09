@@ -1,14 +1,9 @@
 {
-  "name": "forge-demo",
-  "productName": "forge-demo",
+  "name": "eye-commander",
+  "productName": "EyeCommander",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Detect blinks and convert them to switch output",
   "main": ".webpack/main",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/AceCentre/EyeCommander.git",
-    "directory": "forge-demo"
-  },
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -27,6 +22,7 @@
     "@babel/preset-react": "^7.16.0",
     "@electron-forge/cli": "^6.0.0-beta.61",
     "@electron-forge/maker-deb": "^6.0.0-beta.61",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.61",
     "@electron-forge/maker-rpm": "^6.0.0-beta.61",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",

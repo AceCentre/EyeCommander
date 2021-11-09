@@ -1,9 +1,17 @@
+const os = require("os");
+
+let icon = undefined;
+
+if (os.platform() === "darwin") {
+  icon = "./assets/apple-icon.icns";
+}
+
 module.exports = {
   electronRebuildConfig: {
     force: true,
     useCache: false,
   },
-  packagerConfig: {},
+  packagerConfig: { icon },
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
@@ -12,16 +20,20 @@ module.exports = {
       },
     },
     {
-      name: "@electron-forge/maker-zip",
-      platforms: ["darwin"],
-    },
-    {
       name: "@electron-forge/maker-deb",
       config: {},
     },
     {
       name: "@electron-forge/maker-rpm",
       config: {},
+    },
+    {
+      name: "@electron-forge/maker-dmg",
+      config: {
+        format: "ULFO",
+        name: "EyeCommander",
+        icon: "./assets/apple-icon.png",
+      },
     },
   ],
   plugins: [
