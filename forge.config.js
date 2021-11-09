@@ -1,4 +1,5 @@
 const os = require("os");
+const { publish } = require("rxjs");
 
 let icon = undefined;
 let osxSigning = {};
@@ -35,6 +36,22 @@ if (os.platform() === "darwin") {
   console.log("=========");
 }
 
+let publishers = [];
+
+if (process.env.GITHUB_TOKEN) {
+  publish.push({
+    name: "@electron-forge/publisher-github",
+    config: {
+      repository: {
+        owner: "AceCentre",
+        name: "EyeCommander",
+      },
+      prerelease: true,
+      draft: true,
+    },
+  });
+}
+
 module.exports = {
   electronRebuildConfig: {
     force: true,
@@ -44,6 +61,7 @@ module.exports = {
     icon,
     ...osxSigning,
   },
+  publishers,
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
