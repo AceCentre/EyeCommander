@@ -39,7 +39,7 @@ if (os.platform() === "darwin") {
 let publishers = [];
 
 if (process.env.GITHUB_TOKEN) {
-  publish.push({
+  publishers.push({
     name: "@electron-forge/publisher-github",
     config: {
       repository: {
