@@ -36,6 +36,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ runner.os }}-build
-          path: forge-demo/out
+          path: out
           # Github has size limits so this avoids hitting them
           retention-days: 1
