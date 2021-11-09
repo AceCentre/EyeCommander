@@ -18,11 +18,16 @@ if (os.platform() === "darwin") {
   };
 
   console.log("=========");
-  if (process.env.APPLE_ID && process.env.APPLE_ID_PASSWORD) {
+  if (
+    process.env.APPLE_ID &&
+    process.env.APPLE_ID_PASSWORD &&
+    process.env.APPLE_PROVIDER
+  ) {
     console.log("SIGNING PARAMS ADDED");
     osxSigning.osxNotarize = {
       appleId: process.env.APPLE_ID,
       appleIdPassword: process.env.APPLE_ID_PASSWORD,
+      ascProvider: process.env.APPLE_PROVIDER,
     };
   } else {
     console.log("NO SIGNING PARAMS IN ENV");
