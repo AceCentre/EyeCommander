@@ -107,7 +107,7 @@ ipcMain.on("resize-window", (event, width, height) => {
 });
 
 ipcMain.on("blink", async () => {
-  console.log("Blink got");
+  outputController.blink();
 });
 
 const reloadMain = () => {
