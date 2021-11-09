@@ -1,0 +1,41 @@
+name: Electron Builder
+on: [pull_request]
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install robotjs deps for linux
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y libxml2-utils libxtst-dev libpng++-dev
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Electron rebuild
+        # Ignore when this fails, its a total hack but for some reason
+        # electron forge only builds on start, run-as-node forces it to crash out
+        run: yarn start --run-as-node || true
+
+      - name: Forge make
+        run: yarn make
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ runner.os }}-build
+          path: out
+          # Github has size limits so this avoids hitting them
+          retention-days: 1

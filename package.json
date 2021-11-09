@@ -1,0 +1,64 @@
+{
+  "name": "forge-demo",
+  "productName": "forge-demo",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AceCentre/EyeCommander.git",
+    "directory": "forge-demo"
+  },
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "Gavin Henderson",
+    "email": "gavin.henderson@hotmail.co.uk"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-react": "^7.16.0",
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-deb": "^6.0.0-beta.61",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
+    "@electron-forge/maker-zip": "^6.0.0-beta.61",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.61",
+    "@vercel/webpack-asset-relocator-loader": "1.7.0",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.0.0",
+    "electron": "15.3.0",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.0.0"
+  },
+  "dependencies": {
+    "@babel/eslint-parser": "^7.16.0",
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@fontsource/roboto": "^4.5.1",
+    "@mediapipe/camera_utils": "^0.3.1632432234",
+    "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
+    "@mui/icons-material": "^5.0.5",
+    "@mui/material": "^5.0.6",
+    "@tensorflow/tfjs": "^3.11.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.0.1",
+    "eslint": "^8.1.0",
+    "eslint-plugin-react": "^7.26.1",
+    "lodash": "^4.17.21",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-webcam": "^6.0.0",
+    "robotjs": "^0.6.0",
+    "use-sound": "^4.0.1"
+  }
+}
