@@ -9,3 +9,5 @@ This is a project started by Lucas Henrique, Daniel Kashkett, and Giovanbattista
 ## Licence
 
 [GNU GPL v3](LICENCE.txt)
+
+- emoticon by Astatine Lab from the Noun Project
