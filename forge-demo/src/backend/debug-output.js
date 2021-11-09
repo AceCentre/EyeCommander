@@ -9,6 +9,10 @@ export class DebugOutput extends AbstractOutput {
     super();
   }
 
+  blink() {
+    console.log("DEBUG OUTPUT");
+  }
+
   // Only compatible when in debug mode so it doesnt appear on prod
   static getCompatiblePlatforms() {
     if (isDebug()) {

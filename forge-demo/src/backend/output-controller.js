@@ -8,7 +8,34 @@ const OUTPUT_TYPES = [RobotKeyboard, DebugOutput];
 export class OutputController {
   constructor({ store }) {
     this.store = store;
-    this.outputDevices = [];
+    this.outputDevices = null;
+    this.currentDevice = null;
+
+    this.getOutputTypes();
+  }
+
+  async blink() {
+    await this.ensureCurrentDeviceExists();
+
+    this.currentDevice.blink();
+  }
+
+  async ensureCurrentDeviceExists() {
+    if (this.currentDevice) {
+      return;
+    }
+
+    const currentlySelected = await this.getCurrentlySelected();
+
+    let CurrentOutput = null;
+
+    for (const current of OUTPUT_TYPES) {
+      if (current.info().name === currentlySelected.name) {
+        CurrentOutput = current;
+      }
+    }
+
+    this.currentDevice = new CurrentOutput();
   }
 
   getOutputTypes() {
@@ -22,8 +49,6 @@ export class OutputController {
         valid.push(current);
       }
     }
-
-    console.log("Valid platforms");
 
     this.outputDevices = valid;
 
@@ -61,6 +86,8 @@ export class OutputController {
     }
 
     this.store.set(OUTPUT_TYPE_NAME, foundOutput.name);
+
+    this.currentDevice = null;
 
     return foundOutput;
   }

@@ -5,6 +5,10 @@ export class RobotKeyboard extends AbstractOutput {
     super();
   }
 
+  blink() {
+    console.log("ROBOT KEYBOARD OUTPUT");
+  }
+
   static getCompatiblePlatforms() {
     return ["win32", "linux", "darwin"];
   }
