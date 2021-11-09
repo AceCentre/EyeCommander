@@ -34,6 +34,9 @@ jobs:
       - name: Forge make
         run: yarn make
 
+      - name: Forge publish
+        run: yarn publish
+
       - uses: actions/upload-artifact@v2
         with:
           name: MacRelease
