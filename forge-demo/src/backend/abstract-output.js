@@ -5,6 +5,10 @@ export class AbstractOutput {
     }
   }
 
+  async blink() {
+    throw new Error("Method not implemented");
+  }
+
   // Possible values 'aix', 'darwin', 'freebsd', 'linux', 'openbsd', 'sunos', and 'win32'
   static getCompatiblePlatforms() {
     throw new Error("Method not implemented");
