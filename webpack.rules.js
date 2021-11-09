@@ -23,6 +23,7 @@ module.exports = [
       options: {
         exclude: /node_modules/,
         presets: ["@babel/preset-react"],
+        compact: false,
       },
     },
   },
