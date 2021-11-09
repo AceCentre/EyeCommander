@@ -30,11 +30,7 @@ if (os.platform() === "darwin") {
       ascProvider: process.env.APPLE_PROVIDER,
     };
   } else {
-    console.log("NO SIGNING PARAMS IN ENV", {
-      id: process.env.APPLE_ID,
-      password: process.env.APPLE_ID_PASSWORD,
-      provider: process.env.APPLE_PROVIDER,
-    });
+    console.log("NO SIGNING PARAMS IN ENV");
   }
   console.log("=========");
 }

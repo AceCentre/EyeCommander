@@ -7,6 +7,7 @@ jobs:
     env:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+      APPLE_PROVIDER: ${{ secrets.APPLE_PROVIDER }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
