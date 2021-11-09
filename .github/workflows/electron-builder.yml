@@ -30,7 +30,3 @@ jobs:
           path: out/make/EyeCommander.dmg
           # Github has size limits so this avoids hitting them
           retention-days: 1
-
-          # - name: Install robotjs deps for linux
-# if: matrix.os == 'ubuntu-latest'
-# run: sudo apt-get install -y libxml2-utils libxtst-dev libpng++-dev
