@@ -4,6 +4,7 @@ import { OutputController } from "./backend/output-controller";
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
+const setupAutoUpdater = require("update-electron-app");
 
 // Application state
 const store = new Store();
@@ -19,6 +20,10 @@ function isDebug() {
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
+}
+
+if (isDebug()) {
+  setupAutoUpdater();
 }
 
 const createWindow = (javascriptToExecute) => {

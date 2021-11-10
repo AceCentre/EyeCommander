@@ -46,7 +46,7 @@ if (process.env.GITHUB_TOKEN) {
         owner: "AceCentre",
         name: "EyeCommander",
       },
-      prerelease: true,
+      prerelease: false,
       draft: true,
     },
   });
@@ -68,6 +68,10 @@ module.exports = {
       config: {
         name: "EyeCommander",
       },
+    },
+    {
+      name: "@electron-forge/maker-zip",
+      platforms: ["darwin"],
     },
     {
       name: "@electron-forge/maker-deb",
