@@ -19,8 +19,8 @@ module.exports = async ({ github, context, core }) => {
   console.log(latestVersion === currentVersion);
 
   if (latestVersion === currentVersion) {
-    console.log("dont");
-    return "dont";
+    console.log("make");
+    return "make";
   } else {
     console.log("publish");
     return "publish";

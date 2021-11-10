@@ -40,9 +40,6 @@ jobs:
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
 
-      - name: Forge make
-        run: yarn make
-
       - uses: actions/github-script@v5
         id: should-publish
         with:
@@ -54,6 +51,10 @@ jobs:
       - name: Forge publish
         if: ${{ steps.should-publish.outputs.result == 'publish' }}
         run: yarn run publish
+
+      - name: Forge make
+        if: ${{ steps.should-publish.outputs.result == 'make' }}
+        run: yarn make
 
       - uses: actions/upload-artifact@v2
         with:
