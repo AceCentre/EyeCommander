@@ -47,6 +47,7 @@
     "@mui/material": "^5.0.6",
     "@tensorflow/tfjs": "^3.11.0",
     "copy-webpack-plugin": "^9.0.1",
+    "electron-log": "^4.4.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
     "eslint": "^8.1.0",

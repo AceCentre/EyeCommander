@@ -23,7 +23,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 if (isDebug()) {
-  setupAutoUpdater();
+  setupAutoUpdater({ logger: require("electron-log") });
 }
 
 const createWindow = (javascriptToExecute) => {
