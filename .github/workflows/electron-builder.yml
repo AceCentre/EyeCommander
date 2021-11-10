@@ -39,7 +39,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const script = require('../../check-for-version-bump.js');
+            const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
       - name: Forge publish
