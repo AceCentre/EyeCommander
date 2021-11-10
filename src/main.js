@@ -22,8 +22,12 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-if (isDebug()) {
-  setupAutoUpdater({ logger: require("electron-log") });
+if (!isDebug()) {
+  setupAutoUpdater({
+    logger: require("electron-log"),
+    updateInterval: "5 minutes",
+    repo: "AceCentre/EyeCommander",
+  });
 }
 
 const createWindow = (javascriptToExecute) => {
