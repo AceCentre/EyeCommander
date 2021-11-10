@@ -79,7 +79,7 @@ jobs:
           node-version: 16
 
       - name: Output cert file
-        run: echo "${{ secrets.WIN_CERT_PASSWORD }}" | base64 --decode $ > ./win-cert.pfx
+        run: echo "${{ secrets.WIN_CERT_PASSWORD }}" | base64 --decode > ./win-cert.pfx
 
       - uses: actions/github-script@v5
         id: should-publish
