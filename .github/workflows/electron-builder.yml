@@ -34,7 +34,16 @@ jobs:
       - name: Forge make
         run: yarn make
 
+      - uses: actions/github-script@v5
+        id: should-publish
+        with:
+          result-encoding: string
+          script: |
+            const script = require('../../check-for-version-bump.js');
+            return await script({ github, context, core })
+
       - name: Forge publish
+        if: ${{ steps.should-publish.outputs.result == 'publish' }}
         run: yarn run publish
 
       - uses: actions/upload-artifact@v2
