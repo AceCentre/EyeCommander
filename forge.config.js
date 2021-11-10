@@ -2,9 +2,21 @@ const os = require("os");
 
 let icon = undefined;
 let osxSigning = {};
+let certParams = {};
 
 if (os.platform() === "win32") {
   icon = "./assets/windows-icon.ico";
+
+  if (process.env.WIN_CERT_PASSWORD) {
+    console.log("WINDOWS SIGNING PARAM FOUND");
+
+    certParams = {
+      certificateFile: "./win-cert.pfx",
+      certificatePassword: process.env.WIN_CERT_PASSWORD,
+    };
+  } else {
+    console.log("NO WINDOWS SIGNING PARAMS");
+  }
 }
 
 if (os.platform() === "darwin") {
@@ -70,6 +82,7 @@ module.exports = {
       name: "@electron-forge/maker-squirrel",
       config: {
         name: "EyeCommander",
+        ...certParams,
       },
     },
     {

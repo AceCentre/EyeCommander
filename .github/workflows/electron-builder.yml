@@ -67,6 +67,8 @@ jobs:
     runs-on: windows-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      WIN_CERT: ${{ secrets.WIN_CERT }}
+      WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -75,6 +77,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
+
+      - name: Output cert file
+        run: echo $WIN_CERT | base64 --decode $ > ./win-cert.pfx
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
