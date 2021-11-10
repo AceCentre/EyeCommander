@@ -13,6 +13,8 @@ if (os.platform() === "win32") {
     certParams = {
       certificateFile: "./win-cert.pfx",
       certificatePassword: process.env.WIN_CERT_PASSWORD,
+      exe: "EyeCommander.exe",
+      setupExe: "EyeCommanderSetup.exe",
     };
   } else {
     console.log("NO WINDOWS SIGNING PARAMS");
