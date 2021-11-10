@@ -13,7 +13,7 @@ module.exports = async ({ github, context, core }) => {
 
   console.log("latestRelease", latestRelease);
 
-  const latestVersion = latestRelease.name.replace("v", "");
+  const latestVersion = latestRelease.data.name.replace("v", "");
 
   console.log(latestVersion);
   console.log(latestVersion === currentVersion);
