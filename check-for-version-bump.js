@@ -1,6 +1,6 @@
 const packageJson = require("./package.json");
 
-module.exports = async ({ github, context, core }) => {
+module.exports = async ({ github }) => {
   console.log("Checking versions");
   const currentVersion = packageJson.version;
 
