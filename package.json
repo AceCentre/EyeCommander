@@ -1,7 +1,7 @@
 {
   "name": "eye-commander",
   "productName": "EyeCommander",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Detect blinks and convert them to switch output",
   "main": ".webpack/main",
   "scripts": {
