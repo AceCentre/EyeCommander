@@ -1,8 +1,11 @@
 const os = require("os");
-const { publish } = require("rxjs");
 
 let icon = undefined;
 let osxSigning = {};
+
+if (os.platform() === "win32") {
+  icon = "./assets/windows-icon.ico";
+}
 
 if (os.platform() === "darwin") {
   icon = "./assets/apple-icon.icns";
