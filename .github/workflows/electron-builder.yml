@@ -18,6 +18,14 @@ jobs:
         with:
           node-version: 16
 
+      - uses: actions/github-script@v5
+        id: should-publish
+        with:
+          result-encoding: string
+          script: |
+            const script = require('./check-for-version-bump.js');
+            return await script({ github, context, core })
+
       - uses: apple-actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
@@ -39,14 +47,6 @@ jobs:
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
-
-      - uses: actions/github-script@v5
-        id: should-publish
-        with:
-          result-encoding: string
-          script: |
-            const script = require('./check-for-version-bump.js');
-            return await script({ github, context, core })
 
       - name: Forge publish
         if: ${{ steps.should-publish.outputs.result == 'publish' }}
@@ -81,6 +81,14 @@ jobs:
       - name: Output cert file
         run: echo $WIN_CERT | base64 --decode $ > ./win-cert.pfx
 
+      - uses: actions/github-script@v5
+        id: should-publish
+        with:
+          result-encoding: string
+          script: |
+            const script = require('./check-for-version-bump.js');
+            return await script({ github, context, core })
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -98,14 +106,6 @@ jobs:
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
-
-      - uses: actions/github-script@v5
-        id: should-publish
-        with:
-          result-encoding: string
-          script: |
-            const script = require('./check-for-version-bump.js');
-            return await script({ github, context, core })
 
       - name: Forge publish
         if: ${{ steps.should-publish.outputs.result == 'publish' }}
