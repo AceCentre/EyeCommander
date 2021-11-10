@@ -62,3 +62,56 @@ jobs:
           path: out/make/EyeCommander.dmg
           # Github has size limits so this avoids hitting them
           retention-days: 1
+
+  WindowsBuild:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install deps
+        run: yarn install
+
+      - name: Electron rebuild
+        # Ignore when this fails, its a total hack but for some reason
+        # electron forge only builds on start, run-as-node forces it to crash out
+        run: yarn start --run-as-node || true
+
+      - uses: actions/github-script@v5
+        id: should-publish
+        with:
+          result-encoding: string
+          script: |
+            const script = require('./check-for-version-bump.js');
+            return await script({ github, context, core })
+
+      - name: Forge publish
+        if: ${{ steps.should-publish.outputs.result == 'publish' }}
+        run: yarn run publish
+
+      - name: Forge make
+        if: ${{ steps.should-publish.outputs.result == 'make' }}
+        run: yarn make
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: WindowsRelease
+          path: out
+          # Github has size limits so this avoids hitting them
+          retention-days: 1
