@@ -5,7 +5,7 @@ let osxSigning = {};
 let certParams = {};
 
 if (os.platform() === "win32") {
-  icon = "./assets/windows-icon.ico";
+  icon = "./assets/windows_icon.ico";
 
   // if (process.env.WIN_CERT_PASSWORD) {
   //   console.log("WINDOWS SIGNING PARAM FOUND");
