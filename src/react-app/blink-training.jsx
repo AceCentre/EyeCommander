@@ -97,8 +97,15 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
         sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}
         faceInFrame={setAllowNext}
         onBlink={onBlink}
+        paperSx={{ minHeight: "296px" }}
       >
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "auto",
+          }}
+        >
           <Button onClick={prevTask} size="large">
             Previous step
           </Button>

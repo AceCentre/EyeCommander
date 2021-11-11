@@ -12,6 +12,8 @@ import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useStoreValue } from "./hooks/use-store";
 import { REVERSE_CAMERA } from "./lib/store-consts";
+import { CircularProgress } from "@mui/material";
+import { Box } from "@mui/system";
 
 const LOADING_TIME = 2000;
 
@@ -82,20 +84,36 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
 
   useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
 
+  const showIndicator = loading || reverseLoading;
+
   return (
-    <>
+    <Box sx={{ position: "relative" }}>
       <SelectedWebcam sx={{ display: "none" }} webcamRef={webcamRef} />
+      <Box
+        sx={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {showIndicator && <CircularProgress />}
+      </Box>
 
       <canvas
         style={{
           ...canvasFlip,
           width: "100%",
+          height: "100%",
           borderRadius: "4px",
+          background: "white",
           boxShadow:
             "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
         }}
         ref={canvasRef}
-      />
-    </>
+      ></canvas>
+    </Box>
   );
 };

@@ -22,6 +22,7 @@ export const BlinkDetectionWithSliders = ({
   onBlink,
   children,
   sx = {},
+  paperSx = {},
 }) => {
   const distanceHistory = useRef(
     Array(KEEP_NUMBER_OF_VALUES).fill({ time: Infinity, value: 0 })
@@ -121,10 +122,11 @@ export const BlinkDetectionWithSliders = ({
 
       <Paper
         sx={{
-          display: "grid",
+          display: "flex",
           gap: "1rem",
           flexDirection: "column",
           padding: "1rem",
+          ...paperSx,
         }}
       >
         {!loadingBlinkThreshold && (

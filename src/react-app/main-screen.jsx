@@ -30,7 +30,7 @@ export const MainScreen = () => {
   );
   const reloadTrigger = useReload([reloadPlaySound]);
   const [play] = useSound("./public/notif.mp3");
-  const [isFaceInFrame, setIsFaceInFrame] = useState(false);
+  const [isFaceInFrame, setIsFaceInFrame] = useState(true);
   const sendBlinkToBackend = useBlinkAction();
   const openSettings = useOpenSettings();
 
@@ -51,6 +51,7 @@ export const MainScreen = () => {
         onBlink={onBlink}
         faceInFrame={setIsFaceInFrame}
         sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
+        paperSx={{ minHeight: "296px" }}
       >
         <>
           {!isFaceInFrame && (
@@ -59,7 +60,7 @@ export const MainScreen = () => {
               the screen and well lit.
             </Typography>
           )}
-          <Box>
+          <Box sx={{ marginTop: "auto" }}>
             <CustomWidthTooltip
               title="Change the settings including controlling the output."
               placement="bottom"

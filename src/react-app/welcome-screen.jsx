@@ -112,6 +112,8 @@ const WebcamDeviceSelector = ({ nextTask }) => {
     >
       <Webcam
         style={{
+          minHeight: "242px",
+          background: "white",
           width: "100%",
           borderRadius: "4px",
           boxShadow:
