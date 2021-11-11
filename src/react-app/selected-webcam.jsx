@@ -25,6 +25,7 @@ export const SelectedWebcam = ({ webcamRef, sx = {}, ...props }) => {
     <Box sx={sx}>
       <Webcam
         {...props}
+        id="react-webcam-el"
         ref={webcamRef}
         videoConstraints={{ deviceId: selectedDeviceId, ...videoConstraints }}
       />

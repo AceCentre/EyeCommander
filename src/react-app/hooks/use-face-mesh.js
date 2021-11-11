@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { FaceMesh } from "@mediapipe/face_mesh";
-import { Camera } from "@mediapipe/camera_utils";
 
 export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
   const [currentMesh, setCurrentMesh] = useState(null);
@@ -22,15 +21,18 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
 
       faceMesh.onResults(onResults);
 
-      new Camera(webcamRef.current.video, {
-        onFrame: async () => {
-          await faceMesh.send({ image: webcamRef.current.video });
-        },
-      }).start();
+      const videoElement = document.getElementById("react-webcam-el");
+
+      const updateFrame = async () => {
+        await faceMesh.send({ image: webcamRef.current.video });
+        videoElement.requestVideoFrameCallback(updateFrame);
+      };
+
+      videoElement.requestVideoFrameCallback(updateFrame);
 
       setCurrentMesh(faceMesh);
     }
-  }, [loading]);
+  }, [loading, webcamRef]);
 
   useEffect(() => {
     if (currentMesh) {
