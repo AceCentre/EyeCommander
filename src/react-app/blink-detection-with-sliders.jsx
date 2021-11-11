@@ -21,6 +21,7 @@ export const BlinkDetectionWithSliders = ({
   faceInFrame,
   onBlink,
   children,
+  sx = {},
 }) => {
   const distanceHistory = useRef(
     Array(KEEP_NUMBER_OF_VALUES).fill({ time: Infinity, value: 0 })
@@ -113,6 +114,7 @@ export const BlinkDetectionWithSliders = ({
         display: "flex",
         flexDirection: "column",
         gap: "2rem",
+        ...sx,
       }}
     >
       <CameraWithHighlights onFrame={onFrame} />
