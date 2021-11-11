@@ -93,7 +93,11 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
           </Box>
         </Box>
       </Box>
-      <BlinkDetectionWithSliders faceInFrame={setAllowNext} onBlink={onBlink}>
+      <BlinkDetectionWithSliders
+        sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}
+        faceInFrame={setAllowNext}
+        onBlink={onBlink}
+      >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button onClick={prevTask} size="large">
             Previous step

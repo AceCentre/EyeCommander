@@ -23,7 +23,7 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
 });
 
 export const MainScreen = () => {
-  useResizer({ width: 400, height: 700 });
+  useResizer({ width: 800, height: 370 });
   const { value: playSound, reload: reloadPlaySound } = useStoreValue(
     PLAY_SOUND,
     true
@@ -50,6 +50,7 @@ export const MainScreen = () => {
       <BlinkDetectionWithSliders
         onBlink={onBlink}
         faceInFrame={setIsFaceInFrame}
+        sx={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
       >
         <>
           {!isFaceInFrame && (

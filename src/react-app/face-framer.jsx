@@ -20,7 +20,15 @@ export const FaceFramer = ({ nextTask, prevTask }) => {
   );
 
   return (
-    <Box sx={{ width: "95%", margin: "0 auto" }}>
+    <Box
+      sx={{
+        width: "95%",
+        margin: "0 auto",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "1rem",
+      }}
+    >
       <CameraWithHighlights onFrame={onFrame} />
 
       <Paper
@@ -32,7 +40,6 @@ export const FaceFramer = ({ nextTask, prevTask }) => {
           width: "100%",
           margin: "0 auto",
           maxWidth: "540px",
-          marginTop: "1.5rem",
         }}
       >
         {!allowNext ? (
@@ -50,7 +57,13 @@ export const FaceFramer = ({ nextTask, prevTask }) => {
             </Typography>
           </Box>
         )}
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "auto",
+          }}
+        >
           <Button onClick={prevTask} size="large">
             Previous step
           </Button>

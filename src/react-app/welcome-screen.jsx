@@ -23,7 +23,7 @@ const getTaskProps = (taskNumber, current) => ({
 export const WelcomeScreen = ({ forceReload }) => {
   const [activeTask, setActiveTask] = useState(1);
 
-  useResizer({ width: 400, height: 850 });
+  useResizer({ width: 800, height: 670 });
 
   return (
     <Box sx={{ padding: "2rem" }}>
@@ -101,7 +101,15 @@ const WebcamDeviceSelector = ({ nextTask }) => {
   };
 
   return (
-    <Box sx={{ width: "95%", margin: "0 auto" }}>
+    <Box
+      sx={{
+        width: "95%",
+        margin: "0 auto",
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "1rem",
+      }}
+    >
       <Webcam
         style={{
           width: "100%",
@@ -120,7 +128,6 @@ const WebcamDeviceSelector = ({ nextTask }) => {
           gap: "1rem",
           width: "100%",
           margin: "0 auto",
-          marginTop: "1rem",
         }}
       >
         <FormControl>
@@ -137,7 +144,7 @@ const WebcamDeviceSelector = ({ nextTask }) => {
             ))}
           </Select>
         </FormControl>
-        <Box sx={{ textAlign: "right" }}>
+        <Box sx={{ textAlign: "right", marginTop: "auto" }}>
           <Button size="large" variant="contained" onClick={nextTask}>
             Next step
           </Button>
