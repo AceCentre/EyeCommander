@@ -32,82 +32,85 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
   }, [setBlinkCount, play]);
 
   return (
-    <Paper
-      sx={{
-        padding: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        width: "90%",
-        margin: "0 auto",
-        maxWidth: "540px",
-      }}
-    >
-      {!allowNext ? (
-        <Box>
-          <Typography sx={{ color: red[500] }}>
-            We cannot find a face in the window. Try getting closer to the
-            webcam or improve the lighting of your face.
-          </Typography>
-        </Box>
-      ) : (
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          width: "95%",
+          margin: "0 auto",
+          maxWidth: "540px",
+        }}
+      >
+        {!allowNext ? (
+          <Box>
+            <Typography sx={{ color: red[500] }}>
+              We cannot find a face in the window. Try getting closer to the
+              webcam or improve the lighting of your face.
+            </Typography>
+          </Box>
+        ) : (
+          <Box>
+            <Typography>
+              Adjust the sliders below to make sure it can reliably detect your
+              blink. There will be a sound played every time a blink is
+              detected.
+            </Typography>
+          </Box>
+        )}
         <Box>
           <Typography>
-            Adjust the sliders below to make sure it can reliably detect your
-            blink. There will be a sound played every time a blink is detected.
+            To finish setup you must register at least 4 blinks.
           </Typography>
-        </Box>
-      )}
-      <Box>
-        <Typography>
-          To finish setup you must register at least 4 blinks.
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            margin: "1rem 0",
-          }}
-        >
-          <Avatar
-            sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 1) }}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-around",
+              margin: "1rem 0",
+            }}
           >
-            <VisibilityIcon sx={{ width: 40, height: 40 }} />
-          </Avatar>
-          <Avatar
-            sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 2) }}
-          >
-            <VisibilityIcon sx={{ width: 40, height: 40 }} />
-          </Avatar>
-          <Avatar
-            sx={{ width: 56, height: 50, ...getColorProp(blinkCount, 3) }}
-          >
-            <VisibilityIcon sx={{ width: 40, height: 40 }} />
-          </Avatar>
-          <Avatar
-            sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 4) }}
-          >
-            <VisibilityIcon sx={{ width: 40, height: 40 }} />
-          </Avatar>
+            <Avatar
+              sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 1) }}
+            >
+              <VisibilityIcon sx={{ width: 40, height: 40 }} />
+            </Avatar>
+            <Avatar
+              sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 2) }}
+            >
+              <VisibilityIcon sx={{ width: 40, height: 40 }} />
+            </Avatar>
+            <Avatar
+              sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 3) }}
+            >
+              <VisibilityIcon sx={{ width: 40, height: 40 }} />
+            </Avatar>
+            <Avatar
+              sx={{ width: 56, height: 56, ...getColorProp(blinkCount, 4) }}
+            >
+              <VisibilityIcon sx={{ width: 40, height: 40 }} />
+            </Avatar>
+          </Box>
         </Box>
       </Box>
-      <BlinkDetectionWithSliders faceInFrame={setAllowNext} onBlink={onBlink} />
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button onClick={prevTask} size="large">
-          Previous step
-        </Button>
-        <Button
-          onClick={() => {
-            updateInitialSetup(false);
-            forceReload();
-          }}
-          disabled={!allowNext || blinkCount < 4}
-          size="large"
-          variant="contained"
-        >
-          Finish setup
-        </Button>
-      </Box>
-    </Paper>
+      <BlinkDetectionWithSliders faceInFrame={setAllowNext} onBlink={onBlink}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Button onClick={prevTask} size="large">
+            Previous step
+          </Button>
+          <Button
+            onClick={() => {
+              updateInitialSetup(false);
+              forceReload();
+            }}
+            disabled={!allowNext || blinkCount < 4}
+            size="large"
+            variant="contained"
+          >
+            Finish setup
+          </Button>
+        </Box>
+      </BlinkDetectionWithSliders>
+    </>
   );
 };

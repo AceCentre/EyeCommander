@@ -23,40 +23,50 @@ const getTaskProps = (taskNumber, current) => ({
 export const WelcomeScreen = ({ forceReload }) => {
   const [activeTask, setActiveTask] = useState(1);
 
-  useResizer({ width: 700, height: 1255 });
+  useResizer({ width: 400, height: 850 });
 
   return (
     <Box sx={{ padding: "2rem" }}>
-      <Typography variant="h1" sx={{ textAlign: "center", fontSize: "3rem" }}>
-        Welcome to{" "}
-        <Box component="span" sx={{ textDecoration: "underline" }}>
-          EyeCommander
-        </Box>
-      </Typography>
-      <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-        To get setup complete the list of tasks below.
-      </Typography>
+      {activeTask !== 3 && (
+        <>
+          <Typography
+            variant="h1"
+            sx={{ textAlign: "center", fontSize: "1.5rem", fontWeight: "bold" }}
+          >
+            Welcome to{" "}
+            <Box component="span" sx={{ textDecoration: "underline" }}>
+              EyeCommander
+            </Box>
+          </Typography>
+          <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
+            To get setup complete the list of tasks below.
+          </Typography>
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          width: "90%",
-          maxWidth: "540px",
-          margin: "2rem auto",
-        }}
-      >
-        <Typography variant="h2" sx={{ fontSize: "1.5rem" }}>
-          Task list
-        </Typography>
-        <Task {...getTaskProps(1, activeTask)}>Pick your webcam device.</Task>
-        <Task {...getTaskProps(2, activeTask)}>
-          Make sure your face is in frame
-        </Task>
-        <Task {...getTaskProps(3, activeTask)}>Setup blink sensitivity</Task>
-      </Box>
-
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              width: "95%",
+              maxWidth: "540px",
+              margin: "2rem auto",
+            }}
+          >
+            <Typography variant="h2" sx={{ fontSize: "1.5rem" }}>
+              Task list
+            </Typography>
+            <Task {...getTaskProps(1, activeTask)}>
+              Pick your webcam device.
+            </Task>
+            <Task {...getTaskProps(2, activeTask)}>
+              Make sure your face is in frame
+            </Task>
+            <Task {...getTaskProps(3, activeTask)}>
+              Setup blink sensitivity
+            </Task>
+          </Box>
+        </>
+      )}
       <TaskController
         activeTask={activeTask}
         nextTask={() => setActiveTask((current) => current + 1)}
@@ -75,7 +85,7 @@ const WebcamDeviceSelector = ({ nextTask }) => {
 
   if (!devices || devices.length === 0) {
     return (
-      <Box sx={{ width: "90%", maxWidth: "540px", margin: "0 auto" }}>
+      <Box sx={{ width: "95%", maxWidth: "540px", margin: "0 auto" }}>
         <Typography
           sx={{ color: red[500], fontWeight: "bold", textAlign: "center" }}
         >
@@ -91,38 +101,49 @@ const WebcamDeviceSelector = ({ nextTask }) => {
   };
 
   return (
-    <Paper
-      sx={{
-        padding: "2rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "1rem",
-        width: "90%",
-        margin: "0 auto",
-        maxWidth: "540px",
-      }}
-    >
-      <FormControl>
-        <InputLabel>Input device</InputLabel>
-        <Select
-          defaultValue={selectedDeviceId}
-          label="Input device"
-          onChange={handleChange}
-        >
-          {devices.map((device) => (
-            <MenuItem key={device.deviceId} value={device.deviceId}>
-              {device.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Webcam videoConstraints={{ deviceId: selectedDeviceId }} />
-      <Box sx={{ textAlign: "right" }}>
-        <Button size="large" variant="contained" onClick={nextTask}>
-          Next step
-        </Button>
-      </Box>
-    </Paper>
+    <Box sx={{ width: "95%", margin: "0 auto" }}>
+      <Webcam
+        style={{
+          width: "100%",
+          borderRadius: "4px",
+          boxShadow:
+            "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
+        }}
+        videoConstraints={{ deviceId: selectedDeviceId }}
+      />
+
+      <Paper
+        sx={{
+          padding: "2rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+          width: "100%",
+          margin: "0 auto",
+          marginTop: "1rem",
+        }}
+      >
+        <FormControl>
+          <InputLabel>Input device</InputLabel>
+          <Select
+            defaultValue={selectedDeviceId}
+            label="Input device"
+            onChange={handleChange}
+          >
+            {devices.map((device) => (
+              <MenuItem key={device.deviceId} value={device.deviceId}>
+                {device.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box sx={{ textAlign: "right" }}>
+          <Button size="large" variant="contained" onClick={nextTask}>
+            Next step
+          </Button>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 
@@ -152,12 +173,17 @@ const Task = ({ children, completed, active = false }) => {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
       {completed ? (
-        <Avatar sx={{ bgcolor: green[500] }}>
+        <Avatar sx={{ width: "30px", height: "30px", bgcolor: green[500] }}>
           <CheckIcon />
         </Avatar>
       ) : (
         <Avatar
-          sx={{ backgroundColor: "transparent", border: "2px solid #bdbdbd" }}
+          sx={{
+            width: "30px",
+            height: "30px",
+            backgroundColor: "transparent",
+            border: "2px solid #bdbdbd",
+          }}
         >
           <CheckIcon sx={{ display: "none" }} />
         </Avatar>

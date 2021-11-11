@@ -5,6 +5,7 @@ import { CHANGE_THRESHOLD_KEY, THROTTLE_TIME_KEY } from "./lib/store-consts";
 import { throttle } from "lodash";
 import { Box } from "@mui/system";
 import { SliderWithValue } from "./slider-with-value.jsx";
+import { Paper } from "@mui/material";
 
 const euclaideanDistance = (point, point1) => {
   const { x, y } = point;
@@ -13,10 +14,14 @@ const euclaideanDistance = (point, point1) => {
   return distance;
 };
 
-const KEEP_NUMBER_OF_VALUES = 100;
+const KEEP_NUMBER_OF_VALUES = 20;
 const TIME_BETWEEN = 100;
 
-export const BlinkDetectionWithSliders = ({ faceInFrame, onBlink }) => {
+export const BlinkDetectionWithSliders = ({
+  faceInFrame,
+  onBlink,
+  children,
+}) => {
   const distanceHistory = useRef(
     Array(KEEP_NUMBER_OF_VALUES).fill({ time: Infinity, value: 0 })
   );
@@ -103,9 +108,23 @@ export const BlinkDetectionWithSliders = ({ faceInFrame, onBlink }) => {
     [blinkThreshold, throttled, faceInFrame]
   );
   return (
-    <>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "2rem",
+      }}
+    >
       <CameraWithHighlights onFrame={onFrame} />
-      <Box sx={{ display: "grid", gap: "1rem", flexDirection: "column" }}>
+
+      <Paper
+        sx={{
+          display: "grid",
+          gap: "1rem",
+          flexDirection: "column",
+          padding: "1rem",
+        }}
+      >
         {!loadingBlinkThreshold && (
           <SliderWithValue
             min={0}
@@ -130,7 +149,8 @@ export const BlinkDetectionWithSliders = ({ faceInFrame, onBlink }) => {
             }}
           />
         )}
-      </Box>
-    </>
+        {children}
+      </Paper>
+    </Box>
   );
 };
