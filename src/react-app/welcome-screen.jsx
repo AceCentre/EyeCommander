@@ -29,19 +29,6 @@ export const WelcomeScreen = ({ forceReload }) => {
     <Box sx={{ padding: "2rem" }}>
       {activeTask !== 3 && (
         <>
-          <Typography
-            variant="h1"
-            sx={{ textAlign: "center", fontSize: "1.5rem", fontWeight: "bold" }}
-          >
-            Welcome to{" "}
-            <Box component="span" sx={{ textDecoration: "underline" }}>
-              EyeCommander
-            </Box>
-          </Typography>
-          <Typography variant="subtitle1" sx={{ textAlign: "center" }}>
-            To get setup complete the list of tasks below.
-          </Typography>
-
           <Box
             sx={{
               display: "flex",
@@ -50,10 +37,11 @@ export const WelcomeScreen = ({ forceReload }) => {
               width: "95%",
               maxWidth: "540px",
               margin: "2rem auto",
+              marginTop: 0,
             }}
           >
             <Typography variant="h2" sx={{ fontSize: "1.5rem" }}>
-              Task list
+              To get setup complete the list of tasks below.
             </Typography>
             <Task {...getTaskProps(1, activeTask)}>
               Pick your webcam device.

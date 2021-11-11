@@ -97,7 +97,7 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
         sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}
         faceInFrame={setAllowNext}
         onBlink={onBlink}
-        paperSx={{ minHeight: "296px" }}
+        paperSx={{ minHeight: "264px" }}
       >
         <Box
           sx={{

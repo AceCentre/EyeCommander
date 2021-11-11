@@ -40,7 +40,7 @@ export const FaceFramer = ({ nextTask, prevTask }) => {
           width: "100%",
           margin: "0 auto",
           maxWidth: "540px",
-          minHeight: "296px",
+          minHeight: "264px",
         }}
       >
         {!allowNext ? (

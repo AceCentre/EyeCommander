@@ -23,7 +23,7 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
 });
 
 export const MainScreen = () => {
-  useResizer({ width: 800, height: 370 });
+  useResizer({ width: 900, height: 440 });
   const { value: playSound, reload: reloadPlaySound } = useStoreValue(
     PLAY_SOUND,
     true
