@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from "react";
 
-export const useReload = () => {
+export const useReload = (reloadItems = []) => {
   const [reloadTrigger, forceUpdate] = useReducer((x) => x + 1, 0);
 
   useEffect(() => {
@@ -19,10 +19,12 @@ export const useReload = () => {
     electronInternals.onReload(() => {
       forceUpdate();
 
+      reloadItems.forEach((reloadItem) => reloadItem());
+
       console.log("============");
       console.log("reload");
     });
-  }, []);
+  }, [...reloadItems]);
 
   useEffect(() => {
     console.log("reloaded", reloadTrigger % 2 === 0, reloadTrigger);

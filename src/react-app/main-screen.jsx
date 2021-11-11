@@ -24,13 +24,15 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
 
 export const MainScreen = () => {
   useResizer({ width: 400, height: 700 });
-  const reloadTrigger = useReload();
+  const { value: playSound, reload: reloadPlaySound } = useStoreValue(
+    PLAY_SOUND,
+    true
+  );
+  const reloadTrigger = useReload([reloadPlaySound]);
   const [play] = useSound("./public/notif.mp3");
   const [isFaceInFrame, setIsFaceInFrame] = useState(false);
   const sendBlinkToBackend = useBlinkAction();
   const openSettings = useOpenSettings();
-
-  const { value: playSound } = useStoreValue(PLAY_SOUND, true);
 
   const onBlink = useCallback(() => {
     if (playSound) {
