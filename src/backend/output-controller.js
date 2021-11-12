@@ -1,9 +1,10 @@
 import { RobotKeyboard } from "./robot-keyboard";
 import { DebugOutput } from "./debug-output";
+import { GridOutput } from "./grid-output";
 import os from "os";
 import { OUTPUT_TYPE_NAME } from "../react-app/lib/store-consts";
 
-const OUTPUT_TYPES = [RobotKeyboard, DebugOutput];
+const OUTPUT_TYPES = [RobotKeyboard, DebugOutput, GridOutput];
 
 export class OutputController {
   constructor({ store }) {
