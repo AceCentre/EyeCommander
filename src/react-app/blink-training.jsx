@@ -1,4 +1,4 @@
-import { Avatar, Button, Paper, Typography } from "@mui/material";
+import { Avatar, Button, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useCallback, useState } from "react";
 import { green, red } from "@mui/material/colors";
