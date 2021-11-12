@@ -1,12 +1,10 @@
 import { AbstractOutput } from "./abstract-output";
-import { U } from "win32-api";
 
 export class GridOutput extends AbstractOutput {
   constructor() {
     super();
 
-    this.user32 = U.load();
-    this.user32.RegisterWindowMessage("Sensory_SwitchInput");
+
   }
 
   blink() {

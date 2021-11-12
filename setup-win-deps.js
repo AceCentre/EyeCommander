@@ -1,11 +1,11 @@
-// If we are on windows then we want to install win32-api
+// If we are on windows then we want to install ffi-napi
 // If we are not we want to mock it
 
 const os = require("os");
 const fs = require("fs");
 const path = require("path");
 
-const VERSION = "9.6.0";
+const VERSION = "4.0.3";
 
 console.log("======= Setup Win Deps ========");
 
@@ -13,19 +13,19 @@ const packageJson = require("./package.json");
 const { execSync } = require("child_process");
 const newPackageJson = {
   ...packageJson,
-  dependencies: { ...packageJson.dependencies, "win32-api": VERSION },
+  dependencies: { ...packageJson.dependencies, "ffi-napi": VERSION },
 };
 
 if (os.platform() === "win32") {
-  console.log("Adding 'win32-api' to package.json");
+  console.log("Adding 'ffi-napii' to package.json");
   fs.writeFileSync(
     path.join(__dirname, "./package.json"),
     JSON.stringify(newPackageJson, null, 2) + os.EOL
   );
 } else {
-  console.log("Stubbing win32-api");
+  console.log("Stubbing ffi-napi");
   execSync(
-    "cd ./fake-win32-api && yarn link && cd ../ && yarn link win32-api",
+    "cd ./fake-ffi-napi && yarn link && cd ../ && yarn link ffi-napi",
     { stdio: "inherit" }
   );
 }

@@ -1,5 +1,5 @@
 {
-  "name": "win32-api",
+  "name": "ffi-napi",
   "version": "9.6.0",
   "main": "index.js",
   "license": "MIT"
