@@ -41,6 +41,7 @@ const createWindow = (javascriptToExecute) => {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script
+      backgroundThrottling: false
     },
   });
 
