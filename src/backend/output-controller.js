@@ -17,8 +17,7 @@ export class OutputController {
 
   async blink() {
     await this.ensureCurrentDeviceExists();
-
-    this.currentDevice.blink();
+    await this.currentDevice.blink();
   }
 
   async ensureCurrentDeviceExists() {
