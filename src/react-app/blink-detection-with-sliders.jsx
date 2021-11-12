@@ -90,12 +90,18 @@ export const BlinkDetectionWithSliders = ({
             ratio,
           };
 
-          distanceHistory.current.push(currentFrame);
-          distanceHistory.current.shift();
-
-          const firstFrame = distanceHistory.current.find(
+          let firstFrame = distanceHistory.current.find(
             (x) => currentTimestamp - x.time < TIME_BETWEEN
           );
+
+          // If we cant get a frame in the right time we just take the last one we took
+          if (!firstFrame) {
+            firstFrame =
+              distanceHistory.current[distanceHistory.current.length - 1];
+          }
+
+          distanceHistory.current.push(currentFrame);
+          distanceHistory.current.shift();
 
           const timeChange = currentFrame.time - firstFrame.time;
           const ratioChange = currentFrame.ratio - firstFrame.ratio;
