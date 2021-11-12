@@ -59,6 +59,7 @@
     "react-webcam": "^6.0.0",
     "robotjs": "^0.6.0",
     "update-electron-app": "^2.0.1",
-    "use-sound": "^4.0.1"
+    "use-sound": "^4.0.1",
+    "webpack-node-externals": "^3.0.0"
   }
 }
