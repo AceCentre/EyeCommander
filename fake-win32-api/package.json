@@ -1,0 +1,6 @@
+{
+  "name": "win32-api",
+  "version": "9.6.0",
+  "main": "index.js",
+  "license": "MIT"
+}
