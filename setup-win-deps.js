@@ -24,10 +24,9 @@ if (os.platform() === "win32") {
   );
 } else {
   console.log("Stubbing ffi-napi");
-  execSync(
-    "cd ./fake-ffi-napi && yarn link && cd ../ && yarn link ffi-napi",
-    { stdio: "inherit" }
-  );
+  execSync("cd ./fake-ffi-napi && yarn link && cd ../ && yarn link ffi-napi", {
+    stdio: "inherit",
+  });
 }
 
 console.log("===============================");
