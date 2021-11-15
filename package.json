@@ -5,7 +5,6 @@
   "description": "Detect blinks and convert them to switch output",
   "main": ".webpack/main",
   "scripts": {
-    "preinstall": "node ./setup-win-deps.js",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
