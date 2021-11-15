@@ -76,9 +76,6 @@ module.exports = {
   },
   packagerConfig: {
     icon,
-    win32metadata: {
-      "requested-execution-level": "requireAdministrator",
-    },
     ...osxSigning,
   },
   publishers,
