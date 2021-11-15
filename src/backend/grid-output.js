@@ -1,6 +1,6 @@
 import { AbstractOutput } from "./abstract-output";
-import * as os from 'os';
-const ffi = require('ffi-napi')
+import * as os from "os";
+const ffi = require("ffi-napi");
 
 export class GridOutput extends AbstractOutput {
   constructor() {
@@ -38,7 +38,7 @@ export class GridOutput extends AbstractOutput {
       65535,
       this.windowMessage,
       1,
-      1
+      0
     );
 
     console.log("GRID OUTPUT", {
