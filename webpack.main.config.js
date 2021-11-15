@@ -10,7 +10,8 @@ module.exports = {
   module: {
     rules: require('./webpack.rules'),
   },
-  externals: [nodeExternals({
-    allowlist: [/^(?!(^(ffi-napi)$)).*$/i]
-  })]
+  externals: {
+    'ffi-napi': "commonjs2 ffi-napi",
+    'ref-napi': "commonjs2 ref-napi"
+  }
 };

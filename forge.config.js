@@ -138,5 +138,12 @@ module.exports = {
         },
       },
     ],
+    [
+      "@timfish/forge-externals-plugin",
+      {
+        "externals": ["ffi-napi", 'ref-napi'],
+        "includeDeps": true
+      }
+    ]
   ],
 };

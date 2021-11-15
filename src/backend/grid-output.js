@@ -1,6 +1,6 @@
 import { AbstractOutput } from "./abstract-output";
-import * as ffi from "ffi-napi";
-import * as os from "os";
+import * as os from 'os';
+const ffi = require('ffi-napi')
 
 export class GridOutput extends AbstractOutput {
   constructor() {
