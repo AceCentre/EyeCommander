@@ -1,7 +1,7 @@
 {
   "name": "eyecommander",
   "productName": "EyeCommander",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Detect blinks and convert them to switch output",
   "main": ".webpack/main",
   "scripts": {
@@ -28,6 +28,7 @@
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "@electron-forge/plugin-webpack": "6.0.0-beta.61",
     "@electron-forge/publisher-github": "^6.0.0-beta.61",
+    "@timfish/forge-externals-plugin": "^0.1.2",
     "@vercel/webpack-asset-relocator-loader": "1.7.0",
     "babel-loader": "^8.2.3",
     "css-loader": "^6.0.0",
@@ -58,6 +59,9 @@
     "react-webcam": "^6.0.0",
     "robotjs": "^0.6.0",
     "update-electron-app": "^2.0.1",
-    "use-sound": "^4.0.1"
+    "use-sound": "^4.0.1",
+    "webpack-node-externals": "^3.0.0",
+    "ffi-napi": "4.0.3",
+    "ref-napi": "3.0.3"
   }
 }

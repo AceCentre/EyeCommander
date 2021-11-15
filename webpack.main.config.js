@@ -1,3 +1,5 @@
+const nodeExternals = require('webpack-node-externals');
+
 module.exports = {
   /**
    * This is the main entry point for your application, it's the first file
@@ -8,4 +10,8 @@ module.exports = {
   module: {
     rules: require('./webpack.rules'),
   },
+  externals: {
+    'ffi-napi': "commonjs2 ffi-napi",
+    'ref-napi': "commonjs2 ref-napi"
+  }
 };
