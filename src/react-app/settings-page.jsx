@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import {
   Button,
   Checkbox,
@@ -20,11 +21,12 @@ import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 import LogoutIcon from "@mui/icons-material/Logout";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { useStoreValue } from "./hooks/use-store";
-import { PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
+import { BLINK_MODE, PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { useSaveAndClose } from "./hooks/use-save-and-close";
 import { OutputSettings } from "./output-settings.jsx";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { BLINK_MODES } from "./hooks/use-blink";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -92,6 +94,7 @@ export const SettingsPage = () => {
         {currentScreen === SCREENS.CAMERA && <CameraSettings />}
         {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
         {currentScreen === SCREENS.SOUND && <SoundSettings />}
+        {currentScreen === SCREENS.BLINK && <BlinkSettings />}
 
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
           <Button variant="contained" onClick={saveAndClose}>
@@ -126,6 +129,66 @@ const SoundSettings = () => {
         }
         label="Play sound on blink"
       />
+    </>
+  );
+};
+
+const BlinkSettings = () => {
+  const {
+    value: blinkMode,
+    loading: blinkModeLoading,
+    update: blinkModeUpdate,
+  } = useStoreValue(BLINK_MODE, BLINK_MODES[0].id);
+
+  if (blinkModeLoading) return null;
+
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Blink mode
+      </Typography>
+      <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }}>
+        {BLINK_MODES.map((current) => {
+          const boxStyle =
+            current.id === blinkMode
+              ? {
+                  border: "2px solid #1976d2",
+                  padding: "4px",
+                  borderRadius: "4px",
+                }
+              : {
+                  border: "2px solid rgba(0,0,0,0)",
+                  padding: "4px",
+                  borderRadius: "4px",
+                };
+
+          return (
+            <Box sx={boxStyle} key={current.id}>
+              <Paper
+                onClick={() => blinkModeUpdate(current.id)}
+                sx={{
+                  padding: "1rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.5rem",
+                  height: "100%",
+                  cursor: "pointer",
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontWeight: "bold",
+                    fontSize: "1rem",
+                  }}
+                >
+                  {current.title}
+                </Typography>
+                <Typography>{current.description}</Typography>
+              </Paper>
+            </Box>
+          );
+        })}
+      </Box>
     </>
   );
 };
