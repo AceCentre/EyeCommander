@@ -84,8 +84,6 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
 
   useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
 
-  const showIndicator = loading || reverseLoading;
-
   return (
     <Box sx={{ position: "relative" }}>
       <SelectedWebcam sx={{ display: "none" }} webcamRef={webcamRef} />
@@ -97,9 +95,14 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          borderRadius: "4px",
+          background: "white",
+
+          boxShadow:
+            "0px 2px 1px -1px rgb(0  0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
         }}
       >
-        {showIndicator && <CircularProgress />}
+        <CircularProgress />
       </Box>
 
       <canvas
@@ -107,10 +110,7 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
           ...canvasFlip,
           width: "100%",
           height: "100%",
-          borderRadius: "4px",
-          background: "white",
-          boxShadow:
-            "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
+          position: "relative",
         }}
         ref={canvasRef}
       ></canvas>
