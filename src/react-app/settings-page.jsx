@@ -24,11 +24,13 @@ import { PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { useSaveAndClose } from "./hooks/use-save-and-close";
 import { OutputSettings } from "./output-settings.jsx";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const SCREENS = {
   CAMERA: "camera",
   OUTPUT: "output",
   SOUND: "sound",
+  BLINK: "blink",
 };
 
 export const SettingsPage = () => {
@@ -67,6 +69,13 @@ export const SettingsPage = () => {
             onClick={() => setCurrentScreen(SCREENS.SOUND)}
           >
             Sound
+          </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.BLINK}
+            icon={<VisibilityIcon />}
+            onClick={() => setCurrentScreen(SCREENS.BLINK)}
+          >
+            Blink
           </SidebarItem>
         </List>
       </Paper>
