@@ -77,9 +77,6 @@ module.exports = {
   packagerConfig: {
     icon,
     ...osxSigning,
-    win32metadata: {
-      'requested-execution-level': 'requireAdministrator'
-    }
   },
   publishers,
   makers: [
@@ -141,9 +138,9 @@ module.exports = {
     [
       "@timfish/forge-externals-plugin",
       {
-        "externals": ["ffi-napi", 'ref-napi'],
-        "includeDeps": true
-      }
-    ]
+        externals: ["ffi-napi", "ref-napi"],
+        includeDeps: true,
+      },
+    ],
   ],
 };
