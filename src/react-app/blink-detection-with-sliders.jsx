@@ -1,21 +1,14 @@
 import React, { useCallback, useRef } from "react";
 import { CameraWithHighlights } from "./camera-with-highlights.jsx";
 import { useStoreValue } from "./hooks/use-store";
-import { CHANGE_THRESHOLD_KEY, THROTTLE_TIME_KEY } from "./lib/store-consts";
+import { THROTTLE_TIME_KEY } from "./lib/store-consts";
 import { throttle } from "lodash";
 import { Box } from "@mui/system";
 import { SliderWithValue } from "./slider-with-value.jsx";
 import { Paper } from "@mui/material";
-
-const euclaideanDistance = (point, point1) => {
-  const { x, y } = point;
-  const { x: x1, y: y1 } = point1;
-  const distance = Math.sqrt((x1 - x) ** 2 + (y1 - y) ** 2);
-  return distance;
-};
+import { useBlink } from "./hooks/use-blink.js";
 
 const KEEP_NUMBER_OF_VALUES = 20;
-const TIME_BETWEEN = 100;
 
 export const BlinkDetectionWithSliders = ({
   faceInFrame,
@@ -28,11 +21,6 @@ export const BlinkDetectionWithSliders = ({
     Array(KEEP_NUMBER_OF_VALUES).fill({ time: Infinity, value: 0 })
   );
 
-  const {
-    loading: loadingBlinkThreshold,
-    value: blinkThreshold,
-    update: updateBlinkThreshold,
-  } = useStoreValue(CHANGE_THRESHOLD_KEY, 5);
   const {
     loading: loadingThrottleTime,
     value: throttleTime,
@@ -48,6 +36,8 @@ export const BlinkDetectionWithSliders = ({
     [throttleTime, onBlink]
   );
 
+  const { detectBlink, options } = useBlink(onBlink);
+
   const onFrame = useCallback(
     (results) => {
       const currentTimestamp = performance.now();
@@ -58,62 +48,9 @@ export const BlinkDetectionWithSliders = ({
         faceInFrame(false);
       }
 
-      if (results.multiFaceLandmarks) {
-        for (const landmarks of results.multiFaceLandmarks) {
-          const rightEye = {
-            right: landmarks[33],
-            left: landmarks[133],
-            top: landmarks[159],
-            bottom: landmarks[145],
-          };
-
-          const leftEye = {
-            right: landmarks[362],
-            left: landmarks[263],
-            top: landmarks[386],
-            bottom: landmarks[374],
-          };
-
-          const rhDistance = euclaideanDistance(rightEye.right, rightEye.left);
-          const rvDistance = euclaideanDistance(rightEye.top, rightEye.bottom);
-
-          const lvDistance = euclaideanDistance(leftEye.top, leftEye.bottom);
-          const lhDistance = euclaideanDistance(leftEye.right, leftEye.left);
-
-          const reRatio = rhDistance / rvDistance;
-          const leRatio = lhDistance / lvDistance;
-
-          const ratio = (reRatio + leRatio) / 2;
-
-          const currentFrame = {
-            time: currentTimestamp,
-            ratio,
-          };
-
-          let firstFrame = distanceHistory.current.find(
-            (x) => currentTimestamp - x.time < TIME_BETWEEN
-          );
-
-          // If we cant get a frame in the right time we just take the last one we took
-          if (!firstFrame) {
-            firstFrame =
-              distanceHistory.current[distanceHistory.current.length - 1];
-          }
-
-          distanceHistory.current.push(currentFrame);
-          distanceHistory.current.shift();
-
-          const timeChange = currentFrame.time - firstFrame.time;
-          const ratioChange = currentFrame.ratio - firstFrame.ratio;
-          const totalChange = (ratioChange / timeChange) * 100;
-
-          if (totalChange > blinkThreshold) {
-            throttled();
-          }
-        }
-      }
+      detectBlink(results, currentTimestamp, distanceHistory);
     },
-    [blinkThreshold, throttled, faceInFrame]
+    [throttled, faceInFrame, detectBlink]
   );
   return (
     <Box
@@ -135,18 +72,11 @@ export const BlinkDetectionWithSliders = ({
           ...paperSx,
         }}
       >
-        {!loadingBlinkThreshold && (
-          <SliderWithValue
-            min={0}
-            max={100}
-            defaultValue={blinkThreshold * 10}
-            label="Blink depth"
-            tooltip="The higher this value the more clear you blink must be"
-            onChange={(newValue) => {
-              updateBlinkThreshold(newValue / 10);
-            }}
-          />
-        )}
+        {options.map(({ loadingOption, ...option }) => {
+          return loadingOption ? null : (
+            <SliderWithValue key={option.label} {...option} />
+          );
+        })}
         {!loadingThrottleTime && (
           <SliderWithValue
             min={100}
