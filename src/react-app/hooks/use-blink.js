@@ -290,6 +290,12 @@ const useHoldBlink = (onBlink) => {
 
 export const BLINK_MODES = [
   {
+    id: "HOLD",
+    title: "Hold blink",
+    description:
+      "Triggers when you hold your eyes closed for a given period of time",
+  },
+  {
     id: "BASIC",
     title: "Basic",
     description:
@@ -300,12 +306,6 @@ export const BLINK_MODES = [
     title: "Speed",
     description:
       "Tracks the gap between your eye lids over time and detects a blink if it changes rapidly. Works well if you have a shallow blink",
-  },
-  {
-    id: "HOLD",
-    title: "Hold blink",
-    description:
-      "Triggers when you hold your eyes closed for a given period of time",
   },
 ];
 
