@@ -26,10 +26,11 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
 
 export const MainScreen = () => {
   useResizer({ width: 900, height: 440 });
-  const { value: playSound, reload: reloadPlaySound } = useStoreValue(
-    PLAY_SOUND,
-    true
-  );
+  const {
+    value: playSound,
+    reload: reloadPlaySound,
+    loading: loadingPlaySound,
+  } = useStoreValue(PLAY_SOUND, true);
   const [paused, setPaused] = useState(false);
   const reloadTrigger = useReload([reloadPlaySound]);
   const [play] = useSound("./public/notif.mp3");
@@ -38,14 +39,14 @@ export const MainScreen = () => {
   const openSettings = useOpenSettings();
 
   const onBlink = useCallback(() => {
-    if (playSound) {
+    if (playSound && !loadingPlaySound) {
       play();
     }
 
     if (!paused) {
       sendBlinkToBackend();
     }
-  }, [play, playSound, reloadTrigger, paused]);
+  }, [play, playSound, reloadTrigger, paused, loadingPlaySound]);
 
   if (reloadTrigger % 2 !== 0) {
     return null;
@@ -60,12 +61,6 @@ export const MainScreen = () => {
         paperSx={{ minHeight: "296px" }}
       >
         <>
-          {!isFaceInFrame && (
-            <Typography sx={{ color: red[500], fontWeight: "bold" }}>
-              No face detected in frame, make sure your face is in the center of
-              the screen and well lit.
-            </Typography>
-          )}
           <Box
             sx={{
               marginTop: "auto",
@@ -122,6 +117,18 @@ export const MainScreen = () => {
           </Box>
         </>
       </BlinkDetectionWithSliders>
+      {!isFaceInFrame && (
+        <Typography
+          sx={{
+            color: red[500],
+            fontWeight: "bold",
+            marginTop: "1rem",
+          }}
+        >
+          No face detected in frame, make sure your face is in the center of the
+          screen and well lit.
+        </Typography>
+      )}
     </Box>
   );
 };
