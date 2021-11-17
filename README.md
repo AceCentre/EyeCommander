@@ -1,8 +1,10 @@
-# EyeCommander
+<p align="center">
+  <a href="https://acecentre.org.uk/">
+    <img src="https://raw.githubusercontent.com/AceCentre/EyeCommander/main/assets/repo-logo.png" alt="EyeCommander logo" width="400" />
+  </a>
+</p>
+<p align="center"><i>Detect eye gestures and convert them to switch outputs.</i></p>
 
-> An open source computer vision interface that tracks eye movements for individuals with severely-limited mobility.
-
-![Logo](/logo.png)
 
 This is a project started by Lucas Henrique, Daniel Kashkett, and Giovanbattista Amato for AceCentre as part of the 2021 Chronic Coders Coding Academy. The EyeCommander is designed as an open-source solution to eye-gesture detection that will work without the need for a fancy camera or expensive software.
 
