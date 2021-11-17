@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useLoading } from "./hooks/use-loading";
 import { drawConnectors } from "@mediapipe/drawing_utils";
 import {
@@ -12,15 +12,19 @@ import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useStoreValue } from "./hooks/use-store";
 import { REVERSE_CAMERA } from "./lib/store-consts";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
 const LOADING_TIME = 2000;
 
-export const CameraWithHighlights = ({ onFrame = () => {} }) => {
+export const CameraWithHighlights = ({
+  onFrame = () => {},
+  distanceHistory = { current: [] },
+}) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const loading = useLoading(LOADING_TIME);
+  const [frameRate, setFrameRate] = useState(0);
 
   const { value: reverse, loading: reverseLoading } = useStoreValue(
     REVERSE_CAMERA,
@@ -31,6 +35,23 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
 
   const onResults = useCallback(
     (results) => {
+      const firstFrame = distanceHistory.current[0];
+      const lastFrame =
+        distanceHistory.current[distanceHistory.current.length - 1];
+
+      if (
+        firstFrame &&
+        lastFrame &&
+        firstFrame.time !== Infinity &&
+        lastFrame.time !== Infinity
+      ) {
+        const gap = lastFrame.time - firstFrame.time;
+        const numberOfFrames = distanceHistory.current.length;
+        const newFrameRate = Math.floor((numberOfFrames / gap) * 1000);
+
+        setFrameRate(newFrameRate);
+      }
+
       const videoWidth = webcamRef.current.video.videoWidth;
       const videoHeight = webcamRef.current.video.videoHeight;
       const canvasElement = canvasRef.current;
@@ -87,6 +108,13 @@ export const CameraWithHighlights = ({ onFrame = () => {} }) => {
   return (
     <Box sx={{ position: "relative" }}>
       <SelectedWebcam sx={{ display: "none" }} webcamRef={webcamRef} />
+      <Box sx={{ position: "absolute", zIndex: 99, padding: "1rem" }}>
+        <Typography
+          sx={{ color: "white", fontSize: "1rem", fontWeight: "bold" }}
+        >
+          Frame Rate: {frameRate}
+        </Typography>
+      </Box>
       <Box
         sx={{
           position: "absolute",

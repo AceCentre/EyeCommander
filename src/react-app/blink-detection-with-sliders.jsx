@@ -61,7 +61,10 @@ export const BlinkDetectionWithSliders = ({
         ...sx,
       }}
     >
-      <CameraWithHighlights onFrame={onFrame} />
+      <CameraWithHighlights
+        distanceHistory={distanceHistory}
+        onFrame={onFrame}
+      />
 
       <Paper
         sx={{
