@@ -43,7 +43,6 @@ export const MainScreen = () => {
     }
 
     if (!paused) {
-      console.log("sending blink");
       sendBlinkToBackend();
     }
   }, [play, playSound, reloadTrigger, paused]);
@@ -106,7 +105,7 @@ export const MainScreen = () => {
               </CustomWidthTooltip>
             ) : (
               <CustomWidthTooltip
-                title="Stop outputting to chosen output method"
+                title="Stop outputting to chosen output method. Will continue to play sound."
                 placement="bottom"
                 enterDelay={1000}
                 enterNextDelay={1000}
