@@ -28,15 +28,19 @@ export const BlinkDetectionWithSliders = ({
   } = useStoreValue(THROTTLE_TIME_KEY, 1000);
 
   const throttled = useCallback(
-    throttle(() => {
-      if (onBlink) {
-        onBlink();
-      }
-    }, throttleTime),
+    throttle(
+      () => {
+        if (onBlink) {
+          onBlink();
+        }
+      },
+      throttleTime,
+      { trailing: false }
+    ),
     [throttleTime, onBlink]
   );
 
-  const { detectBlink, options } = useBlink(onBlink);
+  const { detectBlink, options } = useBlink(throttled);
 
   const onFrame = useCallback(
     (results) => {
