@@ -15,6 +15,10 @@
   <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/acecentre/eyecommander">
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/AceCentre/EyeCommander/main/assets/demo.gif" alt="EyeCommander demo" width="500" />
+</p>
+
 This is a project started by Lucas Henrique, Daniel Kashkett, and Giovanbattista Amato for AceCentre as part of the 2021 Chronic Coders Coding Academy. The EyeCommander is designed as an open-source solution to eye-gesture detection that will work without the need for a fancy camera or expensive software.
 
 ## Publishing a new version
