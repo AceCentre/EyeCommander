@@ -24,6 +24,7 @@
 - [💿 Installing](#installing)
 - [❓ How to use](#how-to-use)
 - [👥 Getting involved](#getting-involved)
+  - [🕵️‍♀️ What should I work on?](#what-should-i-work-on)
   - [🧑‍💻 Local Development](#local-development)
   - [⬆️ Publishing a new version](#publishing-a-new-version)
   - [💵 Sponsorship](#sponsorship)
@@ -45,6 +46,14 @@ Once you have EyeCommander installed you will be prompted to install an update a
 > Help content COMING SOON
 
 ## Getting involved
+
+### What should I work on
+
+Thank you for considering contributing to the project. 
+
+We would love to help you contribute to the project. You can see what we are currently working on and what we plan to work on in our [roadmap here](https://github.com/AceCentre/EyeCommander/projects/1). The items in the `todo` column are roughly in order of priority, however feel free to pick up anything that interests you.
+
+Once you have picked an issue that you want to work on then drop a comment on the issue and tag either @WillWade or @GavinHenderson and we can help you contribute and give you pointers.
 
 ### Local Development
 
