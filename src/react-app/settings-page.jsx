@@ -27,12 +27,14 @@ import { useSaveAndClose } from "./hooks/use-save-and-close";
 import { OutputSettings } from "./output-settings.jsx";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { BLINK_MODES } from "./hooks/use-blink";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const SCREENS = {
   CAMERA: "camera",
   OUTPUT: "output",
   SOUND: "sound",
   BLINK: "blink",
+  HELP: "help",
 };
 
 export const SettingsPage = () => {
@@ -79,6 +81,13 @@ export const SettingsPage = () => {
           >
             Blink
           </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.HELP}
+            icon={<HelpOutlineIcon />}
+            onClick={() => setCurrentScreen(SCREENS.HELP)}
+          >
+            Help
+          </SidebarItem>
         </List>
       </Paper>
       <Box
@@ -95,6 +104,7 @@ export const SettingsPage = () => {
         {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
         {currentScreen === SCREENS.SOUND && <SoundSettings />}
         {currentScreen === SCREENS.BLINK && <BlinkSettings />}
+        {currentScreen === SCREENS.HELP && <HelpSettings />}
 
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
           <Button variant="contained" onClick={saveAndClose}>
@@ -103,6 +113,31 @@ export const SettingsPage = () => {
         </Box>
       </Box>
     </Box>
+  );
+};
+
+const HelpSettings = () => {
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Help
+      </Typography>
+      <Typography>
+        Watch the series of videos below to learn more about how to use
+        EyeCommander.
+      </Typography>
+      <Box>
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube-nocookie.com/embed/videoseries?list=PLWWQ5nlUD_tvVEM9Ch39GuyFAP_zYhAhW"
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </Box>
+    </>
   );
 };
 

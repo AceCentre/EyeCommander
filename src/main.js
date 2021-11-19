@@ -1,7 +1,7 @@
 import express from "express";
 import { OutputController } from "./backend/output-controller";
 
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
 const setupAutoUpdater = require("update-electron-app");
@@ -15,6 +15,8 @@ let outputController = new OutputController({ store });
 function isDebug() {
   return process.env.npm_lifecycle_event === "start";
 }
+
+Menu.setApplicationMenu(null);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("./backend/squirrel-events")) {
@@ -41,7 +43,7 @@ const createWindow = (javascriptToExecute) => {
       contextIsolation: true, // protect against prototype pollution
       enableRemoteModule: false, // turn off remote
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY, // use a preload script
-      backgroundThrottling: false
+      backgroundThrottling: false,
     },
   });
 
