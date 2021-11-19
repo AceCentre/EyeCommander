@@ -18,7 +18,8 @@ export class RobotKeyboard extends AbstractOutput {
   static info() {
     return {
       name: "Keyboard Emulator",
-      description: "Emulates a keyboard. Using RobotJS under the hood",
+      description:
+        "Emulates a keyboard. Outputs a 'space' keypress for a blink",
       icon: "KeyboardIcon",
     };
   }
