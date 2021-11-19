@@ -43,7 +43,9 @@ Once you have EyeCommander installed you will be prompted to install an update a
 
 ## How to use
 
-> Help content COMING SOON
+Check out our help video series on youtube.
+
+[![Screenshot of youtube video](https://yt-embed.herokuapp.com/embed?v=wIh_UDDYRPg)](https://www.youtube.com/playlist?list=PLWWQ5nlUD_tvVEM9Ch39GuyFAP_zYhAhW)
 
 ## Getting involved
 
