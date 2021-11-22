@@ -3,8 +3,9 @@ import { DebugOutput } from "./debug-output";
 import { GridOutput } from "./grid-output";
 import os from "os";
 import { OUTPUT_TYPE_NAME } from "../react-app/lib/store-consts";
+import { NuVoice } from "./nu-voice";
 
-const OUTPUT_TYPES = [RobotKeyboard, DebugOutput, GridOutput];
+const OUTPUT_TYPES = [RobotKeyboard, DebugOutput, GridOutput, NuVoice];
 
 export class OutputController {
   constructor({ store }) {

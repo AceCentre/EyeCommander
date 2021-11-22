@@ -4,10 +4,11 @@ import { Avatar, Paper, Typography } from "@mui/material";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import CodeIcon from "@mui/icons-material/Code";
 import Grid4x4Icon from "@mui/icons-material/Grid4x4";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 import { Box } from "@mui/system";
 
-const allIcons = { KeyboardIcon, CodeIcon, Grid4x4Icon };
+const allIcons = { KeyboardIcon, CodeIcon, Grid4x4Icon, ChatBubbleOutlineIcon };
 
 const getInternals = () => {
   if (!electronInternals) throw new Error("No internals");
