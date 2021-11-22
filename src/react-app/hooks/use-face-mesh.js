@@ -2,16 +2,43 @@ import { useEffect, useState } from "react";
 
 import { FaceMesh } from "@mediapipe/face_mesh";
 
+const useForceRerender = () => {
+  const [counter, setCounter] = useState(0);
+  const [timer, setTimer] = useState(null);
+
+  useEffect(() => {
+    const timeout = setInterval(() => {
+      setCounter((x) => x + 1);
+    }, 1000);
+    setTimer(timeout);
+
+    return () => {
+      clearInterval(timeout);
+    };
+  }, []);
+
+  return {
+    counter,
+    stop: () => {
+      clearInterval(timer);
+    },
+  };
+};
+
 export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
   const [currentMesh, setCurrentMesh] = useState(null);
   const [videoElement, setVideoElement] = useState(null);
+  const { counter, stop } = useForceRerender();
 
-  if (!videoElement) {
-    const current = document.getElementById("react-webcam-el");
-    if (current) {
-      setVideoElement(current);
+  useEffect(() => {
+    if (!videoElement) {
+      const current = document.getElementById("react-webcam-el");
+      if (current) {
+        setVideoElement(current);
+        stop();
+      }
     }
-  }
+  }, [counter, counter]);
 
   useEffect(() => {
     if (!loading && videoElement) {
