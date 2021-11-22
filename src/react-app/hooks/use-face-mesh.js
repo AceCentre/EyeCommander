@@ -4,8 +4,17 @@ import { FaceMesh } from "@mediapipe/face_mesh";
 
 export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
   const [currentMesh, setCurrentMesh] = useState(null);
+  const [videoElement, setVideoElement] = useState(null);
+
+  if (!videoElement) {
+    const current = document.getElementById("react-webcam-el");
+    if (current) {
+      setVideoElement(current);
+    }
+  }
+
   useEffect(() => {
-    if (!loading) {
+    if (!loading && videoElement) {
       const faceMesh = new FaceMesh({
         locateFile: (file) => {
           return `/public/face/${file}`;
@@ -21,8 +30,6 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
 
       faceMesh.onResults(onResults);
 
-      const videoElement = document.getElementById("react-webcam-el");
-
       const updateFrame = async () => {
         await faceMesh.send({ image: webcamRef.current.video });
         videoElement.requestVideoFrameCallback(updateFrame);
@@ -32,7 +39,7 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
 
       setCurrentMesh(faceMesh);
     }
-  }, [loading, webcamRef]);
+  }, [loading, webcamRef, videoElement]);
 
   useEffect(() => {
     if (currentMesh) {
