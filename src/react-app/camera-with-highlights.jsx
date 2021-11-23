@@ -28,7 +28,7 @@ export const CameraWithHighlights = ({
 
   const { value: reverse, loading: reverseLoading } = useStoreValue(
     REVERSE_CAMERA,
-    false
+    true
   );
 
   const canvasFlip = reverse ? { transform: "scale(-1,1)" } : {};

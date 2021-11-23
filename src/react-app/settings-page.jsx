@@ -266,7 +266,7 @@ const CameraSettings = () => {
     value: reverse,
     loading: reverseLoading,
     update: reverseUpdate,
-  } = useStoreValue(REVERSE_CAMERA, false);
+  } = useStoreValue(REVERSE_CAMERA, true);
 
   const {
     devices,
