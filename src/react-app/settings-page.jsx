@@ -28,6 +28,7 @@ import { OutputSettings } from "./output-settings.jsx";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { BLINK_MODES } from "./hooks/use-blink";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import InfoIcon from "@mui/icons-material/Info";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -35,6 +36,7 @@ const SCREENS = {
   SOUND: "sound",
   BLINK: "blink",
   HELP: "help",
+  ABOUT: "about",
 };
 
 export const SettingsPage = () => {
@@ -88,6 +90,13 @@ export const SettingsPage = () => {
           >
             Help
           </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.ABOUT}
+            icon={<InfoIcon />}
+            onClick={() => setCurrentScreen(SCREENS.ABOUT)}
+          >
+            About
+          </SidebarItem>
         </List>
       </Paper>
       <Box
@@ -104,6 +113,7 @@ export const SettingsPage = () => {
         {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
         {currentScreen === SCREENS.SOUND && <SoundSettings />}
         {currentScreen === SCREENS.BLINK && <BlinkSettings />}
+        {currentScreen === SCREENS.ABOUT && <AboutSettings />}
         {currentScreen === SCREENS.HELP && <HelpSettings />}
 
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
@@ -113,6 +123,35 @@ export const SettingsPage = () => {
         </Box>
       </Box>
     </Box>
+  );
+};
+
+const AboutSettings = () => {
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        About
+      </Typography>
+      <Typography>
+        EyeCommander is an Open Source project developed by AceCentre.
+      </Typography>
+      <Typography>
+        <a href={"https://github.com/acecentre/eyecommander"}>
+          Checkout the source code on Github and contribute if you are able.
+        </a>
+      </Typography>
+      <Typography>
+        <a href={"https://acecentre.org.uk"}>Visit the Ace Centre website</a> to
+        find out more about how we provide support for people with complex
+        communications difficulties.
+      </Typography>
+      <Box sx={{ width: 200, margin: "0 auto" }}>
+        <img
+          style={{ width: "100%", height: "100%" }}
+          src="./public/ace.png"
+        ></img>
+      </Box>
+    </>
   );
 };
 
@@ -126,16 +165,10 @@ const HelpSettings = () => {
         Watch the series of videos below to learn more about how to use
         EyeCommander.
       </Typography>
-      <Box>
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube-nocookie.com/embed/videoseries?list=PLWWQ5nlUD_tvVEM9Ch39GuyFAP_zYhAhW"
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
+      <Box sx={{ width: "500px", margin: "0 auto" }}>
+        <a href="https://www.youtube.com/watch?v=wIh_UDDYRPg&list=PLWWQ5nlUD_tvVEM9Ch39GuyFAP_zYhAhW">
+          <img style={{ width: "100%" }} src="/public/youtube.png"></img>
+        </a>
       </Box>
     </>
   );

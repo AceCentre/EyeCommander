@@ -7,3 +7,17 @@ function render() {
 }
 
 render();
+
+window.addEventListener("click", function (event) {
+  event.preventDefault();
+
+  if (event.target.tagName === "A") {
+    event.preventDefault();
+    electronInternals.openExternal(event.target.href);
+  }
+
+  if (event.target.parentElement.tagName === "A") {
+    event.preventDefault();
+    electronInternals.openExternal(event.target.parentElement.href);
+  }
+});
