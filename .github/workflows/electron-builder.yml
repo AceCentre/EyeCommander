@@ -148,6 +148,7 @@ jobs:
         run: yarn make
 
       - uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: LinuxRelease
           path: out
