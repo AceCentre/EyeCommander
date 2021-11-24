@@ -76,6 +76,7 @@ module.exports = {
   },
   packagerConfig: {
     icon,
+    executableName: "EyeCommander",
     ...osxSigning,
   },
   publishers,
@@ -93,11 +94,21 @@ module.exports = {
     },
     {
       name: "@electron-forge/maker-deb",
-      config: {},
+      config: {
+        options: {
+          maintainer: "Ace Centre",
+          homepage: "https://acecentre.org.uk",
+        },
+      },
     },
     {
       name: "@electron-forge/maker-rpm",
-      config: {},
+      config: {
+        options: {
+          maintainer: "Ace Centre",
+          homepage: "https://acecentre.org.uk",
+        },
+      },
     },
     {
       name: "@electron-forge/maker-dmg",
