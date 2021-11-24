@@ -76,7 +76,7 @@ module.exports = {
   },
   packagerConfig: {
     icon,
-    executableName: "EyeCommander",
+    executableName: "eyecommander",
     ...osxSigning,
   },
   publishers,
