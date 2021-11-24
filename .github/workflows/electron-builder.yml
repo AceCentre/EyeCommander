@@ -128,6 +128,9 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
+      - name: Install linux deps
+        run: sudo apt-get install -y libxml2-utils libxtst-dev libpng++-dev
+
       - name: Install deps
         run: yarn install
 
@@ -146,7 +149,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: WindowsRelease
+          name: LinuxRelease
           path: out
           # Github has size limits so this avoids hitting them
           retention-days: 1
