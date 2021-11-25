@@ -21,6 +21,6 @@ jobs:
           body: |
             To install on your machine download the installer below.
 
-            On *WINDOWS* you should download `EyeCommander-x.x.x.Setup.exe` file.
+            On **WINDOWS** you should download `EyeCommander-x.x.x.Setup.exe` file.
 
-            On *OSx* you should download `EyeCommander.dmg`
+            On **OS** you should download `EyeCommander.dmg`
