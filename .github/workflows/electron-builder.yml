@@ -12,7 +12,7 @@ jobs:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
       APPLE_PROVIDER: ${{ secrets.APPLE_PROVIDER }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -61,7 +61,7 @@ jobs:
   WindowsBuild:
     runs-on: windows-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
       WIN_CERT: ${{ secrets.WIN_CERT }}
       WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
     steps:
@@ -110,7 +110,7 @@ jobs:
   LinuxBuild:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
