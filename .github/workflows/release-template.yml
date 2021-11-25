@@ -18,4 +18,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          body: test_body # new body text
+          body: |
+            To install on your machine download the installer below.
+
+            On *WINDOWS* you should download `EyeCommander-x.x.x.Setup.exe` file.
+
+            On *OSx* you should download `EyeCommander.dmg`
