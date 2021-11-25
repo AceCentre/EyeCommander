@@ -21,15 +21,16 @@
 
 ## Table of contents
 
-- [💿 Installing](#installing)
-- [❓ How to use](#how-to-use)
-- [👥 Getting involved](#getting-involved)
-  - [🕵️‍♀️ What should I work on?](#what-should-i-work-on)
-  - [🧑‍💻 Local Development](#local-development)
-  - [⬆️ Publishing a new version](#publishing-a-new-version)
-  - [💵 Sponsorship](#sponsorship)
-- [👏 Thanks to](#thanks-to)
-- [📄 Licence](#licence)
+- [Table of contents](#table-of-contents)
+- [Installing](#installing)
+- [How to use](#how-to-use)
+- [Getting involved](#getting-involved)
+  - [What should I work on](#what-should-i-work-on)
+  - [Local Development](#local-development)
+  - [Publishing a new version](#publishing-a-new-version)
+  - [Sponsorship](#sponsorship)
+- [Thanks to](#thanks-to)
+- [Licence](#licence)
 
 ## Installing
 
@@ -45,13 +46,13 @@ Once you have EyeCommander installed you will be prompted to install an update a
 
 Check out our help video series on youtube.
 
-[![Screenshot of youtube video](https://yt-embed.herokuapp.com/embed?v=wIh_UDDYRPg)](https://www.youtube.com/playlist?list=PLWWQ5nlUD_tvVEM9Ch39GuyFAP_zYhAhW)
+[![Screenshot of youtube video](./assets/youtube.png)](https://www.youtube.com/playlist?list=PLWWQ5nlUD_tvVEM9Ch39GuyFAP_zYhAhW)
 
 ## Getting involved
 
 ### What should I work on
 
-Thank you for considering contributing to the project. 
+Thank you for considering contributing to the project.
 
 We would love to help you contribute to the project. You can see what we are currently working on and what we plan to work on in our [roadmap here](https://github.com/AceCentre/EyeCommander/projects/1). The items in the `todo` column are roughly in order of priority, however feel free to pick up anything that interests you.
 
@@ -87,4 +88,5 @@ This is a project started by Lucas Henrique, Daniel Kashkett, and Giovanbattista
 The software is distributed under the [GNU GPL v3](LICENCE.txt) licence.
 
 Content used under CC:
+
 - Emoticon by Astatine Lab from the Noun Project
