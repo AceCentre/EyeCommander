@@ -3,6 +3,10 @@ on:
   release:
     types: # This configuration does not affect the page_build event above
       - created
+      - published
+      - edited
+      - released
+      - prereleased
 
 jobs:
   ChangeReleaseBody:
