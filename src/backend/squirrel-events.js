@@ -19,20 +19,11 @@ var check = async function () {
     var cmd = process.argv[1];
     logger.info('processing squirrel command `%s`', cmd);
     var target = path.basename(process.execPath);
-    console.log("\n===== MAKING REG EDIT ======")
+    logger.info("\n===== MAKING REG EDIT ======")
     const keyPath = 'HKCU\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers'
-    const execPath = process.execPath.includes('electron.exe') ? 'demoPath' : process.execPath
-    const pathToVbs = path.resolve(__dirname, "..", "main", 'vbs');
-
-    console.log({ target: execPath, keyPath, externalResourcePath: pathToVbs })
+    const execPath = process.execPath.includes('electron.exe') ? `localDevPath-${new Date().toISOString()}` : process.execPath
 
     try {
-      const result = regeditRaw.setExternalVBSLocation(pathToVbs);
-      if(result == 'Folder not found'){
-        throw new Error('Couldnt find vb scripts');
-      }
-      console.log(result)
-
       await regedit.createKey(keyPath);
       await regedit.putValue({
         [keyPath]: {
@@ -42,10 +33,10 @@ var check = async function () {
           }
         }
       })
-      console.log("===== MADE EDIT SUCCESSFULLY =====")
+      logger.info("===== MADE EDIT SUCCESSFULLY =====")
     } catch (error) {
-      console.log(error);
-      console.log("===== FAILED TO MAKE EDIT =====")
+      logger.info(error);
+      logger.info("===== FAILED TO MAKE EDIT =====")
 
     }
 
