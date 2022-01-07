@@ -38,6 +38,12 @@ jobs:
       - name: Install deps
         run: yarn install
 
+      - name: Install relocator
+        run: yarn --cwd .\node_modules\@zeit\webpack-asset-relocator-loader\ install
+
+      - name: Build relocator
+        run: yarn --cwd .\node_modules\@zeit\webpack-asset-relocator-loader\ build
+
       - name: Electron rebuild
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
@@ -87,6 +93,12 @@ jobs:
       - name: Install deps
         run: yarn install
 
+      - name: Install relocator
+        run: yarn --cwd .\node_modules\@zeit\webpack-asset-relocator-loader\ install
+
+      - name: Build relocator
+        run: yarn --cwd .\node_modules\@zeit\webpack-asset-relocator-loader\ build
+
       - name: Electron rebuild
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
@@ -133,6 +145,12 @@ jobs:
 
       - name: Install deps
         run: yarn install
+
+      - name: Install relocator
+        run: yarn --cwd .\node_modules\@zeit\webpack-asset-relocator-loader\ install
+
+      - name: Build relocator
+        run: yarn --cwd .\node_modules\@zeit\webpack-asset-relocator-loader\ build
 
       - name: Electron rebuild
         # Ignore when this fails, its a total hack but for some reason
