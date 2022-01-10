@@ -2,8 +2,8 @@ const path = require("path");
 const spawn = require("child_process").spawn;
 const app = require("electron").app;
 const logger = require("electron-log");
-const rcedit = require("rcedit");
 const { isAdmin } = require("./is-admin");
+const fs = require("fs");
 
 const run = function (args, done) {
   const updateExe = path.resolve(
@@ -13,14 +13,6 @@ const run = function (args, done) {
   );
   logger.info("Spawning `%s` with args `%s`", updateExe, args);
   spawn(updateExe, args, {
-    detached: true,
-  }).on("close", done);
-};
-
-const restart = function (args = [], done) {
-  const restartExe = path.resolve(path.dirname(process.execPath));
-  logger.info("Spawning `%s` with args `%s`", restartExe, args);
-  spawn(restartExe, args, {
     detached: true,
   }).on("close", done);
 };
@@ -57,15 +49,7 @@ const check = async function () {
             "User is already admin, so skipping changing the execution level"
           );
         } else {
-          const returnValue = await rcedit(process.execPath, {
-            "requested-execution-level": "requireAdministrator",
-          });
-
-          logger.info("Made edit, gonna restart now");
-
-          restart([], app.quit);
-
-          logger.info({ returnValue });
+          await makeEdit();
         }
       } else {
         logger.info("Skipping rcedit because electron is in the path");
@@ -79,6 +63,43 @@ const check = async function () {
     }
   }
   return false;
+};
+
+const SIXTY_FOUR_BIT_ARCHES = ["arm64", "x64"];
+
+function is64BitArch(arch) {
+  return SIXTY_FOUR_BIT_ARCHES.includes(arch);
+}
+
+const makeEdit = async () => {
+  const rcedit64 = path.resolve(__dirname, "..", "rcedit", "rcedit-x64.exe");
+  const rcedit32 = path.resolve(__dirname, "..", "bin", "rcedit.exe");
+  const rceditExe = is64BitArch(process.arch) ? rcedit64 : rcedit32;
+
+  const batchFileContent = `
+    timeout 5
+    
+    start ${rceditExe} --set-requested-execution-level requireAdministrator
+
+    start ${process.execPath}
+  `;
+
+  const batchScriptPath = path.resolve(
+    path.dirname(process.execPath),
+    "..",
+    "SetAdmin.bat"
+  );
+
+  logger.info({ batchFileContent, batchScriptPath });
+
+  fs.writeFileSync(batchScriptPath, batchFileContent);
+
+  spawn(batchScriptPath, [], {
+    detached: true,
+  }).on("close", () => {
+    logger.info("closing");
+    app.quit();
+  });
 };
 
 module.exports = check();
