@@ -2,8 +2,6 @@ const path = require("path");
 const spawn = require("child_process").spawn;
 const app = require("electron").app;
 const logger = require("electron-log");
-const regeditRaw = require("regedit");
-const regedit = regeditRaw.promisified;
 
 const run = function (args, done) {
   const updateExe = path.resolve(
@@ -23,11 +21,6 @@ const check = async function () {
     logger.info("processing squirrel command `%s`", cmd);
     const target = path.basename(process.execPath);
     logger.info("\n===== MAKING REG EDIT ======");
-    const keyPath =
-      "HKCU\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers";
-    const execPath = process.execPath.includes("electron.exe")
-      ? `localDevPath-${new Date().toISOString()}`
-      : process.execPath;
 
     if (cmd === "--squirrel-install" || cmd === "--squirrel-updated") {
       run(["--createShortcut=" + target + ""], app.quit);
@@ -43,15 +36,6 @@ const check = async function () {
     }
 
     try {
-      await regedit.createKey(keyPath);
-      await regedit.putValue({
-        [keyPath]: {
-          [execPath]: {
-            value: "~RUNASADMIN",
-            type: "REG_SZ",
-          },
-        },
-      });
       logger.info("===== MADE EDIT SUCCESSFULLY =====");
     } catch (error) {
       logger.info(error);
