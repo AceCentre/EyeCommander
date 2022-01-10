@@ -22,7 +22,6 @@ module.exports = {
   rules: {
     indent: ["error", 2],
     "no-unused-vars": ["error", { varsIgnorePattern: "React" }],
-    "linebreak-style": ["error", "unix"],
     quotes: ["error", "double", { avoidEscape: true }],
     semi: ["error", "always"],
     "react/react-in-jsx-scope": "off", // Next means we don't need this
