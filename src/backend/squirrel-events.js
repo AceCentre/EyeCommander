@@ -79,7 +79,7 @@ const makeEdit = async () => {
   const batchFileContent = `
     timeout 5
     
-    start ${rceditExe} --set-requested-execution-level requireAdministrator
+    ${rceditExe} ${process.execPath} --set-requested-execution-level requireAdministrator
 
     start ${process.execPath}
   `;
@@ -96,7 +96,7 @@ const makeEdit = async () => {
 
   spawn(batchScriptPath, [], {
     detached: true,
-  }).on("close", () => {
+  }).on("spawn", () => {
     logger.info("closing");
     app.quit();
   });
