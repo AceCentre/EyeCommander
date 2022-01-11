@@ -5,6 +5,8 @@ const logger = require("electron-log");
 const sudo = require("sudo-prompt");
 const { isAdmin } = require("./is-admin");
 
+// Runs the Update.exe which is created by the squirrel installer process.
+// Detaches it from this process.
 const run = function (args, done) {
   const updateExe = path.resolve(
     path.dirname(process.execPath),
@@ -18,38 +20,57 @@ const run = function (args, done) {
 };
 
 const check = async function () {
+  // We only want to run this code on windows
   if (process.platform === "win32") {
     const cmd = process.argv[1];
     logger.info("processing squirrel command `%s`", cmd);
     const target = path.basename(process.execPath);
 
+    // If we are installing then we want to add the shortcut to the desktop
+    // Quit afer we have done that because the installer will reopen afterwards
     if (cmd === "--squirrel-install" || cmd === "--squirrel-updated") {
       run(["--createShortcut=" + target + ""], app.quit);
       return true;
     }
+
+    // If we are uninstalling then we remove the shortcut.
+    // After we do that close eyecommander
     if (cmd === "--squirrel-uninstall") {
       run(["--removeShortcut=" + target + ""], app.quit);
       return true;
     }
+
+    // If we are given the command to close we close
     if (cmd === "--squirrel-obsolete") {
       app.quit();
       return true;
     }
 
+    // EyeCommander must be opened as an admin because otherwise
+    // grid3 and other pieces of software will ignore messages.
+    // This code will spawn a new version of EyeCommander as an admin
+    // then close the existing processes
+    // Wrapped in a try catch because we want EyeCommander
+    // to remain open even if this process fails. It will just be
+    // limited to a normal user
     try {
-      logger.info("\n===== MAKING RCEDIT ======");
-
+      logger.info("\n===== ATTEMPTING TO ELEVATE TO ADMIN ======");
       logger.info({ target, execPath: process.execPath });
 
+      // Dont elevate the process if the target is electon.exe
+      // The target is only called electron.exe when you are in dev mode
       if (!target.toLowerCase().includes("electron.exe")) {
         const isAlreadyAdmin = isAdmin();
 
+        // Check if the current process is admin. If it is we just bail out
+        // if its not admin we want to elecate
         if (isAlreadyAdmin) {
           logger.info(
             "User is already admin, so skipping changing the execution level"
           );
         } else {
-          await makeEdit();
+          // Spawn the new process and then exit this one.
+          await openAdminEyeCommander();
           app.quit();
         }
       } else {
@@ -66,7 +87,9 @@ const check = async function () {
   return false;
 };
 
-const makeEdit = () => {
+// Use sudo-prompt library to start a new process as admin
+// Runs 'start path/to/eyecommander.exe' so that it detaches from this node process.
+const openAdminEyeCommander = () => {
   return new Promise((res, rej) => {
     const options = {
       name: "EyeCommander SpawnProcess",
@@ -77,7 +100,7 @@ const makeEdit = () => {
       function (error, stdout, stderr) {
         logger.info({ stdout, stderr, error });
 
-        if (!error) return rej(error);
+        if (error) return rej(error);
 
         res();
       }
@@ -85,4 +108,5 @@ const makeEdit = () => {
   });
 };
 
+// As soon as this file is required we run this code.
 module.exports = check();
