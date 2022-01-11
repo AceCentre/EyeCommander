@@ -19,10 +19,7 @@ function isDebug() {
 Menu.setApplicationMenu(null);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("./backend/squirrel-events")) {
-  // eslint-disable-line global-require
-  app.quit();
-}
+require("./backend/squirrel-events");
 
 if (!isDebug()) {
   setupAutoUpdater({
