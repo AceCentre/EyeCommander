@@ -50,6 +50,7 @@ const check = async function () {
           );
         } else {
           await makeEdit();
+          app.quit();
         }
       } else {
         logger.info("Skipping rcedit because electron is in the path");
