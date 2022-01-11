@@ -96,6 +96,7 @@ const makeEdit = async () => {
 
   spawn(batchScriptPath, [], {
     detached: true,
+    shell: true,
   }).on("spawn", () => {
     logger.info("closing");
     app.quit();
