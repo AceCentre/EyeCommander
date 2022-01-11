@@ -94,9 +94,8 @@ const makeEdit = async () => {
 
   fs.writeFileSync(batchScriptPath, batchFileContent);
 
-  spawn(batchScriptPath, [], {
+  spawn("cmd.exe", ["/c", batchScriptPath], {
     detached: true,
-    shell: true,
   }).on("spawn", () => {
     logger.info("closing");
     app.quit();
