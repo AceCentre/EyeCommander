@@ -40,8 +40,6 @@ If you are Windows then you should download the file named `EyeCommander-x.x.x.S
 
 Once you have EyeCommander installed you will be prompted to install an update automatically everytime one is available.
 
-> ❗️IMPORTANT❗️: After you have installed EyeCommander on Windows you must run the application as 'Administrator' (Right click 'Run as Administrator')
-
 ## How to use
 
 Check out our help video series on youtube.
