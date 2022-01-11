@@ -2,8 +2,8 @@ const path = require("path");
 const spawn = require("child_process").spawn;
 const app = require("electron").app;
 const logger = require("electron-log");
+const sudo = require("sudo-prompt");
 const { isAdmin } = require("./is-admin");
-const fs = require("fs");
 
 const run = function (args, done) {
   const updateExe = path.resolve(
@@ -65,40 +65,22 @@ const check = async function () {
   return false;
 };
 
-const SIXTY_FOUR_BIT_ARCHES = ["arm64", "x64"];
+const makeEdit = () => {
+  return new Promise((res, rej) => {
+    const options = {
+      name: "EyeCommander SpawnProcess",
+    };
+    sudo.exec(
+      `start ${process.execPath}`,
+      options,
+      function (error, stdout, stderr) {
+        logger.info({ stdout, stderr, error });
 
-function is64BitArch(arch) {
-  return SIXTY_FOUR_BIT_ARCHES.includes(arch);
-}
+        if (!error) return rej(error);
 
-const makeEdit = async () => {
-  const rcedit64 = path.resolve(__dirname, "..", "rcedit", "rcedit-x64.exe");
-  const rcedit32 = path.resolve(__dirname, "..", "bin", "rcedit.exe");
-  const rceditExe = is64BitArch(process.arch) ? rcedit64 : rcedit32;
-
-  const batchFileContent = `
-    timeout 5
-    
-    ${rceditExe} ${process.execPath} --set-requested-execution-level requireAdministrator
-
-    start ${process.execPath}
-  `;
-
-  const batchScriptPath = path.resolve(
-    path.dirname(process.execPath),
-    "..",
-    "SetAdmin.bat"
-  );
-
-  logger.info({ batchFileContent, batchScriptPath });
-
-  fs.writeFileSync(batchScriptPath, batchFileContent);
-
-  spawn("cmd.exe", ["/c", batchScriptPath], {
-    detached: true,
-  }).on("spawn", () => {
-    logger.info("closing");
-    app.quit();
+        res();
+      }
+    );
   });
 };
 

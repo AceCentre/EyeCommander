@@ -62,6 +62,7 @@
     "react-webcam": "^6.0.0",
     "ref-napi": "3.0.3",
     "robotjs": "^0.6.0",
+    "sudo-prompt": "^9.2.1",
     "update-electron-app": "^2.0.1",
     "use-sound": "^4.0.1",
     "webpack-node-externals": "^3.0.0"
