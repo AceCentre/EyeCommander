@@ -7,8 +7,10 @@ import { Box } from "@mui/system";
 import { SliderWithValue } from "./slider-with-value.jsx";
 import { Paper } from "@mui/material";
 import { useBlink } from "./hooks/use-blink.js";
+import { FACEMESH_FACE_OVAL } from "@mediapipe/face_mesh";
 
 const KEEP_NUMBER_OF_VALUES = 20;
+const OVAL_LANDMARKS = [...new Set(FACEMESH_FACE_OVAL.flat())];
 
 export const BlinkDetectionWithSliders = ({
   faceInFrame,
@@ -47,12 +49,26 @@ export const BlinkDetectionWithSliders = ({
       const currentTimestamp = performance.now();
 
       if (results.multiFaceLandmarks.length === 1 && faceInFrame) {
-        faceInFrame(true);
+        const face = results.multiFaceLandmarks[0];
+        const flatCoords = [
+          ...OVAL_LANDMARKS.map((x) => face[x].x),
+          ...OVAL_LANDMARKS.map((x) => face[x].y),
+        ];
+
+        const biggest = Math.max(...flatCoords);
+        const smallest = Math.min(...flatCoords);
+
+        if (smallest < 0) {
+          faceInFrame(false);
+        } else if (biggest > 1) {
+          faceInFrame(false);
+        } else {
+          faceInFrame(true);
+          detectBlink(results, currentTimestamp, distanceHistory);
+        }
       } else if (faceInFrame) {
         faceInFrame(false);
       }
-
-      detectBlink(results, currentTimestamp, distanceHistory);
     },
     [throttled, faceInFrame, detectBlink]
   );

@@ -125,8 +125,8 @@ export const MainScreen = () => {
             marginTop: "1rem",
           }}
         >
-          No face detected in frame, make sure your face is in the center of the
-          screen and well lit.
+          No face detected in frame, make sure your full face is in the center
+          of the screen and well lit.
         </Typography>
       )}
     </Box>
