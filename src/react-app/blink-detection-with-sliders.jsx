@@ -123,5 +123,5 @@ const Option = ({ type, ...option }) => {
     return <SliderWithValue {...option} />;
   }
 
-  throw new Error("Used option type thats not supported: ", type);
+  throw new Error("Used option type thats not supported: " + type);
 };
