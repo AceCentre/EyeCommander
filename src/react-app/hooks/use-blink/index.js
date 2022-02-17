@@ -1,10 +1,10 @@
 import { useCallback } from "react";
-import { BLINK_MODE } from "../lib/store-consts";
+import { BLINK_MODE } from "../../lib/store-consts";
 import { useBasicBlink } from "./use-basic-blink";
 import { useDirectionBasic } from "./use-direction-basic";
 import { useHoldBlink } from "./use-hold-blink";
 import { useSpeedBlink } from "./use-speed-blink";
-import { useStoreValue } from "./use-store";
+import { useStoreValue } from "../use-store";
 
 export const BLINK_MODES = [
   {
@@ -44,6 +44,8 @@ export const useBlink = (...params) => {
   const speed = useSpeedBlink(...params);
   const hold = useHoldBlink(...params);
   const directionBasic = useDirectionBasic(...params);
+
+  console.log({ blinkMode, blinkModeLoading, blinkModee: "yes" });
 
   if (blinkModeLoading) {
     return { detectBlink: noop, options: [] };
