@@ -45,8 +45,6 @@ export const useBlink = (...params) => {
   const hold = useHoldBlink(...params);
   const directionBasic = useDirectionBasic(...params);
 
-  console.log({ blinkMode, blinkModeLoading, blinkModee: "yes" });
-
   if (blinkModeLoading) {
     return { detectBlink: noop, options: [] };
   }
