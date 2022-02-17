@@ -6,7 +6,7 @@ import { throttle } from "lodash";
 import { Box } from "@mui/system";
 import { SliderWithValue } from "./slider-with-value.jsx";
 import { Paper } from "@mui/material";
-import { useBlink } from "./hooks/use-blink.js";
+import { useBlink } from "./hooks/use-blink";
 import { FACEMESH_FACE_OVAL } from "@mediapipe/face_mesh";
 
 const KEEP_NUMBER_OF_VALUES = 20;
