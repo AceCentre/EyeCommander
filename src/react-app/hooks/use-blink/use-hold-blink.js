@@ -97,6 +97,7 @@ export const useHoldBlink = (onBlink) => {
     options: [
       {
         loadingOption: loadingBlinkThreshold,
+        type: "slider",
         min: 0,
         max: 100,
         defaultValue: loadingBlinkThreshold ? 0 : blinkThreshold * 10,
@@ -108,9 +109,10 @@ export const useHoldBlink = (onBlink) => {
       },
       {
         loadingOption: loadingBlinkLength,
+        type: "slider",
         min: 100,
         max: 2000,
-        defaultValue: loadingBlinkThreshold ? 0 : blinkLength,
+        defaultValue: loadingBlinkLength ? 0 : blinkLength,
         label: "Blink length",
         tooltip:
           "The amount of time in MS you must keep your eyes closed for to trigger a blink",

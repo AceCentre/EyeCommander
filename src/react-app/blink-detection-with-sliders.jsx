@@ -97,7 +97,7 @@ export const BlinkDetectionWithSliders = ({
       >
         {options.map(({ loadingOption, ...option }) => {
           return loadingOption ? null : (
-            <SliderWithValue key={option.label} {...option} />
+            <Option key={option.label} {...option} />
           );
         })}
         {!loadingThrottleTime && (
@@ -116,4 +116,12 @@ export const BlinkDetectionWithSliders = ({
       </Paper>
     </Box>
   );
+};
+
+const Option = ({ type, ...option }) => {
+  if (type === "slider") {
+    return <SliderWithValue {...option} />;
+  }
+
+  throw new Error("Used option type thats not supported: ", type);
 };

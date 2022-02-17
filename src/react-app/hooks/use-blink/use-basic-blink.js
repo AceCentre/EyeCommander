@@ -69,6 +69,7 @@ export const useBasicBlink = (onBlink) => {
     options: [
       {
         loadingOption: loadingBlinkThreshold,
+        type: "slider",
         min: 0,
         max: 100,
         defaultValue: loadingBlinkThreshold ? 0 : blinkThreshold * 10,

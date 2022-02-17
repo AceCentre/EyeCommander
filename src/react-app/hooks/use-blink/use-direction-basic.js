@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { CHANGE_THRESHOLD_BASIC_KEY } from "../../lib/store-consts";
+import { DIRECTION_DEPTH_BASIC_KEY } from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
 
 const euclaideanDistance = (point, point1) => {
@@ -11,14 +11,14 @@ const euclaideanDistance = (point, point1) => {
 
 export const useDirectionBasic = (onBlink) => {
   const {
-    loading: loadingBlinkThreshold,
-    value: blinkThreshold,
-    update: updateBlinkThreshold,
-  } = useStoreValue(CHANGE_THRESHOLD_BASIC_KEY, 5);
+    loading: loadingDirectionDepth,
+    value: directionDepth,
+    update: updateDirectionDepth,
+  } = useStoreValue(DIRECTION_DEPTH_BASIC_KEY, 5);
 
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
-      if (loadingBlinkThreshold) return;
+      if (loadingDirectionDepth) return;
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
@@ -80,7 +80,7 @@ export const useDirectionBasic = (onBlink) => {
             ratio,
           };
 
-          const newThreshold = blinkThreshold / 2;
+          const newThreshold = directionDepth / 2;
 
           distanceHistory.current.push(currentFrame);
           distanceHistory.current.shift();
@@ -91,22 +91,22 @@ export const useDirectionBasic = (onBlink) => {
         }
       }
     },
-    [blinkThreshold, loadingBlinkThreshold, onBlink]
+    [directionDepth, loadingDirectionDepth, onBlink]
   );
 
   return {
     detectBlink: noop,
     options: [
       {
-        loadingOption: loadingBlinkThreshold,
+        loadingOption: directionDepth,
+        type: "slider",
         min: 0,
         max: 100,
-        defaultValue: loadingBlinkThreshold ? 0 : blinkThreshold * 10,
-        label: "Blink depth",
-        tooltip:
-          "The higher this more you must close your eyes to trigger a blink",
+        defaultValue: loadingDirectionDepth ? 0 : directionDepth * 10,
+        label: "Direction depth",
+        tooltip: "The distance you have to move your eye to trigger the blink",
         onChange: (newValue) => {
-          updateBlinkThreshold(newValue / 10);
+          updateDirectionDepth(newValue / 10);
         },
       },
     ],
