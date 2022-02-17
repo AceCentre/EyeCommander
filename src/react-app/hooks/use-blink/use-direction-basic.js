@@ -16,9 +16,15 @@ export const useDirectionBasic = (onBlink) => {
     update: updateDirectionDepth,
   } = useStoreValue(DIRECTION_DEPTH_BASIC_KEY, 5);
 
+  const {
+    loading: loadingWhichEyes,
+    value: whichEyes,
+    update: updateWhichEyes,
+  } = useStoreValue("WHICH_EYES", "both");
+
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
-      if (loadingDirectionDepth) return;
+      if (loadingDirectionDepth || loadingWhichEyes) return;
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
@@ -91,7 +97,13 @@ export const useDirectionBasic = (onBlink) => {
         }
       }
     },
-    [directionDepth, loadingDirectionDepth, onBlink]
+    [
+      directionDepth,
+      loadingDirectionDepth,
+      onBlink,
+      whichEyes,
+      loadingWhichEyes,
+    ]
   );
 
   return {
@@ -107,6 +119,33 @@ export const useDirectionBasic = (onBlink) => {
         tooltip: "The distance you have to move your eye to trigger the blink",
         onChange: (newValue) => {
           updateDirectionDepth(newValue / 10);
+        },
+      },
+      {
+        loadingOption: loadingWhichEyes,
+        type: "radio",
+        options: [
+          {
+            value: "both",
+            name: "Both",
+            tooltip: "Detects both eyes",
+          },
+          {
+            value: "left",
+            name: "Left",
+            tooltip: "Detects only the left eye",
+          },
+          {
+            value: "right",
+            name: "Right",
+            tooltip: "Detects only the right eye",
+          },
+        ],
+        defaultValue: loadingWhichEyes ? "both" : whichEyes,
+        label: "Eyes to track",
+        tooltip: "Decide which eyes you want to track",
+        onChange: (newValue) => {
+          updateWhichEyes(newValue);
         },
       },
     ],
