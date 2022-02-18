@@ -183,5 +183,18 @@ const Option = ({ type, ...option }) => {
     return <RadioGroup {...option} />;
   }
 
+  if (type === "sidebyside") {
+    if (option.options.length !== 2) {
+      throw new Error("Sidebyside requires two options");
+    }
+
+    return (
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Option {...option.options[0]} />
+        <Option {...option.options[1]} />
+      </Box>
+    );
+  }
+
   throw new Error("Used option type thats not supported: " + type);
 };

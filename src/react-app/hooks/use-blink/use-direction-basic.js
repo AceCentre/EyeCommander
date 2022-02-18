@@ -1,5 +1,9 @@
 import { useCallback } from "react";
-import { DIRECTION_DEPTH_BASIC_KEY } from "../../lib/store-consts";
+import {
+  DIRECTION_BASIC,
+  DIRECTION_DEPTH_BASIC_KEY,
+  WHICH_EYES,
+} from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
 
 const euclaideanDistance = (point, point1) => {
@@ -20,11 +24,17 @@ export const useDirectionBasic = (onBlink) => {
     loading: loadingWhichEyes,
     value: whichEyes,
     update: updateWhichEyes,
-  } = useStoreValue("WHICH_EYES", "both");
+  } = useStoreValue(WHICH_EYES, "both");
+
+  const {
+    loading: loadingDirection,
+    value: direction,
+    update: updateDirection,
+  } = useStoreValue(DIRECTION_BASIC, "left");
 
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
-      if (loadingDirectionDepth || loadingWhichEyes) return;
+      if (loadingDirectionDepth || loadingWhichEyes || loadingDirection) return;
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
@@ -103,6 +113,8 @@ export const useDirectionBasic = (onBlink) => {
       onBlink,
       whichEyes,
       loadingWhichEyes,
+      direction,
+      loadingDirection,
     ]
   );
 
@@ -122,31 +134,58 @@ export const useDirectionBasic = (onBlink) => {
         },
       },
       {
-        loadingOption: loadingWhichEyes,
-        type: "radio",
+        type: "sidebyside",
         options: [
           {
-            value: "both",
-            name: "Both",
-            tooltip: "Detects both eyes",
+            loadingOption: loadingWhichEyes,
+            type: "radio",
+            options: [
+              {
+                value: "both",
+                name: "Both",
+                tooltip: "Detects both eyes",
+              },
+              {
+                value: "left",
+                name: "Left",
+                tooltip: "Detects only the left eye",
+              },
+              {
+                value: "right",
+                name: "Right",
+                tooltip: "Detects only the right eye",
+              },
+            ],
+            defaultValue: loadingWhichEyes ? "both" : whichEyes,
+            label: "Eyes to track",
+            tooltip: "Decide which eyes you want to track",
+            onChange: (newValue) => {
+              updateWhichEyes(newValue);
+            },
           },
           {
-            value: "left",
-            name: "Left",
-            tooltip: "Detects only the left eye",
-          },
-          {
-            value: "right",
-            name: "Right",
-            tooltip: "Detects only the right eye",
+            loadingOption: loadingDirection,
+            type: "radio",
+            options: [
+              {
+                value: "left",
+                name: "Left",
+                tooltip: "Detects when you look to the left",
+              },
+              {
+                value: "right",
+                name: "Right",
+                tooltip: "Detects when you look to the right",
+              },
+            ],
+            defaultValue: loadingDirection ? "left" : direction,
+            label: "Direction",
+            tooltip: "Decide which direction you want to look",
+            onChange: (newValue) => {
+              updateDirection(newValue);
+            },
           },
         ],
-        defaultValue: loadingWhichEyes ? "both" : whichEyes,
-        label: "Eyes to track",
-        tooltip: "Decide which eyes you want to track",
-        onChange: (newValue) => {
-          updateWhichEyes(newValue);
-        },
       },
     ],
   };
