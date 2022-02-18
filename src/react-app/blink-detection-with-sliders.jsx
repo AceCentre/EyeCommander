@@ -151,7 +151,6 @@ const RadioGroup = ({ options, defaultValue, onChange, label, tooltip }) => {
         value={value}
         exclusive
         onChange={(event) => {
-          console.log("onchange");
           setValue(event.target.value);
           onChange(event.target.value);
         }}
