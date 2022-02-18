@@ -1,13 +1,20 @@
-import React, { useCallback, useRef } from "react";
+import React, { forwardRef, useCallback, useRef, useState } from "react";
 import { CameraWithHighlights } from "./camera-with-highlights.jsx";
 import { useStoreValue } from "./hooks/use-store";
 import { THROTTLE_TIME_KEY } from "./lib/store-consts";
 import { throttle } from "lodash";
 import { Box } from "@mui/system";
 import { SliderWithValue } from "./slider-with-value.jsx";
-import { Paper } from "@mui/material";
+import {
+  Paper,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useBlink } from "./hooks/use-blink";
 import { FACEMESH_FACE_OVAL } from "@mediapipe/face_mesh";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const KEEP_NUMBER_OF_VALUES = 20;
 const OVAL_LANDMARKS = [...new Set(FACEMESH_FACE_OVAL.flat())];
@@ -118,9 +125,62 @@ export const BlinkDetectionWithSliders = ({
   );
 };
 
+const TooltipToggleButton = forwardRef(({ TooltipProps, ...props }, ref) => {
+  return (
+    <Tooltip {...TooltipProps}>
+      <ToggleButton ref={ref} {...props} />
+    </Tooltip>
+  );
+});
+
+const RadioGroup = ({ options, defaultValue, onChange, label, tooltip }) => {
+  const [value, setValue] = useState(defaultValue);
+
+  return (
+    <Box sx={{ display: "flex", gap: "0.5rem", flexDirection: "column" }}>
+      <Box sx={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <Typography>{label}</Typography>
+        {tooltip && (
+          <Tooltip placement="top" title={tooltip}>
+            <HelpOutlineIcon />
+          </Tooltip>
+        )}
+      </Box>
+      <ToggleButtonGroup
+        color="primary"
+        value={value}
+        exclusive
+        onChange={(event) => {
+          console.log("onchange");
+          setValue(event.target.value);
+          onChange(event.target.value);
+        }}
+      >
+        {options.map((option) => (
+          <TooltipToggleButton
+            TooltipProps={{
+              placement: "top",
+              title: option.tooltip,
+              enterDelay: 500,
+            }}
+            key={option.value}
+            value={option.value}
+          >
+            {option.name}
+          </TooltipToggleButton>
+        ))}
+      </ToggleButtonGroup>
+    </Box>
+  );
+};
+
 const Option = ({ type, ...option }) => {
   if (type === "slider") {
     return <SliderWithValue {...option} />;
+  }
+
+  if (type === "radio") {
+    return <RadioGroup {...option} />;
   }
 
   throw new Error("Used option type thats not supported: " + type);
