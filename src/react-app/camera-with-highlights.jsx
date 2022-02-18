@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useLoading } from "./hooks/use-loading";
-import { drawConnectors } from "@mediapipe/drawing_utils";
+import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import {
   FACEMESH_FACE_OVAL,
   FACEMESH_LEFT_IRIS,
@@ -76,6 +76,49 @@ export const CameraWithHighlights = ({
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
+          const leftPupil = {
+            x:
+              (landmarks[474].x +
+                landmarks[475].x +
+                landmarks[476].x +
+                landmarks[477].x) /
+              4,
+            y:
+              (landmarks[474].y +
+                landmarks[475].y +
+                landmarks[476].y +
+                landmarks[477].y) /
+              4,
+          };
+
+          const rightPupil = {
+            x:
+              (landmarks[469].x +
+                landmarks[470].x +
+                landmarks[471].x +
+                landmarks[472].x) /
+              4,
+            y:
+              (landmarks[469].y +
+                landmarks[470].y +
+                landmarks[471].y +
+                landmarks[472].y) /
+              4,
+          };
+
+          drawLandmarks(
+            canvasCtx,
+            [
+              landmarks[33],
+              landmarks[133],
+              landmarks[362],
+              landmarks[263],
+              leftPupil,
+              rightPupil,
+            ],
+            { color: "#ff3030" }
+          );
+
           drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
             color: "#FF3030",
           });
