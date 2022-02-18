@@ -89,7 +89,17 @@ export const useDirectionBasic = (onBlink) => {
           const reRatio = rhDistance / rvDistance;
           const leRatio = lhDistance / lvDistance;
 
-          const ratio = (reRatio + leRatio) / 2;
+          let ratio = 0;
+
+          if (whichEyes === "left") {
+            ratio = leRatio;
+          } else if (whichEyes === "right") {
+            ratio = reRatio;
+          } else if (whichEyes === "both") {
+            ratio = (reRatio + leRatio) / 2;
+          } else {
+            throw new Error("We dont know which eyes to use: " + whichEyes);
+          }
 
           const currentFrame = {
             time: currentTimestamp,
