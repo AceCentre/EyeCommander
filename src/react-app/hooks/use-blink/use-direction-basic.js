@@ -122,18 +122,6 @@ export const useDirectionBasic = (onBlink) => {
     detectBlink: noop,
     options: [
       {
-        loadingOption: directionDepth,
-        type: "slider",
-        min: 0,
-        max: 100,
-        defaultValue: loadingDirectionDepth ? 0 : directionDepth * 10,
-        label: "Direction depth",
-        tooltip: "The distance you have to move your eye to trigger the blink",
-        onChange: (newValue) => {
-          updateDirectionDepth(newValue / 10);
-        },
-      },
-      {
         type: "sidebyside",
         options: [
           {
@@ -186,6 +174,18 @@ export const useDirectionBasic = (onBlink) => {
             },
           },
         ],
+      },
+      {
+        loadingOption: loadingDirectionDepth,
+        type: "slider",
+        min: 0,
+        max: 100,
+        defaultValue: loadingDirectionDepth ? 0 : directionDepth * 10,
+        label: "Direction depth",
+        tooltip: "The distance you have to move your eye to trigger the blink",
+        onChange: (newValue) => {
+          updateDirectionDepth(newValue / 10);
+        },
       },
     ],
   };
