@@ -11,7 +11,7 @@ const euclaideanDistance = (point, point1) => {
   return distance;
 };
 
-export const useSpeedBlink = (onBlink) => {
+export const useSpeedBlink = (onBlink, setDisplayOnSlider) => {
   const {
     loading: loadingBlinkThreshold,
     value: blinkThreshold,
@@ -74,10 +74,18 @@ export const useSpeedBlink = (onBlink) => {
           if (totalChange > blinkThreshold) {
             onBlink("speed");
           }
+
+          const clamp = (number, min, max) =>
+            Math.max(min, Math.min(number, max));
+
+          setDisplayOnSlider({
+            currentValue: clamp(totalChange / 10, 0, 1),
+            threshold: blinkThreshold / 10,
+          });
         }
       }
     },
-    [blinkThreshold, loadingBlinkThreshold, onBlink]
+    [blinkThreshold, loadingBlinkThreshold, onBlink, setDisplayOnSlider]
   );
 
   return {

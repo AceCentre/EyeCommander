@@ -9,7 +9,7 @@ const euclaideanDistance = (point, point1) => {
   return distance;
 };
 
-export const useBasicBlink = (onBlink) => {
+export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
   const {
     loading: loadingBlinkThreshold,
     value: blinkThreshold,
@@ -58,10 +58,15 @@ export const useBasicBlink = (onBlink) => {
           if (ratio > blinkThreshold) {
             onBlink("basic");
           }
+
+          setDisplayOnSlider({
+            currentValue: Math.min(ratio / 10, 1),
+            threshold: blinkThreshold / 10,
+          });
         }
       }
     },
-    [blinkThreshold, loadingBlinkThreshold, onBlink]
+    [blinkThreshold, loadingBlinkThreshold, onBlink, setDisplayOnSlider]
   );
 
   return {

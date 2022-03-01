@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { BLINK_MODE } from "../../lib/store-consts";
 import { useBasicBlink } from "./use-basic-blink";
 import { useDirectionBasic } from "./use-direction-basic";
@@ -38,30 +38,35 @@ export const useBlink = (...params) => {
     BLINK_MODES[0].id
   );
 
+  const [displayOnSlider, setDisplayOnSlider] = useState({
+    currentValue: 0,
+    threshold: 0.5,
+  });
+
   const noop = useCallback(() => {});
 
-  const basic = useBasicBlink(...params);
-  const speed = useSpeedBlink(...params);
-  const hold = useHoldBlink(...params);
-  const directionBasic = useDirectionBasic(...params);
+  const basic = useBasicBlink(...params, setDisplayOnSlider);
+  const speed = useSpeedBlink(...params, setDisplayOnSlider);
+  const hold = useHoldBlink(...params, setDisplayOnSlider);
+  const directionBasic = useDirectionBasic(...params, setDisplayOnSlider);
 
   if (blinkModeLoading) {
     return { detectBlink: noop, options: [] };
   }
 
   if (blinkMode === "BASIC") {
-    return basic;
+    return { ...basic, displayOnSlider };
   }
 
   if (blinkMode === "SPEED") {
-    return speed;
+    return { ...speed, displayOnSlider };
   }
 
   if (blinkMode === "HOLD") {
-    return hold;
+    return { ...hold, displayOnSlider };
   }
 
   if (blinkMode === "DIRECTION_BASIC") {
-    return directionBasic;
+    return { ...directionBasic, displayOnSlider };
   }
 };

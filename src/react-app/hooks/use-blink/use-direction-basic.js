@@ -13,7 +13,7 @@ const euclaideanDistance = (point, point1) => {
   return distance;
 };
 
-export const useDirectionBasic = (onBlink) => {
+export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
   const {
     loading: loadingDirectionDepth,
     value: directionDepth,
@@ -114,6 +114,11 @@ export const useDirectionBasic = (onBlink) => {
           if (ratio > newThreshold) {
             onBlink("basic");
           }
+
+          setDisplayOnSlider({
+            currentValue: Math.min(ratio / 5, 1),
+            threshold: newThreshold / 5,
+          });
         }
       }
     },
@@ -125,6 +130,7 @@ export const useDirectionBasic = (onBlink) => {
       loadingWhichEyes,
       direction,
       loadingDirection,
+      setDisplayOnSlider,
     ]
   );
 

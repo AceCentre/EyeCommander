@@ -20,11 +20,15 @@ const LOADING_TIME = 2000;
 export const CameraWithHighlights = ({
   onFrame = () => {},
   distanceHistory = { current: [] },
+  displayOnSlider = null,
 }) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+  const displayOnSliderRef = useRef();
   const loading = useLoading(LOADING_TIME);
   const [frameRate, setFrameRate] = useState(0);
+
+  displayOnSliderRef.current = displayOnSlider;
 
   const { value: reverse, loading: reverseLoading } = useStoreValue(
     REVERSE_CAMERA,
@@ -71,6 +75,65 @@ export const CameraWithHighlights = ({
         canvasElement.width,
         canvasElement.height
       );
+
+      const paddingFromSides = 32;
+      const distanceBetweenEndsOfLine =
+        canvasElement.width - paddingFromSides * 2;
+
+      /**
+       * Background line
+       */
+      canvasCtx.beginPath();
+      canvasCtx.lineWidth = 8;
+      canvasCtx.strokeStyle = "white";
+      canvasCtx.moveTo(
+        canvasElement.width - paddingFromSides,
+        canvasElement.height - paddingFromSides
+      );
+      canvasCtx.lineTo(
+        paddingFromSides,
+        canvasElement.height - paddingFromSides
+      );
+      canvasCtx.stroke();
+
+      /**
+       * Line to show where you are currently
+       */
+      const endOfGreenLinePoint =
+        canvasElement.width -
+        distanceBetweenEndsOfLine * displayOnSliderRef.current.currentValue -
+        paddingFromSides;
+      canvasCtx.beginPath();
+      canvasCtx.lineWidth = 8;
+      canvasCtx.strokeStyle = "#30FF30";
+      canvasCtx.moveTo(
+        canvasElement.width - paddingFromSides,
+        canvasElement.height - paddingFromSides
+      );
+      canvasCtx.lineTo(
+        endOfGreenLinePoint,
+        canvasElement.height - paddingFromSides
+      );
+      canvasCtx.stroke();
+
+      /** Threshold line */
+      canvasCtx.beginPath();
+      const thresholdMarkerPoint =
+        canvasElement.width -
+        paddingFromSides -
+        distanceBetweenEndsOfLine * displayOnSliderRef.current.threshold;
+
+      canvasCtx.lineWidth = 4;
+      canvasCtx.strokeStyle = "#FF3030";
+      canvasCtx.moveTo(
+        thresholdMarkerPoint,
+        canvasElement.height - paddingFromSides - 20
+      );
+      canvasCtx.lineTo(
+        thresholdMarkerPoint,
+        canvasElement.height - paddingFromSides + 20
+      );
+      canvasCtx.stroke();
 
       onFrame(results);
 
@@ -143,7 +206,7 @@ export const CameraWithHighlights = ({
 
       canvasCtx.restore();
     },
-    [onFrame]
+    [onFrame, displayOnSliderRef]
   );
 
   useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
