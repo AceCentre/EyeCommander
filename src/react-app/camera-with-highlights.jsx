@@ -80,60 +80,115 @@ export const CameraWithHighlights = ({
       const distanceBetweenEndsOfLine =
         canvasElement.width - paddingFromSides * 2;
 
-      /**
-       * Background line
-       */
-      canvasCtx.beginPath();
-      canvasCtx.lineWidth = 8;
-      canvasCtx.strokeStyle = "white";
-      canvasCtx.moveTo(
-        canvasElement.width - paddingFromSides,
-        canvasElement.height - paddingFromSides
-      );
-      canvasCtx.lineTo(
-        paddingFromSides,
-        canvasElement.height - paddingFromSides
-      );
-      canvasCtx.stroke();
+      if (reverse) {
+        /**
+         * Background line
+         */
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "white";
+        canvasCtx.moveTo(
+          canvasElement.width - paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
 
-      /**
-       * Line to show where you are currently
-       */
-      const endOfGreenLinePoint =
-        canvasElement.width -
-        distanceBetweenEndsOfLine * displayOnSliderRef.current.currentValue -
-        paddingFromSides;
-      canvasCtx.beginPath();
-      canvasCtx.lineWidth = 8;
-      canvasCtx.strokeStyle = "#30FF30";
-      canvasCtx.moveTo(
-        canvasElement.width - paddingFromSides,
-        canvasElement.height - paddingFromSides
-      );
-      canvasCtx.lineTo(
-        endOfGreenLinePoint,
-        canvasElement.height - paddingFromSides
-      );
-      canvasCtx.stroke();
+        /**
+         * Line to show where you are currently
+         */
+        const endOfGreenLinePoint =
+          canvasElement.width -
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.currentValue -
+          paddingFromSides;
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "#30FF30";
+        canvasCtx.moveTo(
+          canvasElement.width - paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          endOfGreenLinePoint,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
 
-      /** Threshold line */
-      canvasCtx.beginPath();
-      const thresholdMarkerPoint =
-        canvasElement.width -
-        paddingFromSides -
-        distanceBetweenEndsOfLine * displayOnSliderRef.current.threshold;
+        /** Threshold line */
+        canvasCtx.beginPath();
+        const thresholdMarkerPoint =
+          canvasElement.width -
+          paddingFromSides -
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.threshold;
 
-      canvasCtx.lineWidth = 4;
-      canvasCtx.strokeStyle = "#FF3030";
-      canvasCtx.moveTo(
-        thresholdMarkerPoint,
-        canvasElement.height - paddingFromSides - 20
-      );
-      canvasCtx.lineTo(
-        thresholdMarkerPoint,
-        canvasElement.height - paddingFromSides + 20
-      );
-      canvasCtx.stroke();
+        canvasCtx.lineWidth = 4;
+        canvasCtx.strokeStyle = "#FF3030";
+        canvasCtx.moveTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides - 20
+        );
+        canvasCtx.lineTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides + 20
+        );
+        canvasCtx.stroke();
+      } else {
+        /**
+         * Background line
+         */
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "white";
+        canvasCtx.moveTo(
+          canvasElement.width - paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
+
+        /**
+         * Line to show where you are currently
+         */
+        const endOfGreenLinePoint =
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.currentValue +
+          paddingFromSides;
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "#30FF30";
+        canvasCtx.moveTo(
+          paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          endOfGreenLinePoint,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
+
+        /** Threshold line */
+        canvasCtx.beginPath();
+        const thresholdMarkerPoint =
+          paddingFromSides +
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.threshold;
+
+        canvasCtx.lineWidth = 4;
+        canvasCtx.strokeStyle = "#FF3030";
+        canvasCtx.moveTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides - 20
+        );
+        canvasCtx.lineTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides + 20
+        );
+        canvasCtx.stroke();
+      }
 
       onFrame(results);
 
@@ -206,7 +261,7 @@ export const CameraWithHighlights = ({
 
       canvasCtx.restore();
     },
-    [onFrame, displayOnSliderRef]
+    [onFrame, displayOnSliderRef, reverse, reverseLoading]
   );
 
   useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
