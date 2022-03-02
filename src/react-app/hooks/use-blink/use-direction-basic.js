@@ -80,25 +80,47 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
             pupil: leftPupil,
           };
 
-          const rhDistance = euclaideanDistance(rightEye.right, rightEye.pupil);
-          const rvDistance = euclaideanDistance(rightEye.left, rightEye.pupil);
+          const leftEyeToLeft = euclaideanDistance(leftEye.left, leftEye.pupil);
+          const leftEyeToRight = euclaideanDistance(
+            leftEye.right,
+            leftEye.pupil
+          );
 
-          const lvDistance = euclaideanDistance(leftEye.right, leftEye.pupil);
-          const lhDistance = euclaideanDistance(leftEye.left, leftEye.pupil);
+          const rightEyeToLeft = euclaideanDistance(
+            rightEye.left,
+            rightEye.pupil
+          );
+          const rightEyeToRight = euclaideanDistance(
+            rightEye.right,
+            rightEye.pupil
+          );
 
-          const reRatio = rhDistance / rvDistance;
-          const leRatio = lhDistance / lvDistance;
-
-          let ratio = 0;
+          let eyesToLeft = 0;
+          let eyesToRight = 0;
 
           if (whichEyes === "left") {
-            ratio = leRatio;
+            eyesToLeft = leftEyeToLeft;
+            eyesToRight = leftEyeToRight;
           } else if (whichEyes === "right") {
-            ratio = reRatio;
+            eyesToLeft = rightEyeToLeft;
+            eyesToRight = rightEyeToRight;
           } else if (whichEyes === "both") {
-            ratio = (reRatio + leRatio) / 2;
+            eyesToLeft = (rightEyeToLeft + leftEyeToLeft) / 2;
+            eyesToRight = (rightEyeToRight + leftEyeToRight) / 2;
           } else {
             throw new Error("We dont know which eyes to use: " + whichEyes);
+          }
+
+          let ratio;
+
+          if (direction === "left") {
+            ratio = eyesToRight / eyesToLeft;
+          } else if (direction === "right") {
+            ratio = eyesToLeft / eyesToRight;
+          } else {
+            throw new Error(
+              "We dont know which direction you want: " + direction
+            );
           }
 
           const currentFrame = {
@@ -106,18 +128,18 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
             ratio,
           };
 
-          const newThreshold = directionDepth / 2;
+          const newThreshold = directionDepth;
 
           distanceHistory.current.push(currentFrame);
           distanceHistory.current.shift();
 
-          if (ratio > newThreshold) {
+          if (ratio * 2 > newThreshold) {
             onBlink("basic");
           }
 
           setDisplayOnSlider({
-            currentValue: Math.min(ratio / 5, 1),
-            threshold: newThreshold / 5,
+            currentValue: Math.min((ratio * 2) / 10, 1),
+            threshold: newThreshold / 10,
           });
         }
       }
