@@ -5,6 +5,7 @@ import { useDirectionBasic } from "./use-direction-basic";
 import { useHoldBlink } from "./use-hold-blink";
 import { useSpeedBlink } from "./use-speed-blink";
 import { useStoreValue } from "../use-store";
+import { useDirectionHold } from "./use-direction-hold";
 
 export const BLINK_MODES = [
   {
@@ -30,6 +31,12 @@ export const BLINK_MODES = [
     title: "Left/Right Basic",
     description: "Triggers when you look to the left or right.",
   },
+  {
+    id: "DIRECTION_HOLD",
+    title: "Left/Right Hold",
+    description:
+      "Triggers when you look to the left or right for a specified length of time.",
+  },
 ];
 
 export const useBlink = (...params) => {
@@ -49,6 +56,7 @@ export const useBlink = (...params) => {
   const speed = useSpeedBlink(...params, setDisplayOnSlider);
   const hold = useHoldBlink(...params, setDisplayOnSlider);
   const directionBasic = useDirectionBasic(...params, setDisplayOnSlider);
+  const directionHold = useDirectionHold(...params, setDisplayOnSlider);
 
   if (blinkModeLoading) {
     return { detectBlink: noop, options: [] };
@@ -68,5 +76,9 @@ export const useBlink = (...params) => {
 
   if (blinkMode === "DIRECTION_BASIC") {
     return { ...directionBasic, displayOnSlider };
+  }
+
+  if (blinkMode === "DIRECTION_HOLD") {
+    return { ...directionHold, displayOnSlider };
   }
 };

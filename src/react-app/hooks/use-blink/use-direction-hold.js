@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import {
-  DIRECTION_BASIC,
-  DIRECTION_DEPTH_BASIC_KEY,
-  WHICH_EYES,
+  DIRECTION_DEPTH_HOLD_KEY,
+  WHICH_EYES_HOLD,
+  DIRECTION_HOLD,
+  DIRECTION_LENGTH_KEY,
 } from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
 
@@ -13,24 +14,30 @@ const euclaideanDistance = (point, point1) => {
   return distance;
 };
 
-export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
+export const useDirectionHold = (onBlink, setDisplayOnSlider) => {
   const {
     loading: loadingDirectionDepth,
     value: directionDepth,
     update: updateDirectionDepth,
-  } = useStoreValue(DIRECTION_DEPTH_BASIC_KEY, 5);
+  } = useStoreValue(DIRECTION_DEPTH_HOLD_KEY, 5);
 
   const {
     loading: loadingWhichEyes,
     value: whichEyes,
     update: updateWhichEyes,
-  } = useStoreValue(WHICH_EYES, "both");
+  } = useStoreValue(WHICH_EYES_HOLD, "both");
 
   const {
     loading: loadingDirection,
     value: direction,
     update: updateDirection,
-  } = useStoreValue(DIRECTION_BASIC, "left");
+  } = useStoreValue(DIRECTION_HOLD, "left");
+
+  const {
+    loading: loadingDirectionLength,
+    value: directionLength,
+    update: updateDirectionLength,
+  } = useStoreValue(DIRECTION_LENGTH_KEY, 500);
 
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
@@ -133,8 +140,21 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
           distanceHistory.current.push(currentFrame);
           distanceHistory.current.shift();
 
-          if (ratio * 2 > newThreshold) {
-            onBlink("basic");
+          const ratiosInTime = distanceHistory.current
+            .filter((frame) => {
+              return currentTimestamp - frame.time < directionLength;
+            })
+            .map((frame) => frame.ratio);
+
+          const lowestRatio = Math.min(...ratiosInTime);
+
+          if (lowestRatio > newThreshold) {
+            console.log("Triggering direction hold", {
+              lowestRatio,
+              ratiosInTime,
+              newThreshold,
+            });
+            onBlink("hold");
           }
 
           setDisplayOnSlider({
@@ -153,6 +173,8 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
       direction,
       loadingDirection,
       setDisplayOnSlider,
+      loadingDirectionLength,
+      directionLength,
     ]
   );
 
@@ -232,6 +254,19 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
         tooltip: "The distance you have to move your eye to trigger the blink",
         onChange: (newValue) => {
           updateDirectionDepth(newValue / 10);
+        },
+      },
+      {
+        loadingOption: loadingDirectionLength,
+        type: "slider",
+        min: 100,
+        max: 2000,
+        defaultValue: loadingDirectionLength ? 0 : directionLength,
+        label: "Look length",
+        tooltip:
+          "The amount of time in MS you must keep your eyes looking in the given direction",
+        onChange: (newValue) => {
+          updateDirectionLength(newValue);
         },
       },
     ],
