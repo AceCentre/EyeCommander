@@ -84,10 +84,12 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
-      - name: Set node config to set msvs_version to 2015
-        run: npm config set msvs_version 2015
+      - name: Set node config to set msvs_version to 2022
+        run: npm config set msvs_version 2022
 
       - name: Install deps
+        env:
+          VCINSTALLDIR: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
         run: npm install
 
       - name: Electron rebuild
