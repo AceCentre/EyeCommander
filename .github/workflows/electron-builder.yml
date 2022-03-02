@@ -71,7 +71,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Output cert file
         run: echo $WIN_CERT | base64 --decode > ./win-cert.pfx
@@ -84,11 +84,8 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
-      - name: Clean yarn cache
-        run: yarn cache clean
-
       - name: Install deps
-        run: yarn install
+        run: npm install
 
       - name: Electron rebuild
         # Ignore when this fails, its a total hack but for some reason
