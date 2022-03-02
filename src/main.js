@@ -1,4 +1,5 @@
 import express from "express";
+import { setupAnalytics } from "./backend/analytics";
 import { OutputController } from "./backend/output-controller";
 
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
@@ -28,6 +29,12 @@ require("./backend/squirrel-events");
 //   repo: "AceCentre/EyeCommander",
 // });
 // }
+
+const { capture, analyticsShutdown } = setupAnalytics(store, app, isDebug());
+
+setTimeout(() => {
+  capture("app-open");
+}, 3000);
 
 const createWindow = (javascriptToExecute) => {
   // Create the browser window.
@@ -81,6 +88,7 @@ app.on("ready", () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+  analyticsShutdown();
   if (process.platform !== "darwin") {
     app.quit();
   }
@@ -121,6 +129,7 @@ ipcMain.on("resize-window", (event, width, height) => {
 
 ipcMain.on("blink", async () => {
   outputController.blink();
+  capture("blink");
 });
 
 const reloadMain = () => {
