@@ -84,6 +84,9 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
+      - name: Read versions of vscode
+        run: ls "C:\Program Files\Microsoft Visual Studio"
+
       - name: Set node config to set msvs_version to 2022
         run: npm config set msvs_version 2022
 
