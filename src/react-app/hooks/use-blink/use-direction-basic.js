@@ -136,6 +136,15 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
 
   return {
     detectBlink: noop,
+    highlights: {
+      leftEye: false,
+      rightEye: false,
+      face: true,
+      leftPupil: true,
+      rightPupil: true,
+      leftEyeEdgePoints: true,
+      rightEyeEdgePoints: true,
+    },
     options: [
       {
         type: "sidebyside",

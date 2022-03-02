@@ -3,10 +3,8 @@ import { useLoading } from "./hooks/use-loading";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import {
   FACEMESH_FACE_OVAL,
-  FACEMESH_LEFT_IRIS,
   FACEMESH_RIGHT_EYE,
   FACEMESH_LEFT_EYE,
-  FACEMESH_RIGHT_IRIS,
 } from "@mediapipe/face_mesh";
 import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
@@ -17,10 +15,21 @@ import { Box } from "@mui/system";
 
 const LOADING_TIME = 2000;
 
+const DEFAULT_HIGHLIGHTS = {
+  leftEye: true,
+  rightEye: true,
+  face: true,
+  leftPupil: true,
+  rightPupil: true,
+  leftEyeEdgePoints: true,
+  rightEyeEdgePoints: true,
+};
+
 export const CameraWithHighlights = ({
   onFrame = () => {},
   distanceHistory = { current: [] },
   displayOnSlider = null,
+  highlights = DEFAULT_HIGHLIGHTS,
 }) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
@@ -224,38 +233,51 @@ export const CameraWithHighlights = ({
               4,
           };
 
-          drawLandmarks(
-            canvasCtx,
-            [
-              landmarks[33],
-              landmarks[133],
-              landmarks[362],
-              landmarks[263],
-              leftPupil,
-              rightPupil,
-            ],
-            { color: "#ff3030" }
-          );
+          if (highlights.face) {
+            drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, {
+              color: "#ffffff",
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
-            color: "#FF3030",
-          });
+          if (highlights.leftEye) {
+            drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, {
+              color: "#30FF30",
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_IRIS, {
-            color: "#FF3030",
-          });
+          if (highlights.rightEye) {
+            drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
+              color: "#FF3030",
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, {
-            color: "#30FF30",
-          });
+          if (highlights.leftPupil) {
+            drawLandmarks(canvasCtx, [leftPupil], {
+              color: "#30FF30",
+              radius: 1,
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_IRIS, {
-            color: "#30FF30",
-          });
+          if (highlights.rightPupil) {
+            drawLandmarks(canvasCtx, [rightPupil], {
+              color: "#FF3030",
+              radius: 1,
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, {
-            color: "#ffffff",
-          });
+          if (highlights.rightEyeEdgePoints) {
+            drawLandmarks(canvasCtx, [landmarks[33], landmarks[133]], {
+              color: "#FF3030",
+              radius: 1,
+            });
+          }
+
+          if (highlights.leftEyeEdgePoints) {
+            drawLandmarks(canvasCtx, [landmarks[362], landmarks[263]], {
+              color: "#30FF30",
+              radius: 1,
+            });
+          }
         }
       }
 

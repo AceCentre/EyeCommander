@@ -90,6 +90,15 @@ export const useSpeedBlink = (onBlink, setDisplayOnSlider) => {
 
   return {
     detectBlink: noop,
+    highlights: {
+      leftEye: true,
+      rightEye: true,
+      face: true,
+      leftPupil: false,
+      rightPupil: false,
+      leftEyeEdgePoints: false,
+      rightEyeEdgePoints: false,
+    },
     options: [
       {
         loadingOption: loadingBlinkThreshold,

@@ -49,7 +49,8 @@ export const BlinkDetectionWithSliders = ({
     [throttleTime, onBlink]
   );
 
-  const { detectBlink, options, displayOnSlider } = useBlink(throttled);
+  const { detectBlink, options, displayOnSlider, highlights } =
+    useBlink(throttled);
 
   const onFrame = useCallback(
     (results) => {
@@ -92,6 +93,7 @@ export const BlinkDetectionWithSliders = ({
         distanceHistory={distanceHistory}
         onFrame={onFrame}
         displayOnSlider={displayOnSlider}
+        highlights={highlights}
       />
 
       <Paper
