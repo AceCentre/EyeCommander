@@ -106,6 +106,10 @@ ipcMain.handle("setStoreValue", (event, key, value) => {
   return store.set(key, value);
 });
 
+ipcMain.handle("getVersion", () => {
+  return app.getVersion();
+});
+
 ipcMain.handle("outputController", async (event, functionName, args) => {
   return await outputController[functionName](args);
 });

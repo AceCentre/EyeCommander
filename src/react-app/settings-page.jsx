@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useResizer } from "./hooks/use-resizer";
 import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -127,12 +127,41 @@ export const SettingsPage = () => {
   );
 };
 
+const useVersion = () => {
+  const [version, setVersion] = useState("0.0.0");
+
+  useEffect(() => {
+    const getVersion = async () => {
+      if (!electronInternals) {
+        throw new Error("Electron is not available");
+      }
+
+      if (!electronInternals.ipcRenderer) {
+        throw new Error("Electron ipcRenderer is not available");
+      }
+
+      const realVersion = await electronInternals.ipcRenderer.invoke(
+        "getVersion"
+      );
+
+      setVersion(realVersion);
+    };
+
+    getVersion();
+  }, []);
+
+  return version;
+};
+
 const AboutSettings = () => {
+  const version = useVersion();
+
   return (
     <>
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         About
       </Typography>
+      <Typography>Version: {version}</Typography>
       <Typography>
         EyeCommander is an Open Source project developed by AceCentre.
       </Typography>
