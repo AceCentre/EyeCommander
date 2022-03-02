@@ -30,7 +30,7 @@ require("./backend/squirrel-events");
 // });
 // }
 
-const { capture, analyticsShutdown } = setupAnalytics(store, app, isDebug());
+const { capture, shutdownAnalytics } = setupAnalytics(store, app, isDebug());
 
 setTimeout(() => {
   capture("app-open");
@@ -88,7 +88,7 @@ app.on("ready", () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
-  analyticsShutdown();
+  shutdownAnalytics();
   if (process.platform !== "darwin") {
     app.quit();
   }
