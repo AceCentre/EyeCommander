@@ -86,7 +86,7 @@ jobs:
 
       - name: Remove node-gyp cache
         continue-on-error: true
-        run: rm -rf ~/node_gyp
+        run: rm -r -fo ~/node_gyp
 
       - name: Install deps
         run: yarn install
