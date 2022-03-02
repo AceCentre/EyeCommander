@@ -103,6 +103,7 @@ export const SettingsPage = () => {
         sx={{
           width: "100%",
           height: "100%",
+          maxHeight: "100vh",
           padding: "2rem",
           display: "flex",
           flexDirection: "column",
@@ -215,7 +216,14 @@ const BlinkSettings = () => {
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         Blink mode
       </Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "1rem",
+          overflowY: "auto",
+        }}
+      >
         {BLINK_MODES.map((current) => {
           const boxStyle =
             current.id === blinkMode
