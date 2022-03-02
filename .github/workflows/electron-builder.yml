@@ -71,7 +71,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v1
         with:
-          node-version: 14
+          node-version: 16
 
       - name: Output cert file
         run: echo $WIN_CERT | base64 --decode > ./win-cert.pfx
@@ -83,6 +83,10 @@ jobs:
           script: |
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
+
+      - name: Remove node-gyp cache
+        continue-on-error: true
+        run: rm -rf ~/node_gyp
 
       - name: Install deps
         run: yarn install
