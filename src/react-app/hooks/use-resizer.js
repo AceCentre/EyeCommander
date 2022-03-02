@@ -11,5 +11,5 @@ export const useResizer = ({ width, height }) => {
     }
 
     electronInternals.ipcRenderer.send("resize-window", width, height);
-  }, []);
+  }, [height, width]);
 };

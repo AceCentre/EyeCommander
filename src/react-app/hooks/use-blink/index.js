@@ -6,6 +6,7 @@ import { useHoldBlink } from "./use-hold-blink";
 import { useSpeedBlink } from "./use-speed-blink";
 import { useStoreValue } from "../use-store";
 import { useDirectionHold } from "./use-direction-hold";
+import { useResizer } from "../use-resizer";
 
 export const BLINK_MODES = [
   {
@@ -44,6 +45,11 @@ export const useBlink = (...params) => {
     BLINK_MODE,
     BLINK_MODES[0].id
   );
+
+  useResizer({
+    width: 900,
+    height: !blinkModeLoading && blinkMode === "DIRECTION_HOLD" ? 523 : 440,
+  });
 
   const [displayOnSlider, setDisplayOnSlider] = useState({
     currentValue: 0,

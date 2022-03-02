@@ -302,7 +302,7 @@ export const CameraWithHighlights = ({
         sx={{
           position: "absolute",
           width: "100%",
-          height: "100%",
+          height: "291px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -320,7 +320,7 @@ export const CameraWithHighlights = ({
         style={{
           ...canvasFlip,
           width: "100%",
-          height: "100%",
+          maxHeight: "480px",
           position: "relative",
         }}
         ref={canvasRef}
