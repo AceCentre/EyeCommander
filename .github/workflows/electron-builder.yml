@@ -111,6 +111,10 @@ jobs:
         continue-on-error: true
         run: where node-gyp
 
+      - name: Try a full list
+        continue-on-error: true
+        run: dir /s /b /a:d
+
       - name: Use new node-gyp
         run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
 
