@@ -84,6 +84,13 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
+      - name: Remove cache
+        continue-on-error: true
+        run: rm -r $env:LOCALAPPDATA/node-gyp/Cache
+
+      - name: Install new node-gyp
+        run: npm i -g node-gyp@9.0.0 --verbose
+
       - name: Echo path
         continue-on-error: true
         run: echo $env:LOCALAPPDATA
@@ -92,6 +99,14 @@ jobs:
         continue-on-error: true
         run: ls C:\Users\runneradmin\AppData
 
+      - name: Print path 0.1
+        continue-on-error: true
+        run: ls C:\Users\runneradmin\AppData\Local
+
+      - name: Print path 0.2
+        continue-on-error: true
+        run: ls C:\Users\runneradmin\AppData\LocalLow
+
       - name: Print path 1
         continue-on-error: true
         run: ls C:\Users\runneradmin\AppData\Roaming
@@ -99,13 +114,6 @@ jobs:
       - name: Print path 2
         continue-on-error: true
         run: ls C:\Users\runneradmin\AppData\Roaming\npm
-
-      - name: Remove cache
-        continue-on-error: true
-        run: rm -r $env:LOCALAPPDATA/node-gyp/Cache
-
-      - name: Install new node-gyp
-        run: npm i -g node-gyp@9.0.0 --verbose
 
       - name: Print path 3
         continue-on-error: true
@@ -126,6 +134,10 @@ jobs:
       - name: Print path 7
         continue-on-error: true
         run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules
+
+      - name: Print path 7
+        continue-on-error: true
+        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules\npm
 
       - name: Where is node-gyp
         continue-on-error: true
