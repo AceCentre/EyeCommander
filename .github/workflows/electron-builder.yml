@@ -85,7 +85,6 @@ jobs:
             return await script({ github, context, core })
 
       - name: Install deps
-        env:
         run: yarn install
 
       - name: Electron rebuild
