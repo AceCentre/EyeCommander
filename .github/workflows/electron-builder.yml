@@ -84,22 +84,9 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
-      - name: Read versions of vscode
-        run: ls "C:\Program Files\Microsoft Visual Studio"
-
-      - name: Where is node
-        run: where node
-
-      - name: Install latest node-gyp
-        run: npm install node-gyp@9.0.0
-
-      - name: Set node config to set msvs_version to 2022
-        run: npm config set msvs_version 2022
-
       - name: Install deps
         env:
-          VCINSTALLDIR: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
-        run: npm install
+        run: yarn install
 
       - name: Electron rebuild
         # Ignore when this fails, its a total hack but for some reason
