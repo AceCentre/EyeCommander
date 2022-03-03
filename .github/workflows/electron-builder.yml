@@ -86,78 +86,11 @@ jobs:
 
       - name: Remove cache
         continue-on-error: true
-        run: rm -r $env:LOCALAPPDATA/node-gyp/Cache
+        run: rm -r C:\Users\runneradmin\AppData\Local\node-gyp\Cache
 
       - name: Install new node-gyp
         working-directory: C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules\npm
-        run: npm i node-gyp@9.0.0 --verbose
-
-      - name: Echo path
-        continue-on-error: true
-        run: echo $env:LOCALAPPDATA
-
-      - name: Print path 0
-        continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData
-
-      - name: Print path 0.1
-        continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData\Local
-
-      - name: Print path 0.2
-        continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData\LocalLow
-
-      - name: Print path 1
-        continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData\Roaming
-
-      - name: Print path 2
-        continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData\Roaming\npm
-
-      - name: Print path 3
-        continue-on-error: true
-        run: ls C:\npm
-
-      - name: Print path 4
-        continue-on-error: true
-        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64
-
-      - name: Print path 5
-        continue-on-error: true
-        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\lib
-
-      - name: Print path 6
-        continue-on-error: true
-        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\lib\node_modules
-
-      - name: Print path 7
-        continue-on-error: true
-        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules
-
-      - name: Print path 7
-        continue-on-error: true
-        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules\npm
-
-      - name: Print path 7
-        continue-on-error: true
-        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules\npm\node_modules
-
-      - name: Where is node-gyp
-        continue-on-error: true
-        run: where node-gyp
-
-      - name: Try a full list
-        continue-on-error: true
-        run: dir /s /b /a:d
-
-      - name: Show npm config
-        continue-on-error: true
-        run: npm config ls -l
-
-      # - name: Use new node-gyp
-      #   run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
+        run: npm i node-gyp@9.0.0
 
       - name: Install deps
         run: yarn install
