@@ -90,11 +90,11 @@ jobs:
 
       - name: Print path 1
         continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData
+        run: ls C:\Users\runneradmin\AppData\Roaming
 
       - name: Print path 2
         continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData\Local\node-gyp
+        run: ls C:\Users\runneradmin\AppData\Roaming\npm
 
       - name: Remove cache
         continue-on-error: true
