@@ -89,7 +89,8 @@ jobs:
         run: rm -r $env:LOCALAPPDATA/node-gyp/Cache
 
       - name: Install new node-gyp
-        run: npm i -g node-gyp@9.0.0 --verbose
+        working-directory: C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules\npm
+        run: npm i node-gyp@9.0.0 --verbose
 
       - name: Echo path
         continue-on-error: true
@@ -155,8 +156,8 @@ jobs:
         continue-on-error: true
         run: npm config ls -l
 
-      - name: Use new node-gyp
-        run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
+      # - name: Use new node-gyp
+      #   run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
 
       - name: Install deps
         run: yarn install
