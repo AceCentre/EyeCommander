@@ -84,14 +84,6 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
-      - name: Remove cache
-        continue-on-error: true
-        run: rm -r C:\Users\runneradmin\AppData\Local\node-gyp\Cache
-
-      - name: Install new node-gyp
-        working-directory: C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules\npm
-        run: npm i node-gyp@9.0.0
-
       - name: Install deps
         run: yarn install
 
