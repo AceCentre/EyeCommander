@@ -115,6 +115,10 @@ jobs:
         continue-on-error: true
         run: dir /s /b /a:d
 
+      - name: Show npm config
+        continue-on-error: true
+        run: npm config ls -l
+
       - name: Use new node-gyp
         run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
 
