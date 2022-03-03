@@ -88,6 +88,10 @@ jobs:
         continue-on-error: true
         run: echo $env:LOCALAPPDATA
 
+      - name: Print path 0
+        continue-on-error: true
+        run: ls C:\Users\runneradmin\AppData
+
       - name: Print path 1
         continue-on-error: true
         run: ls C:\Users\runneradmin\AppData\Roaming
