@@ -85,9 +85,19 @@ jobs:
             return await script({ github, context, core })
 
       - name: Echo path
+        continue-on-error: true
         run: echo $env:LOCALAPPDATA
 
+      - name: Print path 1
+        continue-on-error: true
+        run: ls C:\Users\runneradmin\AppData\Local
+
+      - name: Print path 2
+        continue-on-error: true
+        run: ls C:\Users\runneradmin\AppData\Local\node-gyp
+
       - name: Remove cache
+        continue-on-error: true
         run: rm -r $env:LOCALAPPDATA/node-gyp/Cache
 
       - name: Install deps
