@@ -103,6 +103,14 @@ jobs:
       - name: Install new node-gyp
         run: npm i -g node-gyp@9.0.0 --verbose
 
+      - name: Print path 3
+        continue-on-error: true
+        run: ls C:\npm
+
+      - name: Where is node-gyp
+        continue-on-error: true
+        run: where node-gyp
+
       - name: Use new node-gyp
         run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
 
