@@ -90,7 +90,7 @@ jobs:
 
       - name: Print path 1
         continue-on-error: true
-        run: ls C:\Users\runneradmin\AppData\Local
+        run: ls C:\Users\runneradmin\AppData
 
       - name: Print path 2
         continue-on-error: true
