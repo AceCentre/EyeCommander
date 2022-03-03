@@ -87,6 +87,9 @@ jobs:
       - name: Read versions of vscode
         run: ls "C:\Program Files\Microsoft Visual Studio"
 
+      - name: Where is node
+        run: where node
+
       - name: Install latest node-gyp
         run: npm install node-gyp@9.0.0
 
