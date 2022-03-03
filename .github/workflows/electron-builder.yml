@@ -84,6 +84,9 @@ jobs:
             const script = require('./check-for-version-bump.js');
             return await script({ github, context, core })
 
+      - name: Remove cache
+        run: rm -r %LocalAppData%/node-gyp/Cache
+
       - name: Install deps
         run: yarn install
 
