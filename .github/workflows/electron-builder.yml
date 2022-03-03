@@ -119,6 +119,10 @@ jobs:
         continue-on-error: true
         run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\lib\node_modules
 
+      - name: Print path 7
+        continue-on-error: true
+        run: ls C:\hostedtoolcache\windows\node\16.14.0\x64\node_modules
+
       - name: Where is node-gyp
         continue-on-error: true
         run: where node-gyp
