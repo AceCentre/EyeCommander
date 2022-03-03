@@ -101,7 +101,7 @@ jobs:
         run: rm -r $env:LOCALAPPDATA/node-gyp/Cache
 
       - name: Install new node-gyp
-        run: npm i node-gyp@9.0.0
+        run: npm i -g node-gyp@9.0.0
 
       - name: Use new node-gyp
         run: npm config set node_gyp "./node_modules/node-gyp/bin/node-gyp.js"
