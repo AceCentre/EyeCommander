@@ -87,6 +87,9 @@ jobs:
       - name: Read versions of vscode
         run: ls "C:\Program Files\Microsoft Visual Studio"
 
+      - name: Install latest node-gyp
+        run: npm install -g node-gyp@9.0.0
+
       - name: Set node config to set msvs_version to 2022
         run: npm config set msvs_version 2022
 
