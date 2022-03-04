@@ -3,7 +3,7 @@
     <img src="https://raw.githubusercontent.com/AceCentre/EyeCommander/main/assets/repo-logo.png" alt="EyeCommander logo" width="400" />
   </a>
 </p>
-<p align="center"><i>Detect eye gestures and convert them to switch outputs.</i></p>
+<p align="center"><i>Detect eye gestures and convert them to switch outputs</i></p>
 
 <p align="center">
   <img src="https://github.com/acecentre/eyecommander/actions/workflows/electron-builder.yml/badge.svg?branch=main" alt="Github Action Build workflow status" />
