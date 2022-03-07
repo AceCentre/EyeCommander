@@ -50,7 +50,7 @@ jobs:
       - name: Electron rebuild
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
-        run: yarn start --run-as-node || true
+        run: DEBUG=* yarn start --run-as-node || true
 
       - name: Forge publish
         if: ${{ steps.should-publish.outputs.result == 'publish' }}
