@@ -1,5 +1,5 @@
 import { AbstractOutput } from "./abstract-output";
-import robot from "robotjs";
+import sendkeys from "sendkeys";
 
 export class RobotKeyboard extends AbstractOutput {
   constructor() {
@@ -7,12 +7,11 @@ export class RobotKeyboard extends AbstractOutput {
   }
 
   blink() {
-    console.log("tapping space");
-    robot.keyTap("space");
+    sendkeys.sync(" ");
   }
 
   static getCompatiblePlatforms() {
-    return ["win32", "linux", "darwin"];
+    return ["win32"];
   }
 
   static info() {

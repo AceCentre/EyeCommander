@@ -1,5 +1,6 @@
 import { AbstractOutput } from "./abstract-output";
-import robot from "robotjs";
+
+import sendkeys from "sendkeys";
 
 export class NuVoice extends AbstractOutput {
   constructor() {
@@ -8,11 +9,11 @@ export class NuVoice extends AbstractOutput {
 
   blink() {
     console.log("tapping enter");
-    robot.keyTap("enter");
+    sendkeys.sync("{ENTER}");
   }
 
   static getCompatiblePlatforms() {
-    return ["win32", "darwin"];
+    return ["win32"];
   }
 
   static info() {
