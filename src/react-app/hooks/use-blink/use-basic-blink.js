@@ -89,7 +89,7 @@ export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
         defaultValue: loadingBlinkThreshold ? 0 : blinkThreshold * 10,
         label: "Blink depth",
         tooltip:
-          "The higher this more you must close your eyes to trigger a blink",
+          "The higher this more you must close your eyes to trigger a blink. The current value is shown on the indicator on the left",
         onChange: (newValue) => {
           updateBlinkThreshold(newValue / 10);
         },

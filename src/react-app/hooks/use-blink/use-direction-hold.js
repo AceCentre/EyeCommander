@@ -251,7 +251,8 @@ export const useDirectionHold = (onBlink, setDisplayOnSlider) => {
         max: 100,
         defaultValue: loadingDirectionDepth ? 0 : directionDepth * 10,
         label: "Direction depth",
-        tooltip: "The distance you have to move your eye to trigger the blink",
+        tooltip:
+          "The distance you have to move your eye to trigger the blink. The current value is shown on the indicator on the left",
         onChange: (newValue) => {
           updateDirectionDepth(newValue / 10);
         },

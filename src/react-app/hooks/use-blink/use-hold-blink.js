@@ -117,7 +117,8 @@ export const useHoldBlink = (onBlink, setDisplayOnSlider) => {
         max: 100,
         defaultValue: loadingBlinkThreshold ? 0 : blinkThreshold * 10,
         label: "Blink threshold",
-        tooltip: "The higher this quicker your blink must be",
+        tooltip:
+          "The higher this quicker your blink must be. The current value is shown on the indicator on the left",
         onChange: (newValue) => {
           updateBlinkThreshold(newValue / 10);
         },

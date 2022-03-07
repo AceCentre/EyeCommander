@@ -10,7 +10,7 @@ import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useStoreValue } from "./hooks/use-store";
 import { REVERSE_CAMERA } from "./lib/store-consts";
-import { CircularProgress, Typography } from "@mui/material";
+import { CircularProgress, Tooltip, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
 const LOADING_TIME = 2000;
@@ -314,6 +314,27 @@ export const CameraWithHighlights = ({
         }}
       >
         <CircularProgress />
+      </Box>
+
+      <Box
+        style={{
+          position: "absolute",
+          zIndex: 100,
+          height: "100%",
+          width: "100%",
+          maxHeight: "295px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Tooltip
+          title="Use the slider on the right to change the threshold value"
+          arrow
+          followCursor
+          enterDelay={300}
+        >
+          <Box style={{ marginTop: "auto", height: "100px" }}></Box>
+        </Tooltip>
       </Box>
 
       <canvas
