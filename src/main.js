@@ -1,4 +1,5 @@
 import express from "express";
+import { setupAnalytics } from "./backend/analytics";
 import { OutputController } from "./backend/output-controller";
 
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
@@ -28,6 +29,12 @@ if (!isDebug()) {
     repo: "AceCentre/EyeCommander",
   });
 }
+
+const { capture, shutdownAnalytics } = setupAnalytics(store, app, isDebug());
+
+setTimeout(() => {
+  capture("app-open");
+}, 3000);
 
 const createWindow = (javascriptToExecute) => {
   // Create the browser window.
@@ -81,6 +88,7 @@ app.on("ready", () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+  shutdownAnalytics();
   if (process.platform !== "darwin") {
     app.quit();
   }
@@ -106,6 +114,10 @@ ipcMain.handle("setStoreValue", (event, key, value) => {
   return store.set(key, value);
 });
 
+ipcMain.handle("getVersion", () => {
+  return app.getVersion();
+});
+
 ipcMain.handle("outputController", async (event, functionName, args) => {
   return await outputController[functionName](args);
 });
@@ -117,6 +129,7 @@ ipcMain.on("resize-window", (event, width, height) => {
 
 ipcMain.on("blink", async () => {
   outputController.blink();
+  capture("blink");
 });
 
 const reloadMain = () => {

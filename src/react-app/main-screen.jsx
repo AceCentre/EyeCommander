@@ -3,7 +3,6 @@ import { styled } from "@mui/material/styles";
 
 import { Box } from "@mui/system";
 import React, { useCallback, useState } from "react";
-import { useResizer } from "./hooks/use-resizer";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { BlinkDetectionWithSliders } from "./blink-detection-with-sliders.jsx";
 import useSound from "use-sound";
@@ -25,7 +24,6 @@ const CustomWidthTooltip = styled(({ className, ...props }) => (
 });
 
 export const MainScreen = () => {
-  useResizer({ width: 900, height: 440 });
   const {
     value: playSound,
     reload: reloadPlaySound,

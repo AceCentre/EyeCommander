@@ -1,30 +1,43 @@
 import React, { useCallback, useRef, useState } from "react";
 import { useLoading } from "./hooks/use-loading";
-import { drawConnectors } from "@mediapipe/drawing_utils";
+import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import {
   FACEMESH_FACE_OVAL,
-  FACEMESH_LEFT_IRIS,
   FACEMESH_RIGHT_EYE,
   FACEMESH_LEFT_EYE,
-  FACEMESH_RIGHT_IRIS,
 } from "@mediapipe/face_mesh";
 import { useFaceMesh } from "./hooks/use-face-mesh";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useStoreValue } from "./hooks/use-store";
 import { REVERSE_CAMERA } from "./lib/store-consts";
-import { CircularProgress, Typography } from "@mui/material";
+import { CircularProgress, Tooltip, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 
 const LOADING_TIME = 2000;
 
+const DEFAULT_HIGHLIGHTS = {
+  leftEye: true,
+  rightEye: true,
+  face: true,
+  leftPupil: true,
+  rightPupil: true,
+  leftEyeEdgePoints: true,
+  rightEyeEdgePoints: true,
+};
+
 export const CameraWithHighlights = ({
   onFrame = () => {},
   distanceHistory = { current: [] },
+  displayOnSlider = null,
+  highlights = DEFAULT_HIGHLIGHTS,
 }) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
+  const displayOnSliderRef = useRef();
   const loading = useLoading(LOADING_TIME);
   const [frameRate, setFrameRate] = useState(0);
+
+  displayOnSliderRef.current = displayOnSlider;
 
   const { value: reverse, loading: reverseLoading } = useStoreValue(
     REVERSE_CAMERA,
@@ -72,35 +85,205 @@ export const CameraWithHighlights = ({
         canvasElement.height
       );
 
+      const paddingFromSides = 32;
+      const distanceBetweenEndsOfLine =
+        canvasElement.width - paddingFromSides * 2;
+
+      if (reverse) {
+        /**
+         * Background line
+         */
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "white";
+        canvasCtx.moveTo(
+          canvasElement.width - paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
+
+        /**
+         * Line to show where you are currently
+         */
+        const endOfGreenLinePoint =
+          canvasElement.width -
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.currentValue -
+          paddingFromSides;
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "#30FF30";
+        canvasCtx.moveTo(
+          canvasElement.width - paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          endOfGreenLinePoint,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
+
+        /** Threshold line */
+        canvasCtx.beginPath();
+        const thresholdMarkerPoint =
+          canvasElement.width -
+          paddingFromSides -
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.threshold;
+
+        canvasCtx.lineWidth = 4;
+        canvasCtx.strokeStyle = "#FF3030";
+        canvasCtx.moveTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides - 20
+        );
+        canvasCtx.lineTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides + 20
+        );
+        canvasCtx.stroke();
+      } else {
+        /**
+         * Background line
+         */
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "white";
+        canvasCtx.moveTo(
+          canvasElement.width - paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
+
+        /**
+         * Line to show where you are currently
+         */
+        const endOfGreenLinePoint =
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.currentValue +
+          paddingFromSides;
+        canvasCtx.beginPath();
+        canvasCtx.lineWidth = 8;
+        canvasCtx.strokeStyle = "#30FF30";
+        canvasCtx.moveTo(
+          paddingFromSides,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.lineTo(
+          endOfGreenLinePoint,
+          canvasElement.height - paddingFromSides
+        );
+        canvasCtx.stroke();
+
+        /** Threshold line */
+        canvasCtx.beginPath();
+        const thresholdMarkerPoint =
+          paddingFromSides +
+          distanceBetweenEndsOfLine * displayOnSliderRef.current.threshold;
+
+        canvasCtx.lineWidth = 4;
+        canvasCtx.strokeStyle = "#FF3030";
+        canvasCtx.moveTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides - 20
+        );
+        canvasCtx.lineTo(
+          thresholdMarkerPoint,
+          canvasElement.height - paddingFromSides + 20
+        );
+        canvasCtx.stroke();
+      }
+
       onFrame(results);
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
-          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
-            color: "#FF3030",
-          });
+          const leftPupil = {
+            x:
+              (landmarks[474].x +
+                landmarks[475].x +
+                landmarks[476].x +
+                landmarks[477].x) /
+              4,
+            y:
+              (landmarks[474].y +
+                landmarks[475].y +
+                landmarks[476].y +
+                landmarks[477].y) /
+              4,
+          };
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_IRIS, {
-            color: "#FF3030",
-          });
+          const rightPupil = {
+            x:
+              (landmarks[469].x +
+                landmarks[470].x +
+                landmarks[471].x +
+                landmarks[472].x) /
+              4,
+            y:
+              (landmarks[469].y +
+                landmarks[470].y +
+                landmarks[471].y +
+                landmarks[472].y) /
+              4,
+          };
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, {
-            color: "#30FF30",
-          });
+          if (highlights.face) {
+            drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, {
+              color: "#ffffff",
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_IRIS, {
-            color: "#30FF30",
-          });
+          if (highlights.leftEye) {
+            drawConnectors(canvasCtx, landmarks, FACEMESH_LEFT_EYE, {
+              color: "#30FF30",
+            });
+          }
 
-          drawConnectors(canvasCtx, landmarks, FACEMESH_FACE_OVAL, {
-            color: "#ffffff",
-          });
+          if (highlights.rightEye) {
+            drawConnectors(canvasCtx, landmarks, FACEMESH_RIGHT_EYE, {
+              color: "#FF3030",
+            });
+          }
+
+          if (highlights.leftPupil) {
+            drawLandmarks(canvasCtx, [leftPupil], {
+              color: "#30FF30",
+              radius: 1,
+            });
+          }
+
+          if (highlights.rightPupil) {
+            drawLandmarks(canvasCtx, [rightPupil], {
+              color: "#FF3030",
+              radius: 1,
+            });
+          }
+
+          if (highlights.rightEyeEdgePoints) {
+            drawLandmarks(canvasCtx, [landmarks[33], landmarks[133]], {
+              color: "#FF3030",
+              radius: 1,
+            });
+          }
+
+          if (highlights.leftEyeEdgePoints) {
+            drawLandmarks(canvasCtx, [landmarks[362], landmarks[263]], {
+              color: "#30FF30",
+              radius: 1,
+            });
+          }
         }
       }
 
       canvasCtx.restore();
     },
-    [onFrame]
+    [onFrame, displayOnSliderRef, reverse, reverseLoading]
   );
 
   useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
@@ -119,7 +302,7 @@ export const CameraWithHighlights = ({
         sx={{
           position: "absolute",
           width: "100%",
-          height: "100%",
+          height: "291px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -133,11 +316,32 @@ export const CameraWithHighlights = ({
         <CircularProgress />
       </Box>
 
+      <Box
+        style={{
+          position: "absolute",
+          zIndex: 100,
+          height: "100%",
+          width: "100%",
+          maxHeight: "295px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Tooltip
+          title="Use the slider on the right to change the threshold value"
+          arrow
+          followCursor
+          enterDelay={300}
+        >
+          <Box style={{ marginTop: "auto", height: "100px" }}></Box>
+        </Tooltip>
+      </Box>
+
       <canvas
         style={{
           ...canvasFlip,
           width: "100%",
-          height: "100%",
+          maxHeight: "480px",
           position: "relative",
         }}
         ref={canvasRef}

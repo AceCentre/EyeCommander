@@ -15,11 +15,12 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useResizer } from "./hooks/use-resizer";
 import VideoCameraFrontIcon from "@mui/icons-material/VideoCameraFront";
 import LogoutIcon from "@mui/icons-material/Logout";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import StorageIcon from "@mui/icons-material/Storage";
 import { useStoreValue } from "./hooks/use-store";
 import { BLINK_MODE, PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
@@ -37,6 +38,7 @@ const SCREENS = {
   BLINK: "blink",
   HELP: "help",
   ABOUT: "about",
+  ANALYTICS: "analytics",
 };
 
 export const SettingsPage = () => {
@@ -97,12 +99,20 @@ export const SettingsPage = () => {
           >
             About
           </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.ANALYTICS}
+            icon={<StorageIcon />}
+            onClick={() => setCurrentScreen(SCREENS.ANALYTICS)}
+          >
+            Analytics
+          </SidebarItem>
         </List>
       </Paper>
       <Box
         sx={{
           width: "100%",
           height: "100%",
+          maxHeight: "100vh",
           padding: "2rem",
           display: "flex",
           flexDirection: "column",
@@ -115,6 +125,7 @@ export const SettingsPage = () => {
         {currentScreen === SCREENS.BLINK && <BlinkSettings />}
         {currentScreen === SCREENS.ABOUT && <AboutSettings />}
         {currentScreen === SCREENS.HELP && <HelpSettings />}
+        {currentScreen === SCREENS.ANALYTICS && <AnalyticsSettings />}
 
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
           <Button variant="contained" onClick={saveAndClose}>
@@ -126,12 +137,41 @@ export const SettingsPage = () => {
   );
 };
 
+const useVersion = () => {
+  const [version, setVersion] = useState("0.0.0");
+
+  useEffect(() => {
+    const getVersion = async () => {
+      if (!electronInternals) {
+        throw new Error("Electron is not available");
+      }
+
+      if (!electronInternals.ipcRenderer) {
+        throw new Error("Electron ipcRenderer is not available");
+      }
+
+      const realVersion = await electronInternals.ipcRenderer.invoke(
+        "getVersion"
+      );
+
+      setVersion(realVersion);
+    };
+
+    getVersion();
+  }, []);
+
+  return version;
+};
+
 const AboutSettings = () => {
+  const version = useVersion();
+
   return (
     <>
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         About
       </Typography>
+      <Typography>Version: {version}</Typography>
       <Typography>
         EyeCommander is an Open Source project developed by AceCentre.
       </Typography>
@@ -170,6 +210,39 @@ const HelpSettings = () => {
           <img style={{ width: "100%" }} src="/public/youtube.png"></img>
         </a>
       </Box>
+    </>
+  );
+};
+
+const AnalyticsSettings = () => {
+  const {
+    value: collectData,
+    loading: collectDataLoading,
+    update: collectDataUpdate,
+  } = useStoreValue("isAnalyticsAllowed", true);
+
+  if (collectDataLoading) return null;
+
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Analytics
+      </Typography>
+      <Typography>
+        We collect anonymous data about how you use EyeCommander. We use this
+        data so we know how many people use EyeCommander. You can opt out of
+        this tracking at any point. Tracking only works when you have an
+        internet connection.
+      </Typography>
+      <FormControlLabel
+        control={
+          <Checkbox
+            defaultChecked={collectData}
+            onChange={(event) => collectDataUpdate(event.target.checked)}
+          />
+        }
+        label="Allow data collection"
+      />
     </>
   );
 };
@@ -215,7 +288,14 @@ const BlinkSettings = () => {
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         Blink mode
       </Typography>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr", gap: "1rem" }}>
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: "1rem",
+          overflowY: "auto",
+        }}
+      >
         {BLINK_MODES.map((current) => {
           const boxStyle =
             current.id === blinkMode
