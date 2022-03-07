@@ -29,12 +29,12 @@ export const BLINK_MODES = [
   },
   {
     id: "DIRECTION_BASIC",
-    title: "Left/Right Basic",
+    title: "Left/Right Basic (BETA)",
     description: "Triggers when you look to the left or right.",
   },
   {
     id: "DIRECTION_HOLD",
-    title: "Left/Right Hold",
+    title: "Left/Right Hold (BETA)",
     description:
       "Triggers when you look to the left or right for a specified length of time.",
   },
