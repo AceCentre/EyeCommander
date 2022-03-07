@@ -4,7 +4,7 @@ import PostHog from "posthog-node";
 const getWithDefault = (store, id, defaultVal) => {
   const val = store.get(id);
 
-  if (val === undefined) return val;
+  if (val !== undefined) return val;
 
   store.set(id, defaultVal);
 
@@ -12,10 +12,6 @@ const getWithDefault = (store, id, defaultVal) => {
 };
 
 export const setupAnalytics = (store, app, isDebug) => {
-  if (isDebug) {
-    return { capture: () => {}, shutdownAnalytics: () => {} };
-  }
-
   const distinctId = getWithDefault(store, "distinctId", uuidv4());
   const version = app.getVersion();
 
@@ -32,7 +28,19 @@ export const setupAnalytics = (store, app, isDebug) => {
       true
     );
 
+    console.log("=========== Capture ===============");
+
+    console.log(
+      JSON.stringify(
+        { distinctId, key, version, isAnalyticsAllowed, isDebug },
+        null,
+        2
+      )
+    );
+    console.log("=========== ======= ===============");
+
     if (!isAnalyticsAllowed) return;
+    if (isDebug) return;
 
     client.capture({
       distinctId,
