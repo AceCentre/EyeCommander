@@ -49,7 +49,7 @@ jobs:
 
       - name: Electron rebuild
         env:
-          DEBUG: *
+          DEBUG: "*"
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
