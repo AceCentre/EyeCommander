@@ -6,58 +6,6 @@ on:
   pull_request:
 
 jobs:
-  MacBuild:
-    runs-on: macos-latest
-    env:
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-      APPLE_PROVIDER: ${{ secrets.APPLE_PROVIDER }}
-      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
-
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - uses: actions/github-script@v5
-        id: should-publish
-        with:
-          result-encoding: string
-          script: |
-            const script = require('./check-for-version-bump.js');
-            return await script({ github, context, core })
-
-      - uses: apple-actions/import-codesign-certs@v1
-        with:
-          p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
-          p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
-
-      - name: Install deps
-        run: yarn install
-
-      - name: Electron rebuild
-        # Ignore when this fails, its a total hack but for some reason
-        # electron forge only builds on start, run-as-node forces it to crash out
-        run: yarn start --run-as-node || true
-
-      - name: Forge publish
-        if: ${{ steps.should-publish.outputs.result == 'publish' }}
-        run: yarn run publish
-
-      - name: Forge make
-        if: ${{ steps.should-publish.outputs.result == 'make' }}
-        run: yarn make
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: MacRelease
-          path: out/make/EyeCommander.dmg
-          # Github has size limits so this avoids hitting them
-          retention-days: 1
-
   WindowsBuild:
     runs-on: windows-latest
     env:
@@ -115,53 +63,6 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: WindowsRelease
-          path: out
-          # Github has size limits so this avoids hitting them
-          retention-days: 1
-
-  LinuxBuild:
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
-
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - uses: actions/github-script@v5
-        id: should-publish
-        with:
-          result-encoding: string
-          script: |
-            const script = require('./check-for-version-bump.js');
-            return await script({ github, context, core })
-
-      - name: Install linux deps
-        run: sudo apt-get install -y libxml2-utils libxtst-dev libpng++-dev
-
-      - name: Install deps
-        run: yarn install
-
-      - name: Electron rebuild
-        # Ignore when this fails, its a total hack but for some reason
-        # electron forge only builds on start, run-as-node forces it to crash out
-        run: yarn start --run-as-node || true
-
-      - name: Forge publish
-        if: ${{ steps.should-publish.outputs.result == 'publish' }}
-        run: yarn run publish
-
-      - name: Forge make
-        if: ${{ steps.should-publish.outputs.result == 'make' }}
-        run: yarn make
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: LinuxRelease
           path: out
           # Github has size limits so this avoids hitting them
           retention-days: 1
