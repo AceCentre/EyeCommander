@@ -40,6 +40,8 @@ export const BLINK_MODES = [
   },
 ];
 
+const BIGGER_VIEWS = ["DIRECTION_HOLD", "HOLD"];
+
 export const useBlink = (...params) => {
   const { loading: blinkModeLoading, value: blinkMode } = useStoreValue(
     BLINK_MODE,
@@ -48,7 +50,7 @@ export const useBlink = (...params) => {
 
   useResizer({
     width: 900,
-    height: !blinkModeLoading && blinkMode === "DIRECTION_HOLD" ? 523 : 440,
+    height: !blinkModeLoading && BIGGER_VIEWS.includes(blinkMode) ? 523 : 440,
   });
 
   const [displayOnSlider, setDisplayOnSlider] = useState({

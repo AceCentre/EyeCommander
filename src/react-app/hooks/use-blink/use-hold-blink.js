@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import {
   BLINK_LENGTH_KEY,
+  HOLD_BLINK_EYE_TO_TRACK,
   CHANGE_THRESHOLD_HOLD_KEY,
 } from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
@@ -25,9 +26,16 @@ export const useHoldBlink = (onBlink, setDisplayOnSlider) => {
     update: updateBlinkLength,
   } = useStoreValue(BLINK_LENGTH_KEY, 500);
 
+  const {
+    loading: loadingEyeToTrack,
+    value: eyeToTrack,
+    update: updateEyeToTrack,
+  } = useStoreValue(HOLD_BLINK_EYE_TO_TRACK, "both");
+
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
       if (loadingBlinkThreshold) return;
+      if (loadingEyeToTrack) return;
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
@@ -54,7 +62,17 @@ export const useHoldBlink = (onBlink, setDisplayOnSlider) => {
           const reRatio = rhDistance / rvDistance;
           const leRatio = lhDistance / lvDistance;
 
-          const ratio = (reRatio + leRatio) / 2;
+          let ratio = null;
+
+          if (eyeToTrack === "both") {
+            ratio = (reRatio + leRatio) / 2;
+          } else if (eyeToTrack === "right") {
+            ratio = reRatio;
+          } else if (eyeToTrack === "left") {
+            ratio = leRatio;
+          } else {
+            throw new Error(`Invalid eyeToTrack: ${eyeToTrack}`);
+          }
 
           const currentFrame = {
             time: currentTimestamp,
@@ -95,14 +113,21 @@ export const useHoldBlink = (onBlink, setDisplayOnSlider) => {
       blinkLength,
       onBlink,
       setDisplayOnSlider,
+      loadingEyeToTrack,
+      eyeToTrack,
     ]
   );
+
+  const eyesToTrackHighlights = {
+    both: { leftEye: true, rightEye: true },
+    left: { leftEye: true, rightEye: false },
+    right: { leftEye: false, rightEye: true },
+  };
 
   return {
     detectBlink: noop,
     highlights: {
-      leftEye: true,
-      rightEye: true,
+      ...eyesToTrackHighlights[eyeToTrack],
       face: true,
       leftPupil: false,
       rightPupil: false,
@@ -134,6 +159,33 @@ export const useHoldBlink = (onBlink, setDisplayOnSlider) => {
           "The amount of time in MS you must keep your eyes closed for to trigger a blink",
         onChange: (newValue) => {
           updateBlinkLength(newValue);
+        },
+      },
+      {
+        loadingOption: loadingEyeToTrack,
+        type: "radio",
+        options: [
+          {
+            value: "both",
+            name: "Both",
+            tooltip: "Detects both eyes",
+          },
+          {
+            value: "left",
+            name: "Left",
+            tooltip: "Detects only the left eye",
+          },
+          {
+            value: "right",
+            name: "Right",
+            tooltip: "Detects only the right eye",
+          },
+        ],
+        defaultValue: loadingEyeToTrack ? "both" : eyeToTrack,
+        label: "Eyes to track",
+        tooltip: "Decide which eyes you want to track",
+        onChange: (newValue) => {
+          updateEyeToTrack(newValue);
         },
       },
     ],
