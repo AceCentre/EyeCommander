@@ -156,16 +156,34 @@ export const useDirectionBasic = (onBlink, setDisplayOnSlider) => {
     ]
   );
 
+  const eyesToTrackHighlights = {
+    both: {
+      leftPupil: true,
+      rightPupil: true,
+      leftEyeEdgePoints: true,
+      rightEyeEdgePoints: true,
+    },
+    left: {
+      leftPupil: true,
+      rightPupil: false,
+      leftEyeEdgePoints: true,
+      rightEyeEdgePoints: false,
+    },
+    right: {
+      leftPupil: false,
+      rightPupil: true,
+      leftEyeEdgePoints: false,
+      rightEyeEdgePoints: true,
+    },
+  };
+
   return {
     detectBlink: noop,
     highlights: {
       leftEye: false,
       rightEye: false,
       face: true,
-      leftPupil: true,
-      rightPupil: true,
-      leftEyeEdgePoints: true,
-      rightEyeEdgePoints: true,
+      ...eyesToTrackHighlights[whichEyes],
     },
     options: [
       {
