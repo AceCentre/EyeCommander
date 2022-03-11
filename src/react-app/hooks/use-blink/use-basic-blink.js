@@ -1,5 +1,8 @@
 import { useCallback } from "react";
-import { CHANGE_THRESHOLD_BASIC_KEY } from "../../lib/store-consts";
+import {
+  CHANGE_THRESHOLD_BASIC_KEY,
+  BASIC_BASIC_EYE_TO_TRACK,
+} from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
 
 const euclaideanDistance = (point, point1) => {
@@ -16,9 +19,16 @@ export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
     update: updateBlinkThreshold,
   } = useStoreValue(CHANGE_THRESHOLD_BASIC_KEY, 5);
 
+  const {
+    loading: loadingEyeToTrack,
+    value: eyeToTrack,
+    update: updateEyeToTrack,
+  } = useStoreValue(BASIC_BASIC_EYE_TO_TRACK, "both");
+
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
       if (loadingBlinkThreshold) return;
+      if (loadingEyeToTrack) return;
 
       if (results.multiFaceLandmarks) {
         for (const landmarks of results.multiFaceLandmarks) {
@@ -45,7 +55,17 @@ export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
           const reRatio = rhDistance / rvDistance;
           const leRatio = lhDistance / lvDistance;
 
-          const ratio = (reRatio + leRatio) / 2;
+          let ratio = null;
+
+          if (eyeToTrack === "both") {
+            ratio = (reRatio + leRatio) / 2;
+          } else if (eyeToTrack === "right") {
+            ratio = reRatio;
+          } else if (eyeToTrack === "left") {
+            ratio = leRatio;
+          } else {
+            throw new Error(`Invalid eyeToTrack: ${eyeToTrack}`);
+          }
 
           const currentFrame = {
             time: currentTimestamp,
@@ -66,14 +86,26 @@ export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
         }
       }
     },
-    [blinkThreshold, loadingBlinkThreshold, onBlink, setDisplayOnSlider]
+    [
+      blinkThreshold,
+      loadingBlinkThreshold,
+      onBlink,
+      setDisplayOnSlider,
+      loadingEyeToTrack,
+      eyeToTrack,
+    ]
   );
+
+  const eyesToTrackHighlights = {
+    both: { leftEye: true, rightEye: true },
+    left: { leftEye: true, rightEye: false },
+    right: { leftEye: false, rightEye: true },
+  };
 
   return {
     detectBlink: noop,
     highlights: {
-      leftEye: true,
-      rightEye: true,
+      ...eyesToTrackHighlights[eyeToTrack],
       face: true,
       leftPupil: false,
       rightPupil: false,
@@ -92,6 +124,33 @@ export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
           "The higher this more you must close your eyes to trigger a blink. The current value is shown on the indicator on the left",
         onChange: (newValue) => {
           updateBlinkThreshold(newValue / 10);
+        },
+      },
+      {
+        loadingOption: loadingEyeToTrack,
+        type: "radio",
+        options: [
+          {
+            value: "both",
+            name: "Both",
+            tooltip: "Detects both eyes",
+          },
+          {
+            value: "left",
+            name: "Left",
+            tooltip: "Detects only the left eye",
+          },
+          {
+            value: "right",
+            name: "Right",
+            tooltip: "Detects only the right eye",
+          },
+        ],
+        defaultValue: loadingEyeToTrack ? "both" : eyeToTrack,
+        label: "Eyes to track",
+        tooltip: "Decide which eyes you want to track",
+        onChange: (newValue) => {
+          updateEyeToTrack(newValue);
         },
       },
     ],
