@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import {
   CHANGE_THRESHOLD_BASIC_KEY,
-  BASIC_BASIC_EYE_TO_TRACK,
+  BASIC_BLINK_EYE_TO_TRACK,
 } from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
 
@@ -23,7 +23,7 @@ export const useBasicBlink = (onBlink, setDisplayOnSlider) => {
     loading: loadingEyeToTrack,
     value: eyeToTrack,
     update: updateEyeToTrack,
-  } = useStoreValue(BASIC_BASIC_EYE_TO_TRACK, "both");
+  } = useStoreValue(BASIC_BLINK_EYE_TO_TRACK, "both");
 
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {

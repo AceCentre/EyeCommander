@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import {
   CHANGE_THRESHOLD_SPEED_KEY,
-  BASIC_SPEED_EYE_TO_TRACK,
+  SPEED_BLINK_EYE_TO_TRACK,
 } from "../../lib/store-consts";
 import { useStoreValue } from "../use-store";
 
@@ -25,7 +25,7 @@ export const useSpeedBlink = (onBlink, setDisplayOnSlider) => {
     loading: loadingEyeToTrack,
     value: eyeToTrack,
     update: updateEyeToTrack,
-  } = useStoreValue(BASIC_SPEED_EYE_TO_TRACK, "both");
+  } = useStoreValue(SPEED_BLINK_EYE_TO_TRACK, "both");
 
   const noop = useCallback(
     (results, currentTimestamp, distanceHistory) => {
