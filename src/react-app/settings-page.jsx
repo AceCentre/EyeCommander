@@ -249,7 +249,7 @@ const AnalyticsSettings = () => {
       <FormControlLabel
         control={
           <Checkbox
-            defaultChecked={collectData}
+            checked={collectData}
             onChange={(event) => collectDataUpdate(event.target.checked)}
           />
         }
@@ -381,7 +381,7 @@ const CameraSettings = () => {
       <FormControlLabel
         control={
           <Checkbox
-            defaultChecked={reverse}
+            checked={reverse}
             onChange={(event) => reverseUpdate(event.target.checked)}
           />
         }
