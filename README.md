@@ -47,6 +47,8 @@ All developer documentation is available here on Github.
 
 [All user facing documentation is available on our docs website](https://docs.acecentre.org.uk/eyecommander/)
 
+The user facing documentation is synced to this repo via Gitbooks. You can see the raw documentation in the `/docs` folder
+
 ## How to use
 
 Check out our help video series on youtube.
