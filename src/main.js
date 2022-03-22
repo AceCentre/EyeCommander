@@ -6,12 +6,23 @@ const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
 const setupAutoUpdater = require("update-electron-app");
+const AutoLaunch = require("auto-launch");
 
 // Application state
 const store = new Store();
 let settingsWindow = null;
 let mainWindow = null;
 let outputController = new OutputController({ store });
+
+const getWithDefault = (id, defaultVal) => {
+  const val = store.get(id);
+
+  if (val !== undefined) return val;
+
+  store.set(id, defaultVal);
+
+  return defaultVal;
+};
 
 function isDebug() {
   return process.env.npm_lifecycle_event === "start";
@@ -22,12 +33,29 @@ Menu.setApplicationMenu(null);
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 require("./backend/squirrel-events");
 
+let eyeCommanderAutoLaunch = null;
+
 if (!isDebug()) {
   setupAutoUpdater({
     logger: require("electron-log"),
     updateInterval: "5 minutes",
     repo: "AceCentre/EyeCommander",
   });
+
+  eyeCommanderAutoLaunch = new AutoLaunch({
+    name: "EyeCommander",
+  });
+
+  const isAutoLaunchEnabled = getWithDefault(
+    "isEyeCommanderAutoLaunchEnabled",
+    false
+  );
+
+  if (isAutoLaunchEnabled) {
+    eyeCommanderAutoLaunch.enable();
+  } else {
+    eyeCommanderAutoLaunch.disable();
+  }
 }
 
 const { capture, shutdownAnalytics } = setupAnalytics(store, app, isDebug());
@@ -112,6 +140,22 @@ ipcMain.handle("getStoreValue", (event, key) => {
 
 ipcMain.handle("setStoreValue", (event, key, value) => {
   return store.set(key, value);
+});
+
+ipcMain.handle("disableAutoLaunch", () => {
+  if (!isDebug()) {
+    return eyeCommanderAutoLaunch.disable();
+  } else {
+    console.log("Disable AutoLaunch, not doing anything when debugging");
+  }
+});
+
+ipcMain.handle("enableAutoLaunch", () => {
+  if (!isDebug()) {
+    return eyeCommanderAutoLaunch.enable();
+  } else {
+    console.log("Enable AutoLaunch, not doing anything when debugging");
+  }
 });
 
 ipcMain.handle("getVersion", () => {

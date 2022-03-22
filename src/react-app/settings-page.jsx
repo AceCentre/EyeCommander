@@ -30,6 +30,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { BLINK_MODES } from "./hooks/use-blink";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import InfoIcon from "@mui/icons-material/Info";
+import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -39,6 +40,7 @@ const SCREENS = {
   HELP: "help",
   ABOUT: "about",
   ANALYTICS: "analytics",
+  STARTUP: "startup",
 };
 
 export const SettingsPage = () => {
@@ -106,6 +108,13 @@ export const SettingsPage = () => {
           >
             Analytics
           </SidebarItem>
+          <SidebarItem
+            selected={currentScreen === SCREENS.STARTUP}
+            icon={<PowerSettingsNewIcon />}
+            onClick={() => setCurrentScreen(SCREENS.STARTUP)}
+          >
+            Startup
+          </SidebarItem>
         </List>
       </Paper>
       <Box
@@ -126,6 +135,7 @@ export const SettingsPage = () => {
         {currentScreen === SCREENS.ABOUT && <AboutSettings />}
         {currentScreen === SCREENS.HELP && <HelpSettings />}
         {currentScreen === SCREENS.ANALYTICS && <AnalyticsSettings />}
+        {currentScreen === SCREENS.STARTUP && <StartupSettings />}
 
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
           <Button variant="contained" onClick={saveAndClose}>
@@ -161,6 +171,42 @@ const useVersion = () => {
   }, []);
 
   return version;
+};
+
+const StartupSettings = () => {
+  const {
+    value: autoLaunch,
+    loading: autoLaunchLoading,
+    update: autoLaunchUpdate,
+  } = useStoreValue("isEyeCommanderAutoLaunchEnabled", false);
+
+  if (autoLaunchLoading) return null;
+
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Startup
+      </Typography>
+      <Typography>Force EyeCommander to launch on startup</Typography>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={autoLaunch}
+            onChange={(event) => {
+              autoLaunchUpdate(event.target.checked);
+
+              if (event.target.checked) {
+                electronInternals.ipcRenderer.invoke("enableAutoLaunch");
+              } else {
+                electronInternals.ipcRenderer.invoke("disableAutoLaunch");
+              }
+            }}
+          />
+        }
+        label="Launch EyeCommander on startup"
+      />
+    </>
+  );
 };
 
 const AboutSettings = () => {

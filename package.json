@@ -47,6 +47,7 @@
     "@mui/icons-material": "^5.0.5",
     "@mui/material": "^5.0.6",
     "@tensorflow/tfjs": "^3.11.0",
+    "auto-launch": "^5.0.5",
     "copy-webpack-plugin": "^9.0.1",
     "electron-log": "^4.4.1",
     "electron-squirrel-startup": "^1.0.0",
