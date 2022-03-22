@@ -187,7 +187,11 @@ const StartupSettings = () => {
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         Startup
       </Typography>
-      <Typography>Force EyeCommander to launch on startup</Typography>
+      <Typography>Force EyeCommander to launch on startup.</Typography>
+      <Typography>
+        Please note you that your user account must be an Administrator for this
+        to work.
+      </Typography>
       <FormControlLabel
         control={
           <Checkbox
