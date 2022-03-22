@@ -4,6 +4,11 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### v1.2.6
+
+* Update links to docs
+* Add the ability to launch at startup
+
 ### v1.2.5
 
 * You can now track a specific eye in all blink modes. This can be useful if a use can only make clear voluntary movements with one eye
