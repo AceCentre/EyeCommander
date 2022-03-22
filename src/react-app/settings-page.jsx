@@ -185,6 +185,12 @@ const AboutSettings = () => {
         find out more about how we provide support for people with complex
         communications difficulties.
       </Typography>
+      <Typography>
+        <a href={"https://docs.acecentre.org.uk/eyecommander/"}>
+          Check out the EyeCommander documentation, including the version
+          history.
+        </a>
+      </Typography>
       <Box sx={{ width: 200, margin: "0 auto" }}>
         <img
           style={{ width: "100%", height: "100%" }}
@@ -200,6 +206,12 @@ const HelpSettings = () => {
     <>
       <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
         Help
+      </Typography>
+      <Typography>
+        <a href={"https://docs.acecentre.org.uk/eyecommander/"}>
+          Check out the EyeCommander documentation, including the version
+          history.
+        </a>
       </Typography>
       <Typography>
         Watch the series of videos below to learn more about how to use
