@@ -23,6 +23,7 @@
 
 - [Table of contents](#table-of-contents)
 - [Installing](#installing)
+- [Documentation](#documentation)
 - [How to use](#how-to-use)
 - [Getting involved](#getting-involved)
   - [What should I work on](#what-should-i-work-on)
@@ -39,6 +40,12 @@ EyeCommander includes an installer that will automatically add EyeCommander to y
 If you are Windows then you should download the file named `EyeCommander-x.x.x.Setup.exe`. If you are on OSx then you should use the file `EyeCommander.dmg`. Once you have downloaded these files then you should open them and they will install EyeCommander for you.
 
 Once you have EyeCommander installed you will be prompted to install an update automatically everytime one is available.
+
+## Documentation
+
+All developer documentation is available here on Github.
+
+[All user facing documentation is available on our docs website](https://docs.acecentre.org.uk/eyecommander/)
 
 ## How to use
 
