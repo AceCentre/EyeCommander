@@ -35,7 +35,7 @@ export class OutputController {
       }
     }
 
-    this.currentDevice = new CurrentOutput();
+    this.currentDevice = new CurrentOutput({ store: this.store });
   }
 
   getOutputTypes() {
