@@ -25,12 +25,17 @@ import { useStoreValue } from "./hooks/use-store";
 import { BLINK_MODE, PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { useSaveAndClose } from "./hooks/use-save-and-close";
-import { OutputSettings } from "./output-settings.jsx";
+import {
+  KeyboardSettings,
+  OutputSettings,
+  useOutputOptions,
+} from "./output-settings.jsx";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { BLINK_MODES } from "./hooks/use-blink";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import InfoIcon from "@mui/icons-material/Info";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import KeyboardIcon from "@mui/icons-material/Keyboard";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -41,12 +46,24 @@ const SCREENS = {
   ABOUT: "about",
   ANALYTICS: "analytics",
   STARTUP: "startup",
+  KEYBOARD: "keyboard",
 };
 
 export const SettingsPage = () => {
   useResizer({ width: 910, height: 620 });
   const saveAndClose = useSaveAndClose();
   const [currentScreen, setCurrentScreen] = useState(SCREENS.CAMERA);
+
+  const {
+    outputOptions,
+    loading: loadingOptions,
+    currentlySelected,
+    select,
+  } = useOutputOptions();
+
+  if (loadingOptions) return null;
+
+  console.log({ currentlySelected });
 
   return (
     <Box
@@ -73,6 +90,15 @@ export const SettingsPage = () => {
           >
             Output
           </SidebarItem>
+          {currentlySelected.name == "Keyboard Emulator" && (
+            <SidebarItem
+              selected={currentScreen === SCREENS.KEYBOARD}
+              icon={<KeyboardIcon />}
+              onClick={() => setCurrentScreen(SCREENS.KEYBOARD)}
+            >
+              Keyboard
+            </SidebarItem>
+          )}
           <SidebarItem
             selected={currentScreen === SCREENS.SOUND}
             icon={<VolumeUpIcon />}
@@ -129,16 +155,21 @@ export const SettingsPage = () => {
         }}
       >
         {currentScreen === SCREENS.CAMERA && <CameraSettings />}
-        {currentScreen === SCREENS.OUTPUT && <OutputSettings />}
+        {currentScreen === SCREENS.OUTPUT && (
+          <OutputSettings
+            {...{ loadingOptions, select, outputOptions, currentlySelected }}
+          />
+        )}
         {currentScreen === SCREENS.SOUND && <SoundSettings />}
         {currentScreen === SCREENS.BLINK && <BlinkSettings />}
         {currentScreen === SCREENS.ABOUT && <AboutSettings />}
         {currentScreen === SCREENS.HELP && <HelpSettings />}
         {currentScreen === SCREENS.ANALYTICS && <AnalyticsSettings />}
         {currentScreen === SCREENS.STARTUP && <StartupSettings />}
+        {currentScreen === SCREENS.KEYBOARD && <KeyboardSettings />}
 
         <Box sx={{ alignSelf: "flex-end", marginTop: "auto" }}>
-          <Button variant="contained" onClick={saveAndClose}>
+          <Button variant="outlined" onClick={saveAndClose}>
             Save and close
           </Button>
         </Box>

@@ -1,12 +1,15 @@
 /* eslint-disable indent */
-import React, { useEffect, useState } from "react";
-import { Avatar, Paper, Typography } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
+import { Avatar, Button, Paper, Typography } from "@mui/material";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import CodeIcon from "@mui/icons-material/Code";
 import Grid4x4Icon from "@mui/icons-material/Grid4x4";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 import { Box } from "@mui/system";
+import { WEB_KEY_TO_OS_KEY } from "../web-key-to-os-key";
+import { useStoreValue } from "./hooks/use-store";
+import { red } from "@mui/material/colors";
 
 const allIcons = { KeyboardIcon, CodeIcon, Grid4x4Icon, ChatBubbleOutlineIcon };
 
@@ -17,7 +20,7 @@ const getInternals = () => {
   return electronInternals.ipcRenderer;
 };
 
-const useOutputOptions = () => {
+export const useOutputOptions = () => {
   const [outputOptions, setOutputOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentlySelected, setCurrentlySelected] = useState();
@@ -54,14 +57,101 @@ const useOutputOptions = () => {
   return { outputOptions, loading, currentlySelected, select };
 };
 
-export const OutputSettings = () => {
-  const {
-    outputOptions,
-    loading: loadingOptions,
-    currentlySelected,
-    select,
-  } = useOutputOptions();
+const useKeyboardListener = () => {
+  const [isListening, setIsListening] = useState(false);
+  const [error, setError] = useState(null);
+  const { value: currentKey, update: updateCurrentKey } = useStoreValue(
+    "CURRENT_WEB_KEY",
+    " "
+  );
 
+  const startListening = () => {
+    setIsListening(true);
+  };
+
+  const eventHandler = useCallback(
+    (event) => {
+      setError(null);
+      if (isListening) {
+        setIsListening(false);
+
+        console.log(event);
+
+        const osKey = WEB_KEY_TO_OS_KEY[event.key.toLowerCase()];
+
+        if (!osKey) {
+          setError("The key you entered is not currently supported.");
+        } else {
+          updateCurrentKey(event.key);
+        }
+      }
+    },
+    [isListening]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", eventHandler);
+
+    return () => window.removeEventListener("keydown", eventHandler);
+  }, [eventHandler]);
+
+  return { startListening, key: currentKey || " ", isListening, error };
+};
+
+export const KeyboardSettings = () => {
+  const { startListening, key, isListening, error } = useKeyboardListener();
+
+  return (
+    <>
+      <Typography variant="h2" sx={{ fontSize: "1.5rem", fontWeight: "bold" }}>
+        Keyboard
+      </Typography>
+      <Typography>
+        Press the button below then press the key you want to be triggered on a
+        blink.
+      </Typography>
+      <Box>
+        <Button
+          variant="contained"
+          onClick={startListening}
+          disabled={isListening}
+        >
+          {isListening ? "Press key now" : "Listen for keypress"}
+        </Button>
+      </Box>
+      {error && <Typography sx={{ color: red[500] }}>{error}</Typography>}
+      <Box
+        sx={{
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "row",
+          gap: "1rem",
+        }}
+      >
+        <Typography>Currently selected key:</Typography>
+        <Box
+          sx={{
+            padding: "0.5rem 2rem",
+            background: "#aaaaaa",
+            color: "white",
+            fontSize: "1rem",
+            fontWeight: "bold",
+            borderRadius: "4px",
+          }}
+        >
+          {key === " " ? "SPACE" : key.toUpperCase()}
+        </Box>
+      </Box>
+    </>
+  );
+};
+
+export const OutputSettings = ({
+  outputOptions,
+  loadingOptions,
+  currentlySelected,
+  select,
+}) => {
   if (loadingOptions) return null;
 
   return (
