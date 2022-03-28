@@ -7,4 +7,4 @@
 * [Using the keyboard output](using-the-keyboard-output.md)
 * [Using EyeCommander with Grid3](using-eyecommander-with-grid3.md)
 * [System Requirements](system-requirements.md)
-* [Version History](<README (1).md>)
+* [Version History](version-history.md)
