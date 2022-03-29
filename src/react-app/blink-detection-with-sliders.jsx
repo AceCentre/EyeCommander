@@ -89,12 +89,17 @@ export const BlinkDetectionWithSliders = ({
         ...sx,
       }}
     >
-      <CameraWithHighlights
-        distanceHistory={distanceHistory}
-        onFrame={onFrame}
-        displayOnSlider={displayOnSlider}
-        highlights={highlights}
-      />
+      <Box
+        sx={{ height: "334.25px", display: "flex", flexDirection: "column" }}
+      >
+        <CameraWithHighlights
+          distanceHistory={distanceHistory}
+          onFrame={onFrame}
+          displayOnSlider={displayOnSlider}
+          highlights={highlights}
+        />
+        <Box sx={{ marginTop: "auto" }}>{children}</Box>
+      </Box>
 
       <Paper
         sx={{
@@ -122,7 +127,6 @@ export const BlinkDetectionWithSliders = ({
             }}
           />
         )}
-        {children}
       </Paper>
     </Box>
   );
