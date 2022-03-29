@@ -257,6 +257,11 @@ const AboutSettings = () => {
         EyeCommander is an Open Source project developed by AceCentre.
       </Typography>
       <Typography>
+        <a href={"https://forms.office.com/r/ThSe8Mgx6Y"}>
+          Suggest new features or report any bugs you find here.
+        </a>
+      </Typography>
+      <Typography>
         <a href={"https://github.com/acecentre/eyecommander"}>
           Checkout the source code on Github and contribute if you are able.
         </a>
@@ -292,6 +297,11 @@ const HelpSettings = () => {
         <a href={"https://docs.acecentre.org.uk/eyecommander/"}>
           Check out the EyeCommander documentation, including the version
           history.
+        </a>
+      </Typography>
+      <Typography>
+        <a href={"https://forms.office.com/r/ThSe8Mgx6Y"}>
+          Suggest new features or report any bugs you find here.
         </a>
       </Typography>
       <Typography>
