@@ -1,11 +1,12 @@
 import React, { forwardRef, useCallback, useRef, useState } from "react";
 import { CameraWithHighlights } from "./camera-with-highlights.jsx";
 import { useStoreValue } from "./hooks/use-store";
-import { THROTTLE_TIME_KEY } from "./lib/store-consts";
+import { THROTTLE_TIME_KEY, OPTIONS_OPEN } from "./lib/store-consts";
 import { throttle } from "lodash";
 import { Box } from "@mui/system";
 import { SliderWithValue } from "./slider-with-value.jsx";
 import {
+  Button,
   Paper,
   ToggleButton,
   ToggleButtonGroup,
@@ -15,6 +16,9 @@ import {
 import { useBlink } from "./hooks/use-blink";
 import { FACEMESH_FACE_OVAL } from "@mediapipe/face_mesh";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useResizer } from "./hooks/use-resizer.js";
 
 const KEEP_NUMBER_OF_VALUES = 20;
 const OVAL_LANDMARKS = [...new Set(FACEMESH_FACE_OVAL.flat())];
@@ -35,6 +39,17 @@ export const BlinkDetectionWithSliders = ({
     value: throttleTime,
     update: updateThrottleTime,
   } = useStoreValue(THROTTLE_TIME_KEY, 1000);
+
+  const {
+    loading: loadingOptionsOpen,
+    value: optionsOpen,
+    update: updateOptionsOpen,
+  } = useStoreValue(OPTIONS_OPEN, "open");
+
+  useResizer({
+    width: optionsOpen === "open" || loadingOptionsOpen ? 880 : 550,
+    height: optionsOpen === "open" || loadingOptionsOpen ? 440 : 500,
+  });
 
   const throttled = useCallback(
     throttle(
@@ -80,17 +95,25 @@ export const BlinkDetectionWithSliders = ({
     },
     [throttled, faceInFrame, detectBlink]
   );
+
+  if (loadingOptionsOpen) return null;
+
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "2rem",
         ...sx,
+        gap: "2rem",
+        display: optionsOpen === "open" ? "grid" : "flex",
       }}
     >
       <Box
-        sx={{ height: "334.25px", display: "flex", flexDirection: "column" }}
+        sx={{
+          height: "334.25px",
+          display: "flex",
+          flexDirection: "column",
+          minWidth: "389px",
+          maxWidth: "389px",
+        }}
       >
         <CameraWithHighlights
           distanceHistory={distanceHistory}
@@ -104,33 +127,67 @@ export const BlinkDetectionWithSliders = ({
       <Paper
         sx={{
           display: "flex",
-          gap: "1rem",
-          flexDirection: "column",
+          flexDirection: "row",
           padding: "1rem",
+          paddingLeft: "0.5rem",
+          gap: "0.5rem",
           ...paperSx,
         }}
       >
-        {options.map(({ loadingOption, ...option }) => {
-          return loadingOption ? null : (
-            <Option key={option.label} {...option} />
-          );
-        })}
-        {!loadingThrottleTime && (
-          <SliderWithValue
-            min={100}
-            max={10000}
-            defaultValue={throttleTime}
-            label="Throttle time"
-            tooltip="The minimum amount of time between blinks."
-            onChange={(newValue) => {
-              updateThrottleTime(newValue);
+        <TooltipButton
+          TooltipProps={{
+            placement: "top",
+            title: `${optionsOpen === "open" ? "Hide" : "Show"} options`,
+            enterDelay: 500,
+          }}
+          sx={{ minWidth: "0", padding: 0 }}
+          variant="outlined"
+          onClick={() => {
+            updateOptionsOpen(optionsOpen === "open" ? "closed" : "open");
+          }}
+        >
+          {optionsOpen === "open" ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+        </TooltipButton>
+        {optionsOpen === "open" && (
+          <Box
+            sx={{
+              display: "flex",
+              gap: "1rem",
+              flexDirection: "column",
+              width: "100%",
             }}
-          />
+          >
+            {options.map(({ loadingOption, ...option }) => {
+              return loadingOption ? null : (
+                <Option key={option.label} {...option} />
+              );
+            })}
+            {!loadingThrottleTime && (
+              <SliderWithValue
+                min={100}
+                max={10000}
+                defaultValue={throttleTime}
+                label="Throttle time"
+                tooltip="The minimum amount of time between blinks."
+                onChange={(newValue) => {
+                  updateThrottleTime(newValue);
+                }}
+              />
+            )}
+          </Box>
         )}
       </Paper>
     </Box>
   );
 };
+
+const TooltipButton = forwardRef(({ TooltipProps, ...props }, ref) => {
+  return (
+    <Tooltip {...TooltipProps}>
+      <Button ref={ref} {...props} />
+    </Tooltip>
+  );
+});
 
 const TooltipToggleButton = forwardRef(({ TooltipProps, ...props }, ref) => {
   return (

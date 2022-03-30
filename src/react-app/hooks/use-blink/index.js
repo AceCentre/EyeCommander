@@ -46,11 +46,6 @@ export const useBlink = (...params) => {
     BLINK_MODES[0].id
   );
 
-  useResizer({
-    width: 900,
-    height: 440,
-  });
-
   const [displayOnSlider, setDisplayOnSlider] = useState({
     currentValue: 0,
     threshold: 0.5,
