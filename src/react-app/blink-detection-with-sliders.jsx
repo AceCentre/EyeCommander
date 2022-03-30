@@ -46,11 +46,9 @@ export const BlinkDetectionWithSliders = ({
     update: updateOptionsOpen,
   } = useStoreValue(OPTIONS_OPEN, "open");
 
-  electronInternals.logger.info("Options open", { optionsOpen, loadingOptionsOpen });
-
   useResizer({
     width: optionsOpen === "open" || loadingOptionsOpen ? 880 : 550,
-    height: optionsOpen === "open" || loadingOptionsOpen ? 460 : 500,
+    height: optionsOpen === "open" || loadingOptionsOpen ? 440 : 500,
   });
 
   const throttled = useCallback(
