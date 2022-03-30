@@ -12,4 +12,4 @@ If you cannot use the form or want to provide more detail then email me at [ghen
 
 ## Github
 
-If you are familiar with GitHub then you can open a detailed issue on our [Github repository](https://github.com/acecentre/eyecommander) outlining your request and we will get back get back to you.\
+If you are familiar with GitHub then you can open a detailed issue on our [Github repository](https://github.com/acecentre/eyecommander) outlining your request and we will get back get back to you.
