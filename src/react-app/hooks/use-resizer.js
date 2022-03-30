@@ -2,6 +2,8 @@ import { useEffect } from "react";
 
 export const useResizer = ({ width, height }) => {
   useEffect(() => {
+    electronInternals.logger.info("resizer running", { width, height });
+
     if (!electronInternals) {
       throw new Error("Electron is not available");
     }

@@ -7,6 +7,7 @@ const path = require("path");
 const Store = require("electron-store");
 const setupAutoUpdater = require("update-electron-app");
 const AutoLaunch = require("auto-launch");
+const logger = require("electron-log");
 
 // Application state
 const store = new Store();
@@ -37,7 +38,7 @@ let eyeCommanderAutoLaunch = null;
 
 if (!isDebug()) {
   setupAutoUpdater({
-    logger: require("electron-log"),
+    logger,
     updateInterval: "5 minutes",
     repo: "AceCentre/EyeCommander",
   });
@@ -167,8 +168,10 @@ ipcMain.handle("outputController", async (event, functionName, args) => {
 });
 
 ipcMain.on("resize-window", (event, width, height) => {
+  logger.info("Resize event", { width, height });
   let browserWindow = BrowserWindow.fromWebContents(event.sender);
-  browserWindow.setSize(width, height);
+  let result = browserWindow.setSize(width, height);
+  logger.info("Resize finished", { browserWindow, result });
 });
 
 ipcMain.on("blink", async () => {
