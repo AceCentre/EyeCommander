@@ -69,7 +69,7 @@ const createWindow = (javascriptToExecute) => {
   const currentWindow = new BrowserWindow({
     width: 400,
     height: 400,
-    resizable: process.env.NODE_ENV === "development",
+    resizable: false,
     webPreferences: {
       nodeIntegration: false, // is default value after Electron v5
       contextIsolation: true, // protect against prototype pollution
@@ -168,7 +168,9 @@ ipcMain.handle("outputController", async (event, functionName, args) => {
 
 ipcMain.on("resize-window", (event, width, height) => {
   let browserWindow = BrowserWindow.fromWebContents(event.sender);
+  browserWindow.setResizable(true);
   browserWindow.setSize(width, height);
+  browserWindow.setResizable(false);
 });
 
 ipcMain.on("blink", async () => {
