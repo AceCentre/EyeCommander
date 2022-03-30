@@ -4,6 +4,10 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.3.0
+
+- Add the ability to hide the sliders once you have finished using them so they don't create a cluttered UI
+
 ### v1.2.7
 
 - You can now edit the key that is pressed in 'Keyboard Emulator' mode.

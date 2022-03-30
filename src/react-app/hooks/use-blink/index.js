@@ -6,7 +6,6 @@ import { useHoldBlink } from "./use-hold-blink";
 import { useSpeedBlink } from "./use-speed-blink";
 import { useStoreValue } from "../use-store";
 import { useDirectionHold } from "./use-direction-hold";
-import { useResizer } from "../use-resizer";
 
 export const BLINK_MODES = [
   {
