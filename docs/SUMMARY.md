@@ -8,3 +8,4 @@
 * [Using EyeCommander with Grid3](using-eyecommander-with-grid3.md)
 * [System Requirements](system-requirements.md)
 * [Version History](version-history.md)
+* [Bug Reports or Feature Requests](bug-reports-or-feature-requests.md)
