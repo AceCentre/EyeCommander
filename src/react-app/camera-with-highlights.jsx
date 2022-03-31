@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLoading } from "./hooks/use-loading";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import {
@@ -7,6 +7,7 @@ import {
   FACEMESH_LEFT_EYE,
 } from "@mediapipe/face_mesh";
 import { useFaceMesh } from "./hooks/use-face-mesh";
+import { FPS } from "@mediapipe/control_utils";
 import { SelectedWebcam } from "./selected-webcam.jsx";
 import { useStoreValue } from "./hooks/use-store";
 import { REVERSE_CAMERA } from "./lib/store-consts";
@@ -27,7 +28,6 @@ const DEFAULT_HIGHLIGHTS = {
 
 export const CameraWithHighlights = ({
   onFrame = () => {},
-  distanceHistory = { current: [] },
   displayOnSlider = null,
   highlights = DEFAULT_HIGHLIGHTS,
 }) => {
@@ -35,7 +35,28 @@ export const CameraWithHighlights = ({
   const canvasRef = useRef(null);
   const displayOnSliderRef = useRef();
   const loading = useLoading(LOADING_TIME);
-  const [frameRate, setFrameRate] = useState(0);
+  const [fpsCounter, setFpsCounter] = useState(null);
+
+  useEffect(() => {
+    const newCounter = new FPS();
+
+    // Pretty major hack so I don't have to attach
+    // a canvas because then i lose control over styling
+    newCounter.j = {
+      canvas: {},
+      clearRect: () => {},
+      fillRect: () => {},
+      setLineDash: () => {},
+      beginPath: () => {},
+      moveTo: () => {},
+      lineTo: () => {},
+      stroke: () => {},
+    };
+
+    newCounter.h = {};
+
+    setFpsCounter(newCounter);
+  }, []);
 
   displayOnSliderRef.current = displayOnSlider;
 
@@ -48,21 +69,8 @@ export const CameraWithHighlights = ({
 
   const onResults = useCallback(
     (results) => {
-      const firstFrame = distanceHistory.current[0];
-      const lastFrame =
-        distanceHistory.current[distanceHistory.current.length - 1];
-
-      if (
-        firstFrame &&
-        lastFrame &&
-        firstFrame.time !== Infinity &&
-        lastFrame.time !== Infinity
-      ) {
-        const gap = lastFrame.time - firstFrame.time;
-        const numberOfFrames = distanceHistory.current.length;
-        const newFrameRate = Math.floor((numberOfFrames / gap) * 1000);
-
-        setFrameRate(newFrameRate);
+      if (fpsCounter) {
+        fpsCounter.tick();
       }
 
       const videoWidth = webcamRef.current.video.videoWidth;
@@ -283,7 +291,7 @@ export const CameraWithHighlights = ({
 
       canvasCtx.restore();
     },
-    [onFrame, displayOnSliderRef, reverse, reverseLoading]
+    [onFrame, displayOnSliderRef, reverse, reverseLoading, fpsCounter]
   );
 
   useFaceMesh({ loading: loading || reverseLoading, webcamRef }, onResults);
@@ -295,7 +303,9 @@ export const CameraWithHighlights = ({
         <Typography
           sx={{ color: "white", fontSize: "1rem", fontWeight: "bold" }}
         >
-          Frame Rate: {frameRate}
+          Frame Rate:{" "}
+          {(fpsCounter && fpsCounter.h && fpsCounter.h.textContent) ||
+            "Loading"}
         </Typography>
       </Box>
       <Box
