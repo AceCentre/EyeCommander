@@ -1,0 +1,16 @@
+name: Deploy facemesh example
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./facemesh-example
