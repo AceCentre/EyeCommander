@@ -41,7 +41,7 @@
     "@emotion/styled": "^11.3.0",
     "@fontsource/roboto": "^4.5.1",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
-    "@mediapipe/camera_utils": "^0.3.1632432234",
+    "@mediapipe/camera_utils": "^0.3.1640029074",
     "@mediapipe/drawing_utils": "^0.3.1620248257",
     "@mediapipe/face_mesh": "^0.4.1633559619",
     "@mui/icons-material": "^5.0.5",

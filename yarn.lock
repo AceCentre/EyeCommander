@@ -814,7 +814,7 @@
   dependencies:
     "sourcemap-codec" "^1.4.4"
 
-"@mediapipe/camera_utils@^0.3.1632432234":
+"@mediapipe/camera_utils@^0.3.1640029074":
   "integrity" "sha512-jRV/Mp2lgqNYT68TeVRu/Xq+ptZO9F9vCjxzQsA3VM2r7oXg0TrnfO9De2KKOUTpt0p28dKHs625J8GdWjha8A=="
   "resolved" "https://registry.npmjs.org/@mediapipe/camera_utils/-/camera_utils-0.3.1640029074.tgz"
   "version" "0.3.1640029074"
