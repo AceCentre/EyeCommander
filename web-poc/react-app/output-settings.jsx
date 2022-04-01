@@ -79,8 +79,6 @@ const useKeyboardListener = () => {
       if (isListening) {
         setIsListening(false);
 
-        console.log(event);
-
         const osKey = WEB_KEY_TO_OS_KEY[event.key.toLowerCase()];
 
         if (!osKey) {

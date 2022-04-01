@@ -59,7 +59,6 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
       faceMesh.onResults(onResults);
 
       const updateFrame = async () => {
-        console.log("UPDATE FRAME");
         await faceMesh.send({ image: webcamRef.current.video });
         videoElement.requestVideoFrameCallback(updateFrame);
       };

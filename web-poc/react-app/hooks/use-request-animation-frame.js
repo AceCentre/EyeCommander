@@ -24,7 +24,6 @@ export const useAnimationFrame = (callback, fpsCap = 30, deps = []) => {
   };
 
   useEffect(() => {
-    console.log("Starting to request frame");
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current);
   }, []); // Make sure the effect runs only once

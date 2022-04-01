@@ -17,8 +17,6 @@ export const useStoreValue = (key, defaultValue = null) => {
     const getValueFromStore = async () => {
       const result = localStorage.getItem(key);
 
-      console.log({ result });
-
       if (result === undefined || result === null) {
         localStorage.setItem(key, defaultValue);
         const newResult = localStorage.getItem(key);

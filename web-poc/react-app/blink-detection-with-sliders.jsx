@@ -66,8 +66,6 @@ export const BlinkDetectionWithSliders = ({
 
   const result = useBlink(throttled);
 
-  console.log(result);
-
   const { detectBlink, options, displayOnSlider, highlights } = result;
 
   const onFrame = useCallback(
