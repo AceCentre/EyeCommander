@@ -44,7 +44,7 @@ export const useFaceMesh = ({ loading, webcamRef }, onResults) => {
     if (!loading && videoElement) {
       const faceMesh = new FaceMesh({
         locateFile: (file) => {
-          return `https://acecentre.github.io/EyeCommander/public/face/${file}`;
+          return `/public/face/${file}`;
         },
       });
 
