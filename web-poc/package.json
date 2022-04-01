@@ -1,0 +1,16 @@
+{
+  "name": "web-poc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "webpack serve",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "webpack": "^5.70.0"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.9.2"
+  }
+}
