@@ -22,7 +22,7 @@ export const SelectedWebcam = ({ webcamRef, sx = {}, ...props }) => {
   const videoConstraints = props.videoConstraints || {};
 
   return (
-    <Box sx={sx}>
+    <Box sx={{ opacity: 0, height: 0, width: 0 }}>
       <Webcam
         {...props}
         id="react-webcam-el"
