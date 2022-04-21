@@ -27,14 +27,14 @@ export const useReload = (reloadItems = []) => {
   }, [...reloadItems]);
 
   useEffect(() => {
-    console.log("reloaded", reloadTrigger % 2 === 0, reloadTrigger);
+    // console.log("reloaded", reloadTrigger % 2 === 0, reloadTrigger);
 
     if (reloadTrigger % 2 !== 0) {
       forceUpdate();
     }
   }, [reloadTrigger]);
 
-  console.log("reloadTrigger", reloadTrigger);
+  // console.log("reloadTrigger", reloadTrigger);
 
   return reloadTrigger;
 };
