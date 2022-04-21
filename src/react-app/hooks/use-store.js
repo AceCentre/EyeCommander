@@ -33,11 +33,11 @@ export const useStoreValue = (key, defaultValue = null) => {
 
         setValue(newResult);
         setLoading(false);
-        console.log("Get value defaulted", key, newResult);
+        // console.log("Get value defaulted", key, newResult);
       } else {
         setValue(result);
         setLoading(false);
-        console.log("Get value", key, result);
+        // console.log("Get value", key, result);
       }
     };
 
