@@ -23,7 +23,7 @@ const getTaskProps = (taskNumber, current) => ({
 export const WelcomeScreen = ({ forceReload }) => {
   const [activeTask, setActiveTask] = useState(1);
 
-  useResizer({ width: 800, height: 670 });
+  useResizer({ width: 800, height: 670, loading: false });
 
   return (
     <Box sx={{ padding: "2rem" }}>

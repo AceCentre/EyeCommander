@@ -50,7 +50,7 @@ const SCREENS = {
 };
 
 export const SettingsPage = () => {
-  useResizer({ width: 910, height: 620 });
+  useResizer({ width: 910, height: 620, loading: false });
   const saveAndClose = useSaveAndClose();
   const [currentScreen, setCurrentScreen] = useState(SCREENS.CAMERA);
 

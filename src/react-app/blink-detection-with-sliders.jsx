@@ -47,8 +47,9 @@ export const BlinkDetectionWithSliders = ({
   } = useStoreValue(OPTIONS_OPEN, "open");
 
   useResizer({
-    width: optionsOpen === "open" || loadingOptionsOpen ? 880 : 550,
-    height: optionsOpen === "open" || loadingOptionsOpen ? 440 : 500,
+    width: optionsOpen === "open"  ? 880 : 550,
+    height: optionsOpen === "open"  ? 440 : 500,
+    loading: loadingOptionsOpen
   });
 
   const throttled = useCallback(

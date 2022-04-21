@@ -1,7 +1,9 @@
 import { useEffect } from "react";
 
-export const useResizer = ({ width, height }) => {
+export const useResizer = ({ width, height, loading }) => {
   useEffect(() => {
+    if (loading) return;
+
     if (!electronInternals) {
       throw new Error("Electron is not available");
     }
@@ -11,5 +13,5 @@ export const useResizer = ({ width, height }) => {
     }
 
     electronInternals.ipcRenderer.send("resize-window", width, height);
-  }, [height, width]);
+  }, [height, width, loading]);
 };
