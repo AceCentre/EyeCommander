@@ -4,6 +4,10 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.3.1
+
+- Fix bug that caused the window to resize after you opened the settings
+
 ### 1.3.0
 
 - Add the ability to hide the sliders once you have finished using them so they don't create a cluttered UI
