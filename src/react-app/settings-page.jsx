@@ -431,10 +431,11 @@ const BlinkSettings = () => {
                     fontWeight: "bold",
                     fontSize: "1rem",
                   }}
-                >
-                  {current.title}
-                </Typography>
-                <Typography>{current.description}</Typography>
+                  dangerouslySetInnerHTML={{ __html: current.title }}
+                ></Typography>
+                <Typography
+                  dangerouslySetInnerHTML={{ __html: current.description }}
+                ></Typography>
               </Paper>
             </Box>
           );

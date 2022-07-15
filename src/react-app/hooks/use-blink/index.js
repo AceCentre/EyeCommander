@@ -10,7 +10,7 @@ import { useDirectionHold } from "./use-direction-hold";
 export const BLINK_MODES = [
   {
     id: "HOLD",
-    title: "Hold blink",
+    title: "Hold blink (<strong>Recommended<strong>)",
     description:
       "Triggers when you hold your eyes closed for a given period of time",
   },
@@ -18,13 +18,13 @@ export const BLINK_MODES = [
     id: "BASIC",
     title: "Basic",
     description:
-      "Tracks the gap between your top eye lid and bottom, detects a blink when it goes below your given threshold",
+      "Triggers as soon as your eyes close. This mode will detect involuntary blinks so is <strong>not recommended.</strong>",
   },
   {
     id: "SPEED",
     title: "Speed",
     description:
-      "Tracks the gap between your eye lids over time and detects a blink if it changes rapidly. Works well if you have a shallow blink",
+      "Tracks the speed that your eye opens and closes. <strong>Not recommended</strong> as it will miss deliberate blinks.",
   },
   {
     id: "DIRECTION_BASIC",

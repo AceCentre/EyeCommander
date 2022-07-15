@@ -4,6 +4,10 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.3.2
+
+- Improve descriptions of blink modes following feedback
+
 ### 1.3.1
 
 - Fix bug that caused the window to resize after you opened the settings
