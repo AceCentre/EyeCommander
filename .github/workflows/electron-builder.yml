@@ -7,7 +7,7 @@ on:
 
 jobs:
   WindowsBuild:
-    runs-on: windows-latest
+    runs-on: macos-latest
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
       WIN_CERT: ${{ secrets.WIN_CERT }}
@@ -66,7 +66,7 @@ jobs:
           destination-file: win-cert.p12
 
       - name: Sign Windows Binary
-        run:  |
+        run: |
           & 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86\signtool.exe' sign /a /td sha256 /fd sha256 /v /f "win-cert.p12" /p "${{ secrets.CERTPASSWORD }}" /v "out\EyeCommander-win32-x64\eyecommander.exe"
 
       - uses: actions/upload-artifact@v3
