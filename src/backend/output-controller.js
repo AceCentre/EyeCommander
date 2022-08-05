@@ -1,8 +1,10 @@
 import { DebugOutput } from "./debug-output";
+import { MacKeyboard } from "./mac-keyboard";
+
 import os from "os";
 import { OUTPUT_TYPE_NAME } from "../react-app/lib/store-consts";
 
-const OUTPUT_TYPES = [DebugOutput];
+const OUTPUT_TYPES = [DebugOutput, MacKeyboard];
 export class OutputController {
   constructor({ store }) {
     this.store = store;
