@@ -1,17 +1,12 @@
 name: Electron Builder
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 jobs:
-  WindowsBuild:
+  MacBuild:
     runs-on: macos-latest
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-      WIN_CERT: ${{ secrets.WIN_CERT }}
-      WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v3
@@ -33,14 +28,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - uses: actions/github-script@v5
-        id: should-publish
-        with:
-          result-encoding: string
-          script: |
-            const script = require('./check-for-version-bump.js');
-            return await script({ github, context, core })
-
       - name: Install deps
         run: yarn install
 
@@ -51,27 +38,12 @@ jobs:
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
 
-      - name: Forge publish
-        if: ${{ steps.should-publish.outputs.result == 'publish' }}
-        run: yarn run publish
-
       - name: Forge make
-        if: ${{ steps.should-publish.outputs.result == 'make' }}
         run: yarn make
-
-      - name: Dump cert
-        uses: kitek/decode-base64-into-file-action@1.0
-        with:
-          encoded-value: ${{ secrets.CERTP12B64 }}
-          destination-file: win-cert.p12
-
-      - name: Sign Windows Binary
-        run: |
-          & 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86\signtool.exe' sign /a /td sha256 /fd sha256 /v /f "win-cert.p12" /p "${{ secrets.CERTPASSWORD }}" /v "out\EyeCommander-win32-x64\eyecommander.exe"
 
       - uses: actions/upload-artifact@v3
         with:
-          name: WindowsRelease
+          name: ReleaseArtifacts
           path: out
           # Github has size limits so this avoids hitting them
           retention-days: 1
