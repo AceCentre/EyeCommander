@@ -36,6 +36,7 @@ module.exports = {
     useCache: false,
   },
   packagerConfig: {
+    appBundleId: "com.acecentre.eyecommander",
     icon: "./assets/apple-icon.icns",
     executableName: "EyeCommander",
     osxSign: {
@@ -45,11 +46,6 @@ module.exports = {
       "entitlements-inherit": "./assets/entitlements.plist",
       "signature-flags": "library",
       "gatekeeper-assess": false,
-    },
-    osxNotarize: {
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_ID_PASSWORD,
-      ascProvider: process.env.APPLE_PROVIDER,
     },
   },
   publishers: [],
