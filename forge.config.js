@@ -36,7 +36,8 @@ module.exports = {
     useCache: false,
   },
   packagerConfig: {
-    executableName: "eyecommander",
+    icon: "./assets/apple-icon.icns",
+    executableName: "EyeCommander",
   },
   publishers: [],
   makers: [

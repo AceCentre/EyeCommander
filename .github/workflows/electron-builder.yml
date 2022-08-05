@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ReleaseArtifacts
-          path: out
+          name: MacDMG
+          path: out/make/EyeCommander.dmg
           # Github has size limits so this avoids hitting them
           retention-days: 1
