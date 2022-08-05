@@ -38,6 +38,19 @@ module.exports = {
   packagerConfig: {
     icon: "./assets/apple-icon.icns",
     executableName: "EyeCommander",
+    osxSign: {
+      identity: "Developer ID Application: THE ACE CENTRE-NORTH (K45HHA96ND)",
+      "hardened-runtime": true,
+      entitlements: "./assets/entitlements.plist",
+      "entitlements-inherit": "./assets/entitlements.plist",
+      "signature-flags": "library",
+      "gatekeeper-assess": false,
+    },
+    osxNotarize: {
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_ID_PASSWORD,
+      ascProvider: process.env.APPLE_PROVIDER,
+    },
   },
   publishers: [],
   makers: [

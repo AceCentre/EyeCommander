@@ -39,6 +39,10 @@ jobs:
         run: yarn start --run-as-node || true
 
       - name: Forge make
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_PROVIDER: ${{ secrets.APPLE_PROVIDER }}
         run: yarn make
 
       - uses: actions/upload-artifact@v3
