@@ -30,7 +30,7 @@ function isDebug() {
 Menu.setApplicationMenu(null);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-require("./backend/squirrel-events");
+// require("./backend/squirrel-events");
 
 let eyeCommanderAutoLaunch = null;
 
