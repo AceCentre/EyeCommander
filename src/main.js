@@ -76,10 +76,10 @@ const createWindow = (javascriptToExecute) => {
     currentWindow.webContents.executeJavaScript(javascriptToExecute, true);
   }
 
+  currentWindow.webContents.openDevTools();
   if (isDebug()) {
     // Create the browser window.
     currentWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-    currentWindow.webContents.openDevTools();
   } else {
     const exApp = express();
     exApp.use(express.static(path.resolve(__dirname, "..", "renderer")));
