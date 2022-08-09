@@ -8,18 +8,23 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
-      - name: Prepare signing
-        uses: acecentre/prepare-signing@master
+      - uses: apple-actions/import-codesign-certs@v1
         with:
-          appStoreConnectPrivateKey: ${{ secrets.appStoreConnectPrivateKey }}
-          keyID: ${{ secrets.keyID }}
-          issuerID: ${{ secrets.issuerID }}
-          # keychainName: ${{ secrets.keychainName }}
-          # keychainPassword: ${{ secrets.keychainPassword }}
-          base64P12File: ${{ secrets.base64P12File }}
-          p12Password: ${{ secrets.p12Password }}
-          bundleIdentifier: ${{ secrets.bundleIdentifier }}
-          signType: ${{ secrets.signType }}
+          p12-file-base64: ${{ secrets.base64P12File }}
+          p12-password: ${{ secrets.p12Password }
+
+      # - name: Prepare signing
+      #   uses: acecentre/prepare-signing@master
+      #   with:
+      #     appStoreConnectPrivateKey: ${{ secrets.appStoreConnectPrivateKey }}
+      #     keyID: ${{ secrets.keyID }}
+      #     issuerID: ${{ secrets.issuerID }}
+      #     # keychainName: ${{ secrets.keychainName }}
+      #     # keychainPassword: ${{ secrets.keychainPassword }}
+      #     base64P12File: ${{ secrets.base64P12File }}
+      #     p12Password: ${{ secrets.p12Password }}
+      #     bundleIdentifier: com.acecentre.eyecommander
+      #     signType: ${{ secrets.signType }}
 
       - name: Check out Git repository
         uses: actions/checkout@v3
