@@ -8,6 +8,19 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
     steps:
+      - name: Prepare signing
+        uses: acecentre/prepare-signing@master
+        with:
+          appStoreConnectPrivateKey: ${{ secrets.appStoreConnectPrivateKey }}
+          keyID: ${{ secrets.keyID }}
+          issuerID: ${{ secrets.issuerID }}
+          # keychainName: ${{ secrets.keychainName }}
+          # keychainPassword: ${{ secrets.keychainPassword }}
+          base64P12File: ${{ secrets.base64P12File }}
+          p12Password: ${{ secrets.p12Password }}
+          bundleIdentifier: ${{ secrets.bundleIdentifier }}
+          signType: ${{ secrets.signType }}
+
       - name: Check out Git repository
         uses: actions/checkout@v3
 
@@ -37,19 +50,6 @@ jobs:
         # Ignore when this fails, its a total hack but for some reason
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
-
-      - name: Prepare signing
-        uses: acecentre/prepare-signing@master
-        with:
-          appStoreConnectPrivateKey: ${{ secrets.appStoreConnectPrivateKey }}
-          keyID: ${{ secrets.keyID }}
-          issuerID: ${{ secrets.issuerID }}
-          # keychainName: ${{ secrets.keychainName }}
-          # keychainPassword: ${{ secrets.keychainPassword }}
-          base64P12File: ${{ secrets.base64P12File }}
-          p12Password: ${{ secrets.p12Password }}
-          bundleIdentifier: ${{ secrets.bundleIdentifier }}
-          signType: ${{ secrets.signType }}
 
       - name: Forge make
         env:
