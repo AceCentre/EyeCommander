@@ -11,7 +11,7 @@ jobs:
       - uses: apple-actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.base64P12File }}
-          p12-password: ${{ secrets.p12Password }
+          p12-password: ${{ secrets.p12Password }}
 
       # - name: Prepare signing
       #   uses: acecentre/prepare-signing@master
