@@ -40,7 +40,7 @@ module.exports = {
     icon: "./assets/apple-icon.icns",
     executableName: "EyeCommander",
     osxSign: {
-      identity: "Developer ID Application: THE ACE CENTRE-NORTH (K45HHA96ND)",
+      keychain: process.env.KEYCHAIN,
       "hardened-runtime": true,
       entitlements: "./assets/entitlements.plist",
       "entitlements-inherit": "./assets/entitlements.plist",

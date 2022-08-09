@@ -7,11 +7,13 @@ jobs:
     runs-on: macos-latest
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      KEYCHAIN: job-${{ github.job }}-${{ github.run_id	}}-${{ github.run_number }}-${{ github.run_attempt }}
     steps:
       - uses: apple-actions/import-codesign-certs@v1
         with:
           p12-file-base64: ${{ secrets.base64P12File }}
           p12-password: ${{ secrets.p12Password }}
+          keychain: ${{ env.KEYCHAIN }}
 
       # - name: Prepare signing
       #   uses: acecentre/prepare-signing@master
