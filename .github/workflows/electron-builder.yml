@@ -16,21 +16,6 @@ jobs:
           p12-password: ${{ secrets.p12Password }}
           keychain: ${{ env.KEYCHAIN }}
 
-      - run: security find-identity -v ${{ env.KEYCHAIN }}.keychain-db
-
-      # - name: Prepare signing
-      #   uses: acecentre/prepare-signing@master
-      #   with:
-      #     appStoreConnectPrivateKey: ${{ secrets.appStoreConnectPrivateKey }}
-      #     keyID: ${{ secrets.keyID }}
-      #     issuerID: ${{ secrets.issuerID }}
-      #     # keychainName: ${{ secrets.keychainName }}
-      #     # keychainPassword: ${{ secrets.keychainPassword }}
-      #     base64P12File: ${{ secrets.base64P12File }}
-      #     p12Password: ${{ secrets.p12Password }}
-      #     bundleIdentifier: com.acecentre.eyecommander
-      #     signType: ${{ secrets.signType }}
-
       - name: Check out Git repository
         uses: actions/checkout@v3
 
@@ -73,4 +58,4 @@ jobs:
           name: MacDMG
           path: out/make/EyeCommander.dmg
           # Github has size limits so this avoids hitting them
-          retention-days: 1
+          retention-days: 14
