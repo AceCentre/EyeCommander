@@ -30,6 +30,10 @@
 //   console.log("=========");
 // }
 
+console.log("=========");
+console.log(process.env.KEYCHAIN);
+console.log("========");
+
 module.exports = {
   electronRebuildConfig: {
     force: true,
@@ -41,6 +45,7 @@ module.exports = {
     executableName: "EyeCommander",
     osxSign: {
       keychain: process.env.KEYCHAIN,
+      identity: "Developer ID Application: THE ACE CENTRE-NORTH (K45HHA96ND)",
       "hardened-runtime": true,
       entitlements: "./assets/entitlements.plist",
       "entitlements-inherit": "./assets/entitlements.plist",
