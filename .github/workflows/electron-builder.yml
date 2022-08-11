@@ -16,7 +16,7 @@ jobs:
           p12-password: ${{ secrets.p12Password }}
           keychain: ${{ env.KEYCHAIN }}
 
-      - run: security find-identity -v ${{ env.KEYCHAIN }}
+      - run: security find-identity -v ${{ env.KEYCHAIN }}.keychain-db
 
       # - name: Prepare signing
       #   uses: acecentre/prepare-signing@master
