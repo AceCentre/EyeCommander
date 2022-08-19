@@ -61,7 +61,7 @@ if (process.env.GITHUB_TOKEN) {
     config: {
       repository: {
         owner: "AceCentre",
-        name: "EyeCommander",
+        name: "Eye Commander",
       },
       prerelease: false,
       draft: false,
@@ -76,7 +76,7 @@ module.exports = {
   },
   packagerConfig: {
     icon,
-    executableName: "eyecommander",
+    executableName: "eye commander",
     ...osxSigning,
   },
   publishers,
@@ -84,7 +84,7 @@ module.exports = {
     {
       name: "@electron-forge/maker-squirrel",
       config: {
-        name: "EyeCommander",
+        name: "Eye Commander",
         ...certParams,
       },
     },
