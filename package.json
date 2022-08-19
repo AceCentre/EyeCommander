@@ -1,5 +1,5 @@
 {
-  "name": "eye commander",
+  "name": "eyecommander",
   "productName": "Eye Commander",
   "version": "1.3.2",
   "description": "Detect blinks and convert them to switch output",
