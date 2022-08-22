@@ -4,6 +4,10 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.3.3
+
+- Fix bug where the app wouldn't work when the Windows User name included a space
+
 ### 1.3.2
 
 - Improve descriptions of blink modes following feedback
