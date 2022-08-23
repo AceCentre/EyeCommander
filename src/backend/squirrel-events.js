@@ -16,7 +16,10 @@ const run = function (args, done) {
   logger.info("Spawning `%s` with args `%s`", updateExe, args);
   spawn(updateExe, args, {
     detached: true,
-  }).on("close", done);
+  }).on("close", () => {
+    logger.info("Calling done which will close");
+    done();
+  });
 };
 
 const check = async function () {
@@ -95,13 +98,16 @@ const openAdminEyeCommander = () => {
       name: "EyeCommander SpawnProcess",
     };
 
-    console.log(`start "${process.execPath}"`);
+    logger.info("Running the following command:");
+    logger.info(`start "${process.execPath}"`);
 
     sudo.exec(
       `start "${process.execPath}"`,
       options,
       function (error, stdout, stderr) {
+        logger.info("Executed with the following results:");
         logger.info({ stdout, stderr, error });
+        logger.info("See above results");
 
         if (error) return rej(error);
 
