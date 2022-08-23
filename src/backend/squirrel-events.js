@@ -94,6 +94,9 @@ const openAdminEyeCommander = () => {
     const options = {
       name: "EyeCommander SpawnProcess",
     };
+
+    console.log(`start "${process.execPath}"`);
+
     sudo.exec(
       `start "${process.execPath}"`,
       options,

@@ -9,7 +9,7 @@ export class MindExpress extends AbstractOutput {
 
   blink() {
     console.log("tapping space");
-    sendkeys.sync("{SPACE}");
+    sendkeys.sync(" ");
   }
 
   static getCompatiblePlatforms() {
