@@ -102,7 +102,7 @@ const openAdminEyeCommander = () => {
     logger.info(`"${process.execPath}"`);
 
     sudo.exec(
-      `"${process.execPath}"`,
+      `Start-Process -FilePath "${process.execPath}"`,
       options,
       function (error, stdout, stderr) {
         logger.info("Executed with the following results:");
