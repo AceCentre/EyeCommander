@@ -5,13 +5,20 @@ import KeyboardIcon from "@mui/icons-material/Keyboard";
 import CodeIcon from "@mui/icons-material/Code";
 import Grid4x4Icon from "@mui/icons-material/Grid4x4";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import FaceIcon from "@mui/icons-material/Face";
 
 import { Box } from "@mui/system";
 import { WEB_KEY_TO_OS_KEY } from "../web-key-to-os-key";
 import { useStoreValue } from "./hooks/use-store";
 import { red } from "@mui/material/colors";
 
-const allIcons = { KeyboardIcon, CodeIcon, Grid4x4Icon, ChatBubbleOutlineIcon };
+const allIcons = {
+  KeyboardIcon,
+  CodeIcon,
+  Grid4x4Icon,
+  ChatBubbleOutlineIcon,
+  FaceIcon,
+};
 
 const getInternals = () => {
   if (!electronInternals) throw new Error("No internals");

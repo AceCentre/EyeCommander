@@ -4,8 +4,15 @@ import { GridOutput } from "./grid-output";
 import os from "os";
 import { OUTPUT_TYPE_NAME } from "../react-app/lib/store-consts";
 import { NuVoice } from "./nu-voice";
+import { MindExpress } from "./mind-express";
 
-const OUTPUT_TYPES = [RobotKeyboard, DebugOutput, GridOutput, NuVoice];
+const OUTPUT_TYPES = [
+  RobotKeyboard,
+  DebugOutput,
+  GridOutput,
+  NuVoice,
+  MindExpress,
+];
 export class OutputController {
   constructor({ store }) {
     this.store = store;
