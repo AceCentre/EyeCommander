@@ -99,10 +99,10 @@ const openAdminEyeCommander = () => {
     };
 
     logger.info("Running the following command:");
-    logger.info(`"${process.execPath}"`);
+    logger.info(`powershell Start-Process -FilePath "${process.execPath}"`);
 
     sudo.exec(
-      `Start-Process -FilePath "${process.execPath}"`,
+      `powershell Start-Process -FilePath "${process.execPath}"`,
       options,
       function (error, stdout, stderr) {
         logger.info("Executed with the following results:");
