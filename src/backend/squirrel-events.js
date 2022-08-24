@@ -85,7 +85,7 @@ const check = async function () {
       logger.info("\n===== MADE EDIT SUCCESSFULLY =====");
     } catch (error) {
       if (
-        error.message.toLowerCase().contains("user did not grant permission.")
+        error.message.toLowerCase().includes("user did not grant permission.")
       ) {
         logger.info("User didn't give permission");
         dialog.showMessageBoxSync({
