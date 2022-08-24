@@ -59,19 +59,9 @@ jobs:
         if: ${{ steps.should-publish.outputs.result == 'make' }}
         run: yarn make
 
-      - name: Dump cert
-        uses: kitek/decode-base64-into-file-action@1.0
-        with:
-          encoded-value: ${{ secrets.CERTP12B64 }}
-          destination-file: win-cert.p12
-
-      - name: Sign Windows Binary
-        run:  |
-          & 'C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86\signtool.exe' sign /a /td sha256 /fd sha256 /v /f "win-cert.p12" /p "${{ secrets.CERTPASSWORD }}" /v "out\EyeCommander-win32-x64\eyecommander.exe"
-
       - uses: actions/upload-artifact@v3
         with:
           name: WindowsRelease
-          path: out
+          path: out/make/squirrel.windows/x64
           # Github has size limits so this avoids hitting them
           retention-days: 1
