@@ -4,6 +4,12 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.4.0
+
+- Fix bug that prevented users from mapping the keyboard emulator to spacebar
+- Add mind express option
+- Improve forcing run as admin workflow
+
 ### 1.3.3
 
 - Fix bug where the app wouldn't work when the Windows User name included a space
