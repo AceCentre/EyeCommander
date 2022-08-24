@@ -4,6 +4,7 @@ const app = require("electron").app;
 const logger = require("electron-log");
 const sudo = require("sudo-prompt");
 const { isAdmin } = require("./is-admin");
+const { dialog } = require("electron");
 
 // Runs the Update.exe which is created by the squirrel installer process.
 // Detaches it from this process.
@@ -83,6 +84,17 @@ const check = async function () {
 
       logger.info("\n===== MADE EDIT SUCCESSFULLY =====");
     } catch (error) {
+      if (
+        error.message.toLowerCase().contains("user did not grant permission.")
+      ) {
+        logger.info("User didn't give permission");
+        dialog.showMessageBoxSync({
+          title: "Permissions problem",
+          type: "warning",
+          message:
+            "You did not grant EyeCommander admin privileges. This means yo might run into problems when using EyeCommander with your chosen AAC app. To grant it permission relaunch EyeCommander.",
+        });
+      }
       logger.info(error);
       logger.info("\n===== FAILED TO MAKE EDIT =====");
     }
