@@ -37,7 +37,9 @@ export const MainScreen = () => {
 
   const [paused, setPaused] = useState(false);
   const reloadTrigger = useReload([reloadPlaySound, reloadSoundVolume]);
-  const [play] = useSound("./public/notif.mp3", { volume: soundVolume || 0.5 });
+  const [play] = useSound("./public/notif-louder.mp3", {
+    volume: soundVolume || 0.5,
+  });
   const [isFaceInFrame, setIsFaceInFrame] = useState(true);
   const sendBlinkToBackend = useBlinkAction();
   const openSettings = useOpenSettings();

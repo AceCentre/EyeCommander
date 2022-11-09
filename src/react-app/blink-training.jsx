@@ -24,7 +24,7 @@ export const BlinkTraining = ({ prevTask, forceReload }) => {
   const [blinkCount, setBlinkCount] = useState(0);
 
   const [allowNext, setAllowNext] = useState(true);
-  const [play] = useSound("./public/notif.mp3");
+  const [play] = useSound("./public/notif-louder.mp3");
 
   const onBlink = useCallback(() => {
     setBlinkCount((x) => x + 1);

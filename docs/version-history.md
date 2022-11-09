@@ -4,6 +4,10 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.4.2
+
+- Lift the max volume of the click
+
 ### 1.4.1
 
 - [Allow users to change volume of clicking sound.](https://github.com/AceCentre/EyeCommander/issues/82)
