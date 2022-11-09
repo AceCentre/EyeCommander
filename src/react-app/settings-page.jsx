@@ -22,7 +22,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import StorageIcon from "@mui/icons-material/Storage";
 import { useStoreValue } from "./hooks/use-store";
-import { BLINK_MODE, PLAY_SOUND, REVERSE_CAMERA } from "./lib/store-consts";
+import {
+  BLINK_MODE,
+  PLAY_SOUND,
+  REVERSE_CAMERA,
+  SOUND_VOLUME,
+} from "./lib/store-consts";
 import { useWebcamSelector } from "./hooks/use-webcam-selector";
 import { useSaveAndClose } from "./hooks/use-save-and-close";
 import {
@@ -36,6 +41,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import InfoIcon from "@mui/icons-material/Info";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
+import { SliderWithValue } from "./slider-with-value.jsx";
 
 const SCREENS = {
   CAMERA: "camera",
@@ -356,8 +362,13 @@ const SoundSettings = () => {
     loading: playSoundLoading,
     update: playSoundUpdate,
   } = useStoreValue(PLAY_SOUND, true);
+  const {
+    value: soundVolume,
+    loading: soundVolumeLoading,
+    update: soundVolumeUpdate,
+  } = useStoreValue(SOUND_VOLUME, 0.5);
 
-  if (playSoundLoading) return null;
+  if (playSoundLoading || soundVolumeLoading) return null;
 
   return (
     <>
@@ -372,6 +383,16 @@ const SoundSettings = () => {
           />
         }
         label="Play sound on blink"
+      />
+      <SliderWithValue
+        min={0}
+        max={100}
+        defaultValue={soundVolume * 100}
+        label="Volume"
+        tooltip="The volume of the sound played when you blink"
+        onChange={(newValue) => {
+          soundVolumeUpdate(newValue / 100);
+        }}
       />
     </>
   );

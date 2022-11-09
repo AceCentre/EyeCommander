@@ -4,6 +4,10 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.4.1
+
+- [Allow users to change volume of clicking sound.](https://github.com/AceCentre/EyeCommander/issues/82)
+
 ### 1.4.0
 
 - Fix bug that prevented users from mapping the keyboard emulator to spacebar

@@ -11,7 +11,7 @@ import { useBlinkAction } from "./hooks/use-blink-action";
 import { useOpenSettings } from "./hooks/use-open-settings";
 import { useReload } from "./hooks/use-reload";
 import { useStoreValue } from "./hooks/use-store";
-import { PLAY_SOUND } from "./lib/store-consts";
+import { PLAY_SOUND, SOUND_VOLUME } from "./lib/store-consts";
 import PauseIcon from "@mui/icons-material/Pause";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
@@ -29,22 +29,37 @@ export const MainScreen = () => {
     reload: reloadPlaySound,
     loading: loadingPlaySound,
   } = useStoreValue(PLAY_SOUND, true);
+  const {
+    value: soundVolume,
+    reload: reloadSoundVolume,
+    loading: loadingSoundVolume,
+  } = useStoreValue(SOUND_VOLUME, 0.5);
+
   const [paused, setPaused] = useState(false);
-  const reloadTrigger = useReload([reloadPlaySound]);
-  const [play] = useSound("./public/notif.mp3");
+  const reloadTrigger = useReload([reloadPlaySound, reloadSoundVolume]);
+  const [play] = useSound("./public/notif.mp3", { volume: soundVolume || 0.5 });
   const [isFaceInFrame, setIsFaceInFrame] = useState(true);
   const sendBlinkToBackend = useBlinkAction();
   const openSettings = useOpenSettings();
 
   const onBlink = useCallback(() => {
-    if (playSound && !loadingPlaySound) {
+    if (playSound && !loadingPlaySound && !loadingSoundVolume) {
+      console.log({ soundVolume });
       play();
     }
 
     if (!paused) {
       sendBlinkToBackend();
     }
-  }, [play, playSound, reloadTrigger, paused, loadingPlaySound]);
+  }, [
+    play,
+    playSound,
+    soundVolume,
+    reloadTrigger,
+    paused,
+    loadingPlaySound,
+    loadingSoundVolume,
+  ]);
 
   if (reloadTrigger % 2 !== 0) {
     return null;
