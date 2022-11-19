@@ -92,7 +92,7 @@ This is a project started by Lucas Henrique, Daniel Kashkett, and Giovanbattista
 
 ## Licence
 
-The software is distributed under the [GNU GPL v3](LICENCE.txt) licence.
+The software is distributed under the [MIT](LICENCE) licence.
 
 Content used under CC:
 
