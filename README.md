@@ -92,7 +92,7 @@ This is a project started by Lucas Henrique, Daniel Kashkett, and Giovanbattista
 
 ## Licence
 
-The software is distributed under the [MIT](LICENCE) licence.
+The software is distributed under the [MIT](LICENSE) licence.
 
 Content used under CC:
 
