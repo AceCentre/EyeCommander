@@ -6,10 +6,6 @@
 
 EyeCommander is a desktop application that uses your camera to detect when you blink. Once a blink has been detected you can output that into any desktop application, including communication software like Grid3.
 
-<figure><img src=".gitbook/assets/glue.png" alt="This is alt"><figcaption><p>This is a caption</p></figcaption></figure>
-
-
-
 ## Why would you use EyeCommander?
 
 To help explain EyeCommander we created two personas that are not based on specific individuals but a collection of people who could benefit from using this technology.
