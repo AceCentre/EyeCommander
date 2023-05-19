@@ -1,18 +1,10 @@
-import { RobotKeyboard } from "./robot-keyboard";
 import { DebugOutput } from "./debug-output";
-import { GridOutput } from "./grid-output";
+import { MacKeyboard } from "./mac-keyboard";
+
 import os from "os";
 import { OUTPUT_TYPE_NAME } from "../react-app/lib/store-consts";
-import { NuVoice } from "./nu-voice";
-import { MindExpress } from "./mind-express";
 
-const OUTPUT_TYPES = [
-  RobotKeyboard,
-  DebugOutput,
-  GridOutput,
-  NuVoice,
-  MindExpress,
-];
+const OUTPUT_TYPES = [DebugOutput, MacKeyboard];
 export class OutputController {
   constructor({ store }) {
     this.store = store;

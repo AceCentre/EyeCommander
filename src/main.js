@@ -5,7 +5,6 @@ import { OutputController } from "./backend/output-controller";
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const path = require("path");
 const Store = require("electron-store");
-const setupAutoUpdater = require("update-electron-app");
 const AutoLaunch = require("auto-launch");
 
 // Application state
@@ -31,17 +30,11 @@ function isDebug() {
 Menu.setApplicationMenu(null);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-require("./backend/squirrel-events");
+// require("./backend/squirrel-events");
 
 let eyeCommanderAutoLaunch = null;
 
 if (!isDebug()) {
-  setupAutoUpdater({
-    logger: require("electron-log"),
-    updateInterval: "5 minutes",
-    repo: "AceCentre/EyeCommander",
-  });
-
   eyeCommanderAutoLaunch = new AutoLaunch({
     name: "EyeCommander",
   });

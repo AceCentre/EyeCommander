@@ -1,18 +1,21 @@
 name: Electron Builder
 on:
-  push:
-    branches:
-      - main
   pull_request:
 
 jobs:
-  WindowsBuild:
-    runs-on: windows-latest
+  MacBuild:
+    runs-on: macos-latest
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-      WIN_CERT: ${{ secrets.WIN_CERT }}
-      WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
+      DEBUG: electron-osx-sign*
+      KEYCHAIN: job-${{ github.job }}-${{ github.run_id	}}-${{ github.run_number }}-${{ github.run_attempt }}
     steps:
+      - uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.base64P12File }}
+          p12-password: ${{ secrets.p12Password }}
+          keychain: ${{ env.KEYCHAIN }}
+
       - name: Check out Git repository
         uses: actions/checkout@v3
 
@@ -33,14 +36,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
 
-      - uses: actions/github-script@v5
-        id: should-publish
-        with:
-          result-encoding: string
-          script: |
-            const script = require('./check-for-version-bump.js');
-            return await script({ github, context, core })
-
       - name: Install deps
         run: yarn install
 
@@ -51,17 +46,16 @@ jobs:
         # electron forge only builds on start, run-as-node forces it to crash out
         run: yarn start --run-as-node || true
 
-      - name: Forge publish
-        if: ${{ steps.should-publish.outputs.result == 'publish' }}
-        run: yarn run publish
-
       - name: Forge make
-        if: ${{ steps.should-publish.outputs.result == 'make' }}
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_PROVIDER: ${{ secrets.APPLE_PROVIDER }}
         run: yarn make
 
       - uses: actions/upload-artifact@v3
         with:
-          name: WindowsRelease
-          path: out/make/squirrel.windows/x64
+          name: MacDMG
+          path: out/make/EyeCommander.dmg
           # Github has size limits so this avoids hitting them
-          retention-days: 1
+          retention-days: 14
