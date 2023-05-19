@@ -83,7 +83,7 @@ export const WEB_KEY_TO_OS_KEY = {
   enter: "{ENTER}",
   escape: "{ESC}",
   tab: "{TAB}",
-  " ": "{SPACE}",
+  " ": " ",
   f1: "{F1}",
   f2: "{F2}",
   f3: "{F3}",

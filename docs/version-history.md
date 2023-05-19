@@ -4,6 +4,24 @@ description: Find out about the latest changes to EyeCommander here
 
 # Version History
 
+### 1.4.2
+
+- Lift the max volume of the click
+
+### 1.4.1
+
+- [Allow users to change volume of clicking sound.](https://github.com/AceCentre/EyeCommander/issues/82)
+
+### 1.4.0
+
+- Fix bug that prevented users from mapping the keyboard emulator to spacebar
+- Add mind express option
+- Improve forcing run as admin workflow
+
+### 1.3.3
+
+- Fix bug where the app wouldn't work when the Windows User name included a space
+
 ### 1.3.2
 
 - Improve descriptions of blink modes following feedback

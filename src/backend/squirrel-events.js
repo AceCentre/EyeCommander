@@ -4,6 +4,7 @@ const app = require("electron").app;
 const logger = require("electron-log");
 const sudo = require("sudo-prompt");
 const { isAdmin } = require("./is-admin");
+const { dialog } = require("electron");
 
 // Runs the Update.exe which is created by the squirrel installer process.
 // Detaches it from this process.
@@ -16,7 +17,10 @@ const run = function (args, done) {
   logger.info("Spawning `%s` with args `%s`", updateExe, args);
   spawn(updateExe, args, {
     detached: true,
-  }).on("close", done);
+  }).on("close", () => {
+    logger.info("Calling done which will close");
+    done();
+  });
 };
 
 const check = async function () {
@@ -80,6 +84,17 @@ const check = async function () {
 
       logger.info("\n===== MADE EDIT SUCCESSFULLY =====");
     } catch (error) {
+      if (
+        error.message.toLowerCase().includes("user did not grant permission.")
+      ) {
+        logger.info("User didn't give permission");
+        dialog.showMessageBoxSync({
+          title: "Permissions problem",
+          type: "warning",
+          message:
+            "You did not grant EyeCommander admin privileges. This means yo might run into problems when using EyeCommander with your chosen AAC app. To grant it permission relaunch EyeCommander.",
+        });
+      }
       logger.info(error);
       logger.info("\n===== FAILED TO MAKE EDIT =====");
     }
@@ -94,11 +109,17 @@ const openAdminEyeCommander = () => {
     const options = {
       name: "EyeCommander SpawnProcess",
     };
+
+    logger.info("Running the following command:");
+    logger.info(`powershell Start-Process -FilePath "${process.execPath}"`);
+
     sudo.exec(
-      `start ${process.execPath}`,
+      `powershell Start-Process -FilePath "${process.execPath}"`,
       options,
       function (error, stdout, stderr) {
+        logger.info("Executed with the following results:");
         logger.info({ stdout, stderr, error });
+        logger.info("See above results");
 
         if (error) return rej(error);
 

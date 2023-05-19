@@ -12,7 +12,7 @@ Currently it only runs on windows, we can make a version for OSx or linux, if th
 
 ## Hardware
 
-EyeCommander is uses a lot of CPU power to run, this is due to the fact that every frame has to be analysed by a machine learning model to extract all of your facial features.&#x20;
+EyeCommander uses a lot of CPU power to run, this is due to the fact that every frame has to be analysed by a machine learning model to extract all of your facial features.&#x20;
 
 EyeCommander shows a 'frames per second' counter in the top left hand corner of the video feed. The higher the number of frames per second the more responsive and accurate the blink detection will be. The highest you will get is 30 frames per second and anything lower than 5 frames per second will be too low to work at all.
 
@@ -20,6 +20,6 @@ You _can_ run EyeCommander on GridPad devices but we have found that they get fa
 
 ### Recommendation
 
-From our experience we have had the best success with[ Surface Pro](https://www.microsoft.com/en-gb/store/configure/surface-pro-8/8qwcrtq8v8xg/20gj) tablets. They have enough processing power to run EyeCommander easily at 30 frames per second and work for our clients needs.
+From our experience we have had the best success with[ Surface Pro](https://www.microsoft.com/en-gb/store/configure/surface-pro-8/8qwcrtq8v8xg/20gj) tablets. They have enough processing power to run EyeCommander easily at 30 frames per second and work for our client's needs.
 
 Please note, this is a just recommendation so feel free to try it on other devices and let us know how you get on.&#x20;
