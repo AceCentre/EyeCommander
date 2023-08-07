@@ -110,11 +110,13 @@ const openAdminEyeCommander = () => {
       name: "EyeCommander SpawnProcess",
     };
 
+    const escapedPath = process.execPath.replace(/ /g, "` ");
+
     logger.info("Running the following command:");
-    logger.info(`powershell Start-Process -FilePath "${process.execPath}"`);
+    logger.info(`powershell Start-Process -FilePath "${escapedPath}"`);
 
     sudo.exec(
-      `powershell Start-Process -FilePath "${process.execPath}"`,
+      `powershell Start-Process -FilePath "${escapedPath}"`,
       options,
       function (error, stdout, stderr) {
         logger.info("Executed with the following results:");
