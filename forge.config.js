@@ -64,7 +64,7 @@ if (process.env.GITHUB_TOKEN) {
         name: "EyeCommander",
       },
       prerelease: false,
-      draft: false,
+      draft: true,
     },
   });
 }
